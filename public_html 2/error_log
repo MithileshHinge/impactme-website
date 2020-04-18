@@ -1,0 +1,34 @@
+[18-Sep-2019 09:54:12 Asia/kolkata] PHP Fatal error:  Uncaught exception 'Facebook\Exceptions\FacebookSDKException' with message 'Connection timed out after 10000 milliseconds' in /home/ffke7qkibpol/public_html/demo/src/Facebook/HttpClients/FacebookCurlHttpClient.php:73
+Stack trace:
+#0 /home/ffke7qkibpol/public_html/demo/src/Facebook/FacebookClient.php(216): Facebook\HttpClients\FacebookCurlHttpClient->send('https://graph.f...', 'GET', '', Array, 60)
+#1 /home/ffke7qkibpol/public_html/demo/src/Facebook/Authentication/OAuth2Client.php(277): Facebook\FacebookClient->sendRequest(Object(Facebook\FacebookRequest))
+#2 /home/ffke7qkibpol/public_html/demo/src/Facebook/Authentication/OAuth2Client.php(226): Facebook\Authentication\OAuth2Client->sendRequestWithClientParams('/oauth/access_t...', Array)
+#3 /home/ffke7qkibpol/public_html/demo/src/Facebook/Authentication/OAuth2Client.php(186): Facebook\Authentication\OAuth2Client->requestAnAccessToken(Array)
+#4 /home/ffke7qkibpol/public_html/demo/authenticate.php(22): Facebook\Authentication\OAuth2Client->getLongLivedAccessToke in /home/ffke7qkibpol/public_html/demo/src/Facebook/HttpClients/FacebookCurlHttpClient.php on line 73
+[23-Sep-2019 06:09:49 UTC] PHP Parse error:  syntax error, unexpected '}' in /home/ffke7qkibpol/public_html/demo/uploadPostFile.php on line 22
+[23-Sep-2019 06:12:04 UTC] PHP Parse error:  syntax error, unexpected '}' in /home/ffke7qkibpol/public_html/demo/uploadPostFile.php on line 22
+[23-Sep-2019 06:12:14 UTC] PHP Parse error:  syntax error, unexpected '}' in /home/ffke7qkibpol/public_html/demo/uploadPostFile.php on line 22
+[23-Sep-2019 06:12:42 UTC] PHP Parse error:  syntax error, unexpected '}' in /home/ffke7qkibpol/public_html/demo/uploadPostFile.php on line 22
+[22-Nov-2019 20:15:44 Asia/kolkata] PHP Fatal error:  Uncaught exception 'Facebook\Exceptions\FacebookSDKException' with message 'Connection timed out after 10000 milliseconds' in /home/ffke7qkibpol/public_html/src/Facebook/HttpClients/FacebookCurlHttpClient.php:73
+Stack trace:
+#0 /home/ffke7qkibpol/public_html/src/Facebook/FacebookClient.php(216): Facebook\HttpClients\FacebookCurlHttpClient->send('https://graph.f...', 'GET', '', Array, 60)
+#1 /home/ffke7qkibpol/public_html/src/Facebook/Authentication/OAuth2Client.php(277): Facebook\FacebookClient->sendRequest(Object(Facebook\FacebookRequest))
+#2 /home/ffke7qkibpol/public_html/src/Facebook/Authentication/OAuth2Client.php(226): Facebook\Authentication\OAuth2Client->sendRequestWithClientParams('/oauth/access_t...', Array)
+#3 /home/ffke7qkibpol/public_html/src/Facebook/Authentication/OAuth2Client.php(186): Facebook\Authentication\OAuth2Client->requestAnAccessToken(Array)
+#4 /home/ffke7qkibpol/public_html/authenticate.php(22): Facebook\Authentication\OAuth2Client->getLongLivedAccessToken('EAAF16cUxCzkBAO...')
+#5 {ma in /home/ffke7qkibpol/public_html/src/Facebook/HttpClients/FacebookCurlHttpClient.php on line 73
+[07-Jan-2020 16:27:31 Asia/kolkata] PHP Fatal error:  Call to a member function fetch_object() on null in /home/ffke7qkibpol/public_html/class/class.message.php on line 812
+[07-Jan-2020 16:27:49 Asia/kolkata] PHP Fatal error:  Call to a member function fetch_object() on null in /home/ffke7qkibpol/public_html/class/class.message.php on line 812
+[07-Jan-2020 16:28:05 Asia/kolkata] PHP Fatal error:  Call to a member function fetch_object() on null in /home/ffke7qkibpol/public_html/class/class.message.php on line 812
+[07-Jan-2020 16:28:46 Asia/kolkata] PHP Fatal error:  Call to a member function fetch_object() on null in /home/ffke7qkibpol/public_html/class/class.message.php on line 812
+[09-Jan-2020 13:12:55 Asia/kolkata] PHP Fatal error:  Uncaught exception 'Facebook\Exceptions\FacebookServerException' with message 'fb_exchange_token parameter not specified' in /home/ffke7qkibpol/public_html/src/Facebook/Exceptions/FacebookResponseException.php:111
+Stack trace:
+#0 /home/ffke7qkibpol/public_html/src/Facebook/FacebookResponse.php(210): Facebook\Exceptions\FacebookResponseException::create(Object(Facebook\FacebookResponse))
+#1 /home/ffke7qkibpol/public_html/src/Facebook/FacebookResponse.php(255): Facebook\FacebookResponse->makeException()
+#2 /home/ffke7qkibpol/public_html/src/Facebook/FacebookResponse.php(82): Facebook\FacebookResponse->decodeBody()
+#3 /home/ffke7qkibpol/public_html/src/Facebook/FacebookClient.php(225): Facebook\FacebookResponse->__construct(Object(Facebook\FacebookRequest), '{"error":{"mess...', 0, Array)
+#4 /home/ffke7qkibpol/public_html/src/Facebook/Authentication/OAuth2Client.php(277): Facebook\FacebookClient->sendRequest(Object(Facebook\FacebookRequest))
+#5 /home/ffke7qkibpol/public_html/src/Facebook/Authentication/OAuth2Cli in /home/ffke7qkibpol/public_html/src/Facebook/Exceptions/FacebookResponseException.php on line 111
+[16-Jan-2020 13:36:40 Asia/kolkata] PHP Fatal error:  Class 'query' not found in /home/ffke7qkibpol/public_html/admin/configure.php on line 54
+[08-Feb-2020 19:30:03 Asia/kolkata] PHP Fatal error:  Call to a member function impact() on null in /home/ffke7qkibpol/public_html/class/class.message.php on line 757
+[08-Feb-2020 19:30:19 Asia/kolkata] PHP Fatal error:  Call to a member function impact() on null in /home/ffke7qkibpol/public_html/class/class.message.php on line 757

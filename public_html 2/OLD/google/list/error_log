@@ -1,0 +1,20 @@
+[26-Jul-2019 11:20:08 UTC] PHP Warning:  file_get_contents(https://www.googleapis.com/youtube/v3/activities?part=snippet&amp;key=AIzaSyDU6se05K35AmdrS3cmaAwaEc3wMX_PLFI): failed to open stream: HTTP request failed! HTTP/1.0 400 Bad Request
+ in /home/ffke7qkibpol/public_html/google/list/index.php on line 9
+[26-Jul-2019 11:20:08 UTC] PHP Notice:  Trying to get property 'items' of non-object in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[26-Jul-2019 11:20:08 UTC] PHP Warning:  Invalid argument supplied for foreach() in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[27-Jul-2019 14:18:43 UTC] PHP Warning:  file_get_contents(https://www.googleapis.com/youtube/v3/activities?part=snippet&amp;key=AIzaSyDU6se05K35AmdrS3cmaAwaEc3wMX_PLFI): failed to open stream: HTTP request failed! HTTP/1.0 403 Forbidden
+ in /home/ffke7qkibpol/public_html/google/list/index.php on line 9
+[27-Jul-2019 14:18:43 UTC] PHP Notice:  Trying to get property 'items' of non-object in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[27-Jul-2019 14:18:43 UTC] PHP Warning:  Invalid argument supplied for foreach() in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[28-Jul-2019 10:09:00 UTC] PHP Warning:  file_get_contents(https://www.googleapis.com/youtube/v3/activities?part=snippet&amp;key=AIzaSyDU6se05K35AmdrS3cmaAwaEc3wMX_PLFI): failed to open stream: HTTP request failed! HTTP/1.0 403 Forbidden
+ in /home/ffke7qkibpol/public_html/google/list/index.php on line 9
+[28-Jul-2019 10:09:00 UTC] PHP Notice:  Trying to get property 'items' of non-object in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[28-Jul-2019 10:09:00 UTC] PHP Warning:  Invalid argument supplied for foreach() in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[29-Jul-2019 04:03:51 UTC] PHP Warning:  file_get_contents(https://www.googleapis.com/youtube/v3/activities?part=snippet&amp;key=AIzaSyDU6se05K35AmdrS3cmaAwaEc3wMX_PLFI): failed to open stream: HTTP request failed! HTTP/1.0 403 Forbidden
+ in /home/ffke7qkibpol/public_html/google/list/index.php on line 9
+[29-Jul-2019 04:03:51 UTC] PHP Notice:  Trying to get property 'items' of non-object in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[29-Jul-2019 04:03:51 UTC] PHP Warning:  Invalid argument supplied for foreach() in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[05-Aug-2019 07:36:16 UTC] PHP Warning:  file_get_contents(https://www.googleapis.com/youtube/v3/activities?part=snippet&amp;key=AIzaSyDU6se05K35AmdrS3cmaAwaEc3wMX_PLFI): failed to open stream: HTTP request failed! HTTP/1.0 403 Forbidden
+ in /home/ffke7qkibpol/public_html/google/list/index.php on line 9
+[05-Aug-2019 07:36:16 UTC] PHP Notice:  Trying to get property 'items' of non-object in /home/ffke7qkibpol/public_html/google/list/index.php on line 30
+[05-Aug-2019 07:36:16 UTC] PHP Warning:  Invalid argument supplied for foreach() in /home/ffke7qkibpol/public_html/google/list/index.php on line 30

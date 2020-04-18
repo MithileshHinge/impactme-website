@@ -1,0 +1,13 @@
+[11-Jan-2020 12:03:41 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_delete.php on line 45
+[11-Jan-2020 12:03:47 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_delete.php on line 45
+[11-Jan-2020 12:04:17 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_delete.php on line 45
+[11-Jan-2020 12:04:21 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_delete.php on line 45
+[11-Jan-2020 12:04:24 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_delete.php on line 45
+[11-Jan-2020 12:07:11 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_delete.php on line 45
+[11-Jan-2020 12:07:28 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_add.php on line 14
+[11-Jan-2020 12:07:34 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_add.php on line 14
+[11-Jan-2020 12:08:06 Asia/kolkata] PHP Fatal error:  Call to undefined method query::add_notification() in /home/ffke7qkibpol/public_html/include/comment_delete.php on line 45
+[31-Jan-2020 15:07:45 UTC] PHP Notice:  Use of undefined constant BASEPATH - assumed 'BASEPATH' in /home/ffke7qkibpol/public_html/include/comment_list.php on line 1
+[31-Jan-2020 15:07:45 UTC] PHP Notice:  Use of undefined constant BASEPATH - assumed 'BASEPATH' in /home/ffke7qkibpol/public_html/include/comment_list.php on line 1
+[31-Jan-2020 15:07:45 UTC] PHP Notice:  Use of undefined constant BASEPATH - assumed 'BASEPATH' in /home/ffke7qkibpol/public_html/include/comment_list.php on line 2
+[31-Jan-2020 15:07:45 UTC] PHP Notice:  Use of undefined constant BASEPATH - assumed 'BASEPATH' in /home/ffke7qkibpol/public_html/include/comment_list.php on line 2

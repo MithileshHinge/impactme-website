@@ -1,0 +1,11 @@
+[12-Sep-2019 21:56:56 UTC] PHP Parse error:  syntax error, unexpected 'else' (T_ELSE) in /home/ffke7qkibpol/public_html/demo/admin/creator_submission_view_new.php on line 145
+[13-Sep-2019 03:27:36 Asia/kolkata] PHP Fatal error:  Call to undefined function item() in /home/ffke7qkibpol/public_html/demo/admin/creator_submission_view_new.php on line 144
+[13-Sep-2019 03:27:57 Asia/kolkata] PHP Fatal error:  Call to undefined function item() in /home/ffke7qkibpol/public_html/demo/admin/creator_submission_view_new.php on line 144
+[20-Nov-2019 13:08:10 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427
+[20-Nov-2019 13:08:10 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427
+[20-Nov-2019 13:08:10 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427
+[20-Nov-2019 13:08:10 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427
+[20-Nov-2019 13:08:44 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427
+[20-Nov-2019 13:08:44 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427
+[20-Nov-2019 13:08:44 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427
+[20-Nov-2019 13:08:44 UTC] PHP Notice:  Undefined variable: arr in /home/ffke7qkibpol/public_html/admin/admin.php on line 1427

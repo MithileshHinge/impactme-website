@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Mirrored from envato.megadrupal.com/html/kickstars/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 14 May 2019 05:16:24 GMT -->
+<head>
+    <title>Welcome to Impactme</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/normalize.css"/>
+    <link rel="stylesheet" href="css/jquery.sidr.light.css"/>
+	<link rel="stylesheet" href="css/animate.min.css"/>
+	<link rel="stylesheet" href="css/md-slider.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/responsive.css"/>
+    <script type="text/javascript" src="js/raphael-min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.touchwipe.min.js"></script>
+	<script type="text/javascript" src="js/md_slider.min.js"></script>
+	<script type="text/javascript" src="js/jquery.sidr.min.js"></script>
+    <!-- <script type="text/javascript" src="js/jquery.tweet.min.js"></script> -->
+    <script type="text/javascript" src="js/pie.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+
+</head>
+<style>
+.tab-contents{
+    height: 655px;
+}
+    .inbox_people {
+  background: #f8f8f8 none repeat scroll 0 0;
+  float: left;
+  overflow: hidden;
+  width: 40%; border-right:1px solid #c4c4c4;
+}
+.inbox_msg {
+  border: 1px solid #c4c4c4;
+  clear: both;
+  overflow: hidden;
+}
+.top_spac{ margin: 20px 0 0;}
+
+
+.recent_heading {float: left; width:40%;}
+.srch_bar {
+  display: inline-block;
+  text-align: right;
+  width: 60%; padding:
+}
+.headind_srch{ padding:10px 29px 10px 20px; overflow:hidden; border-bottom:1px solid #c4c4c4;}
+
+.recent_heading h4 {
+  color: #05728f;
+  font-size: 21px;
+  margin: auto;
+}
+.srch_bar input{ border:1px solid #cdcdcd; border-width:0 0 1px 0; width:80%; padding:2px 0 4px 6px; background:none;}
+.srch_bar .input-group-addon button {
+  background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+  border: medium none;
+  padding: 0;
+  color: #707070;
+  font-size: 18px;
+}
+.srch_bar .input-group-addon { margin: 0 0 0 -27px;}
+
+.chat_ib h5{ font-size:15px; color:#464646; margin:0 0 8px 0;}
+.chat_ib h5 span{ font-size:13px; float:right;}
+.chat_ib p{ font-size:14px; color:#989898; margin:auto}
+.chat_img {
+  float: left;
+  width: 11%;
+}
+.chat_ib {
+  float: left;
+  padding: 0 0 0 15px;
+  width: 88%;
+}
+
+.chat_people{ overflow:hidden; clear:both;}
+.chat_list {
+  border-bottom: 1px solid #c4c4c4;
+  margin: 0;
+  padding: 18px 16px 10px;
+}
+.inbox_chat { height: 550px; overflow-y: scroll;}
+
+.active_chat{ background:#ebebeb;}
+
+.incoming_msg_img {
+  display: inline-block;
+  width: 6%;
+}
+.received_msg {
+  display: inline-block;
+  padding: 0 0 0 10px;
+  vertical-align: top;
+  width: 92%;
+ }
+ .received_withd_msg p {
+  background: #ebebeb none repeat scroll 0 0;
+  border-radius: 3px;
+  color: #646464;
+  font-size: 14px;
+  margin: 0;
+  padding: 5px 10px 5px 12px;
+  width: 100%;
+}
+.time_date {
+  color: #747474;
+  display: block;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+.received_withd_msg { width: 57%;}
+.mesgs {
+  float: left;
+  padding: 30px 15px 0 25px;
+  width: 60%;
+}
+
+ .sent_msg p {
+  background: #05728f none repeat scroll 0 0;
+  border-radius: 3px;
+  font-size: 14px;
+  margin: 0; color:#fff;
+  padding: 5px 10px 5px 12px;
+  width:100%;
+}
+.outgoing_msg{ overflow:hidden; margin:26px 0 26px;}
+.sent_msg {
+  float: right;
+  width: 46%;
+}
+.input_msg_write input {
+  background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+  border: medium none;
+  color: #4c4c4c;
+  font-size: 15px;
+  min-height: 48px;
+  width: 100%;
+}
+
+.type_msg {border-top: 1px solid #c4c4c4;position: relative;}
+.msg_send_btn {
+  background: #05728f none repeat scroll 0 0;
+  border: medium none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  font-size: 17px;
+  height: 33px;
+  position: absolute;
+  right: 0;
+  top: 11px;
+  width: 33px;
+}
+.plane{
+  position: relative;
+    bottom: 11px;
+    left: -10px;
+}
+.messaging { padding: 0 0 50px 0;}
+.msg_history {
+  height: 516px;
+  overflow-y: auto;
+}
+</style>
+<body>
+<div id="wrapper">
+    <header id="header">
+        <div class=" col-md-12 wrap-top-menu hidden-lg">
+            <div class="container_12 clearfix">
+                <div class="grid_12">
+                    <div class="top-message clearfix">
+                        <i class="icon iFolder"></i>
+                        <span class="txt-message">Nulla egestas nulla ac diam ultricies id viverra nisi adipiscing.</span>
+                        <i class="icon iX"></i>
+                        <div class="clear"></div>
+                    </div>
+                    <i id="sys_btn_toggle_search" class="icon iBtnRed make-right"></i>
+                </div>
+            </div>
+        </div> <!-- end: .wrap-top-menu -->
+        <div class="container_12 clearfix">
+            <div class="grid_12 header-content">
+                <div id="sys_header_right" class="header-right">
+                    <span class="chat-icon"><i class="fa fa-comments"></i></span>
+                    <div class="photo-nav">
+                        <div class="drop">
+                            <ul class="link-creater">
+                                <li><a href="edit.html">Finish Page</a></li>
+                                <li><a href="postcreater.html">Post from creater</a></li>
+                                <li><a href="#">My Profile</a></li>
+                                <li><a href="#">Explore Creater</a></li>
+                                <li><a href="#">My Membership</a></li>
+                                 <li><a href="#">My Profile setting</a></li>
+                                  <li><a href="#">Help center and Faq</a></li>
+                                   <li><a href="#">logout</a></li>
+                            </ul>
+                       </div>
+                    </div>
+                </div>
+                <div class="header-left">
+                    <h1 id="logo">
+                        <a href="index.html"><img src="images/logo-3.png" alt="$SITE_NAME"/></a>
+                    </h1>
+                    <div class="main-nav clearfix">
+                        <div class="form-search">
+                        <form action="#">
+                            <label for="sys_txt_keyword" style="border-bottom: 1px solid #dfe1e2;">
+                                <input id="sys_txt_keyword" class="active" type="text" placeholder="Search Creators... "/ style="    margin: 6px 0 0 40px;">
+                            </label>
+                            <button class="btn-search" type="reset"><i class="icon iMagnifier"></i></button>
+                            <button class="btn-reset-keyword" type="reset"><i class="icon iXHover"></i></button>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header><!--end: #header -->
+
+    <div class="container" >
+        <div class="col-md-12">
+            <div class="layout-2cols">
+        <div class="content grid_12">
+            <div class="project-detail">
+                   <h2 class="message-head">Messages</h2>
+                <div class="project-tab-detail tabbable accordion edit-about" id="message-box">
+                    <ul class="nav nav-tabs clearfix" id="message-tab">
+                      <li class="active">
+                        <div class="message-image"></div>
+                        <a href="#" id="message-name"><span class="message-rock">akshay rock</span><br>
+                            <span style="color:black">Creator inbox</span>
+
+                        </a>
+                    </li>
+                      <li style="margin: 0 0 0 33px;">
+                       <div class="message-image"></div>
+                        <a href="#" id="message-name"><span class="message-rock">akshay rock</span><br>
+                            <span style="color:black">Impact inbox</span>
+
+                        </a>
+                    </li>
+                      
+                    </ul>
+
+                     <!--===================== Meassage  Creater ======================-->
+                    <div class="tab-content">
+                        <div>
+                           
+                            <h3 class="rs alternate-tab accordion-label">About</h3>
+                            <div class="tab-pane accordion-content active" style="margin: 33px 0 0 -30px;">
+                                <div class="form form-profile">
+                                    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+                                        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+                                        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                                        <!------ Include the above in your HEAD tag ---------->
+
+                                        <br/><br/>
+                                        <div class="tabs">
+                                          <div class="tab-button-outer">
+                                            <ul id="tab-button">
+                                                <li style="border: 1px solid #ddd;">
+                                                    <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="new-message">New Message</button>
+                                                </li>
+                                                <div id="id01" class="modal">
+                                          
+                                          <form class="modal-content animate" action="/action_page.php" style="width: 44%;">
+                                            <div class="imgcontainer">
+                                              <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+                                              
+                                            </div>
+
+                                            <div class="container">
+                                              <label for="uname"><b style="font-size: 20px;">From Akshay(Creater)</b></label><br>
+                                              
+
+                                              
+                                              <input type="password" placeholder="To" name="psw" required class="message-input"><br>
+
+                                              <textarea id="subject" name="subject" placeholder="Message" style="height:200px" class="message-input"></textarea>
+                                                
+                                              <button type="submit" id="message-submit">Submit</button>
+                                              
+                                            </div>
+
+                                            
+                                          </form>
+                                        </div>
+                                              <li><a href="#tab01">All</a></li>
+                                              <li><a href="#tab02">Unread</a></li>
+                                              <li><a href="#tab03">Read</a></li>
+                                             
+                                            </ul>
+                                          </div>
+                                          <div class="tab-select-outer">
+                                            <select id="tab-select">
+                                              <option value="#tab01">Tab 1</option>
+                                              <option value="#tab02">Tab 2</option>
+                                              <option value="#tab03">Tab 3</option>
+                                             
+                                            </select>
+                                          </div>
+
+                                          <div id="tab01" class="tab-contents active">
+                                              
+                                              
+                                            <!--<div class="col-md-3">-->
+                                                
+                                            <!--    <p><button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="new-message message-model">New Message</button></p>-->
+                                                
+                                            <!--</div>-->
+                                            
+                                            <div class="col-md-12">
+                                                <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                                            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+
+                                            <h3 class=" text-center">Messaging</h3>
+<div class="messaging">
+      <div class="inbox_msg">
+        <div class="inbox_people">
+          <div class="headind_srch">
+            <div class="recent_heading">
+              <h4>Recent</h4>
+            </div>
+            <div class="srch_bar">
+              <div class="stylish-input-group">
+                <input type="text" class="search-bar"  placeholder="Search" >
+                <!-- <span class="input-group-addon"> -->
+                <!-- <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                </span> --> </div>
+            </div>
+          </div>
+          <div class="inbox_chat">
+            <div class="chat_list active_chat">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mesgs">
+          <div class="msg_history">
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Test which is a new approach to have all
+                    solutions</p>
+                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
+              </div>
+            </div>
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>Test which is a new approach to have all
+                  solutions</p>
+                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Test, which is a new approach to have</p>
+                  <span class="time_date"> 11:01 AM    |    Yesterday</span></div>
+              </div>
+            </div>
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>Apollo University, Delhi, India Test</p>
+                <span class="time_date"> 11:01 AM    |    Today</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>We work directly with our designers and suppliers,
+                    and sell direct to you, which means quality, exclusive
+                    products, at a price anyone can afford.</p>
+                  <span class="time_date"> 11:01 AM    |    Today</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="type_msg">
+            <div class="input_msg_write">
+              <input type="text" class="write_msg" placeholder="Type a message" />
+              <button class="msg_send_btn" type="button">
+                <i class="fa fa-paper-plane-o plane" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+     
+      
+    </div>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                          </div>
+                                          <div id="tab02" class="tab-contents">
+                                            <div class="col-md-3">
+                                                
+                                                <p><button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="new-message message-model">New Message</button></p>
+                                                
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="col-md-1 image-messager"></div>
+                                                <div class="col-md-11">
+                                                    <ul style="padding:0 0 0 0;">
+                                                        <li class="message-name"                     >Ritesh sir
+                                                        <span class="message-date">13 Nov</span>
+                                                        </li>
+                                                        <li class="message-text"                     >test the message for impact me in hello creater for support me                   </li>
+                                                    </ul>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                          </div>
+                                          <div id="tab03" class="tab-contents">
+                                           
+                                           <div class="col-md-3">
+                                                
+                                                <p><button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="new-message message-model">New Message</button></p>
+                                                
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="col-md-1 image-messager"></div>
+                                                <div class="col-md-11">
+                                                    <ul style="padding:0 0 0 0;">
+                                                        <li class="message-name"                     >chetan sir
+                                                        <span class="message-date">13 Nov</span>
+                                                        </li>
+                                                        <li class="message-text"                     >test the message for impact me in hello creater for support me                   </li>
+                                                    </ul>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                          </div>
+                                          
+                                        </div>
+
+                                        <script type="text/javascript">
+                                            $(function() {
+                                          var $tabButtonItem = $('#tab-button li'),
+                                              $tabSelect = $('#tab-select'),
+                                              $tabContents = $('.tab-contents'),
+                                              activeClass = 'is-active';
+
+                                          $tabButtonItem.first().addClass(activeClass);
+                                          $tabContents.not(':first').hide();
+
+                                          $tabButtonItem.find('a').on('click', function(e) {
+                                            var target = $(this).attr('href');
+
+                                            $tabButtonItem.removeClass(activeClass);
+                                            $(this).parent().addClass(activeClass);
+                                            $tabSelect.val(target);
+                                            $tabContents.hide();
+                                            $(target).show();
+                                            e.preventDefault();
+                                          });
+
+                                          $tabSelect.on('change', function() {
+                                            var target = $(this).val(),
+                                                targetSelectNum = $(this).prop('selectedIndex');
+
+                                            $tabButtonItem.removeClass(activeClass);
+                                            $tabButtonItem.eq(targetSelectNum).addClass(activeClass);
+                                            $tabContents.hide();
+                                            $(target).show();
+                                          });
+                                        });
+                                            var modal = document.getElementById('id01');
+
+                                        // When the user clicks anywhere outside of the modal, close it
+                                        window.onclick = function(event) {
+                                            if (event.target == modal) {
+                                                modal.style.display = "none";
+                                            }
+                                        }
+                                        function myFunction() {
+                                          var dots = document.getElementById("dots");
+                                          var moreText = document.getElementById("more");
+                                          var btnText = document.getElementById("myBtn");
+                                        
+                                          if (dots.style.display === "none") {
+                                            dots.style.display = "inline";
+                                             
+                                            moreText.style.display = "none";
+                                          } else {
+                                            dots.style.display = "none";
+                                           
+                                            moreText.style.display = "inline";
+                                          }
+                                        }
+                                        </script>
+                                    
+                                </div>
+                            </div><!--end: .tab-pane -->
+                        </div>
+
+
+                        <!--=================== Impact Message ==========================-->
+
+                        <div>
+                            <h3 class="rs alternate-tab accordion-label">Tiers</h3>
+                            <div class="tab-pane accordion-content" style="margin: 33px 0 0 -30px;">
+                                <div class="form form-profile">
+                                    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+                                        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+                                        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                                        <!------ Include the above in your HEAD tag ---------->
+
+                                        <br/><br/>
+                                        <div class="tabs">
+                                          <div class="tab-button-outer">
+                                            <ul id="tab-button">
+                                                <li style="border: 1px solid #ddd;">
+                                                    <button onclick="document.getElementById('impact1').style.display='block'" style="width:auto;" class="new-message">New Message</button>
+                                                </li>
+                                                <div id="impact1" class="modal">
+                                          
+                                          <form class="modal-content animate" action="/action_page.php" style="width: 44%;">
+                                            <div class="imgcontainer">
+                                              <span onclick="document.getElementById('impact1').style.display='none'" class="close" title="Close Modal">&times;</span>
+                                              
+                                            </div>
+
+                                            <div class="container">
+                                              <label for="uname"><b style="font-size: 20px;">From Akshay(Impact)</b></label><br>
+                                              
+
+                                              
+                                              <input type="password" placeholder="To" name="psw" required class="message-input"><br>
+                                              <textarea id="subject" name="subject" placeholder="Message" style="height:200px" class="message-input"></textarea>
+                                                
+                                              <button type="submit" id="message-submit">Submit</button>
+                                              
+                                            </div>
+
+                                            
+                                          </form>
+                                        </div>
+                                              <li><a href="#tab0111">All</a></li>
+                                              <li><a href="#tab0222">Unread</a></li>
+                                              <li><a href="#tab0333">Read</a></li>
+                                             
+                                            </ul>
+                                          </div>
+                                          <div class="tab-select-outer">
+                                            <select id="tab-select">
+                                              <option value="#tab0111">Tab 1</option>
+                                              <option value="#tab0222">Tab 2</option>
+                                              <option value="#tab0333">Tab 3</option>
+                                             
+                                            </select>
+                                          </div>
+
+                                          <div id="tab0111" class="tab-contents active">
+                                            <div class="col-md-3">
+                                                
+                                                <p><button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="new-message message-model">New Message</button></p>
+                                                
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="col-md-1 image-messager"></div>
+                                                <div class="col-md-11">
+                                                    <ul style="padding:0 0 0 0;">
+                                                        <li class="message-name"                     >Akshay Bhoyar
+                                                        <span class="message-date">13 Nov</span>
+                                                        </li>
+                                                        <li class="message-text"                     >test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me  test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me                  </li>
+                                                    </ul>
+                                                </div>
+                                                
+                                            </div>
+                                          </div>
+                                          
+                                          
+                                          <div id="tab0222" class="tab-contents">
+                                            <div class="col-md-3">
+                                                
+                                                <p><button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="new-message message-model">New Message</button></p>
+                                                
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="col-md-1 image-messager"></div>
+                                                <div class="col-md-11">
+                                                    <ul style="padding:0 0 0 0;">
+                                                        <li class="message-name"                     >cvb
+                                                        <span class="message-date">13 Nov</span>
+                                                        </li>
+                                                        <li class="message-text"                     >test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me  test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me                  </li>
+                                                    </ul>
+                                                </div>
+                                                
+                                            </div>
+                                          </div>
+                                          
+                                          
+                                          <div id="tab0333" class="tab-contents">
+                                            <div class="col-md-3">
+                                                
+                                                <p><button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="new-message message-model">New Message</button></p>
+                                                
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="col-md-1 image-messager"></div>
+                                                <div class="col-md-11">
+                                                    <ul style="padding:0 0 0 0;">
+                                                        <li class="message-name"                     >zxmn
+                                                        <span class="message-date">13 Nov</span>
+                                                        </li>
+                                                        <li class="message-text"                     >test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me  test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me test the message for impact me in hello creater for support me                  </li>
+                                                    </ul>
+                                                </div>
+                                                
+                                            </div>
+                                          </div>
+                                          
+                                        </div>
+
+                                        <script type="text/javascript">
+                                            $(function() {
+                                          var $tabButtonItem = $('#tab-button li'),
+                                              $tabSelect = $('#tab-select'),
+                                              $tabContents = $('.tab-contents'),
+                                              activeClass = 'is-active';
+
+                                          $tabButtonItem.first().addClass(activeClass);
+                                          $tabContents.not(':first').hide();
+
+                                          $tabButtonItem.find('a').on('click', function(e) {
+                                            var target = $(this).attr('href');
+
+                                            $tabButtonItem.removeClass(activeClass);
+                                            $(this).parent().addClass(activeClass);
+                                            $tabSelect.val(target);
+                                            $tabContents.hide();
+                                            $(target).show();
+                                            e.preventDefault();
+                                          });
+
+                                          $tabSelect.on('change', function() {
+                                            var target = $(this).val(),
+                                                targetSelectNum = $(this).prop('selectedIndex');
+
+                                            $tabButtonItem.removeClass(activeClass);
+                                            $tabButtonItem.eq(targetSelectNum).addClass(activeClass);
+                                            $tabContents.hide();
+                                            $(target).show();
+                                          });
+                                        });
+                                            var modal = document.getElementById('impact1');
+
+                                        // When the user clicks anywhere outside of the modal, close it
+                                        window.onclick = function(event) {
+                                            if (event.target == modal) {
+                                                modal.style.display = "none";
+                                            }
+                                        }
+                                        </script>
+                                </div>
+                            </div><!--end: .tab-pane -->
+                        </div>
+                        
+                        </div>
+                      </div>
+                </div><!--end: .project-tab-detail -->
+            </div>
+        </div><!--end: .content -->
+        </div>
+    </div>
+   
+                        <footer id="footer" class="col-md-12">
+        <div class="container_12 main-footer">
+            <div class="grid_3 about-us">
+                <h3 class="rs title">About</h3>
+                <p class="rs description">Donec rutrum elit ac arcu bibendum rhoncus in vitae turpis. Quisque fermentum gravida eros non faucibus. Curabitur fermentum, arcu sed cursus commodo.</p>
+                <p class="rs email"><a class="fc-default  be-fc-orange" href="http://envato.megadrupal.com/cdn-cgi/l/email-protection#b2dbdcd4ddf2dfd7d5d3d6c0c7c2d3de9cd1dddf"><span class="__cf_email__" data-cfemail="bbd2d5ddd4fbd6dedcdadfc9cecbdad795d8d4d6">[email&#160;protected]</span></a></p>
+                <p class="rs">+1 (555) 555 - 55 - 55</p>
+            </div><!--end: .contact-info -->
+            <div class="grid_3 recent-tweets">
+                <h3 class="rs title">Recent Tweets</h3>
+                <div class="lst-tweets" id="sys_lst_tweets">
+                    
+                </div>
+            </div><!--end: .recent-tweets -->
+            <div class="clear clear-2col"></div>
+            <div class="grid_3 email-newsletter">
+                <h3 class="rs title">Newsletter Signup</h3>
+                <div class="inner">
+                    <p class="rs description">Nam aliquet, velit quis consequat interdum, odio dolor elementum.</p>
+                    <form action="#">
+                        <div class="form form-email">
+                            <label class="lbl" for="txt-email">
+                                <input id="txt-email" type="text" class="txt fill-width" placeholder="Enter your e-mail address"/>
+                            </label>
+                            <button class="btn btn-green" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!--end: .email-newsletter -->
+            <div class="grid_3">
+                <h3 class="rs title">Discover &amp; Create</h3>
+                <div class="footer-menu">
+                    <ul class="rs">
+                        <li><a class="be-fc-orange" href="#">What is Kickstars</a></li>
+                        <li><a class="be-fc-orange" href="#">Start a project</a></li>
+                        <li><a class="be-fc-orange" href="#">Project Guidlines</a></li>
+                        <li><a class="be-fc-orange" href="#">Press</a></li>
+                        <li><a class="be-fc-orange" href="#">Stats</a></li>
+                    </ul>
+                    <ul class="rs">
+                        <li><a class="be-fc-orange" href="#">Staff Picks</a></li>
+                        <li><a class="be-fc-orange" href="#">Popular</a></li>
+                        <li><a class="be-fc-orange" href="#">Recent</a></li>
+                        <li><a class="be-fc-orange" href="#">Small Projects</a></li>
+                        <li><a class="be-fc-orange" href="#">Most Funded</a></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="copyright">
+            <div class="container_12">
+                <div class="grid_12">
+                    <a class="logo-footer" href="index.html"><img src="images/logo-3.png" alt="$SITE_NAME"/></a>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </footer>
+
+
+   
+
+                        </body>
+                       </html>

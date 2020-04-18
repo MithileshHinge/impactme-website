@@ -1,0 +1,214 @@
+# SEO Friendly Rewrites
+Options +FollowSymLinks
+
+
+
+RewriteEngine On
+
+
+RewriteEngine On
+RewriteCond %{HTTP_HOST} !^www.
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Enable Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+  AddOutputFilterByType DEFLATE application/x-font
+  AddOutputFilterByType DEFLATE application/x-font-opentype
+  AddOutputFilterByType DEFLATE application/x-font-otf
+  AddOutputFilterByType DEFLATE application/x-font-truetype
+  AddOutputFilterByType DEFLATE application/x-font-ttf
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE font/opentype
+  AddOutputFilterByType DEFLATE font/otf
+  AddOutputFilterByType DEFLATE font/ttf
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE image/x-icon
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/plain
+</IfModule>
+<IfModule mod_gzip.c>
+  mod_gzip_on Yes
+  mod_gzip_dechunk Yes
+  mod_gzip_item_include file .(html?|txt|css|js|php|pl)$
+  mod_gzip_item_include handler ^cgi-script$
+  mod_gzip_item_include mime ^text/.*
+  mod_gzip_item_include mime ^application/x-javascript.*
+  mod_gzip_item_exclude mime ^image/.*
+  mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</IfModule>
+
+# Leverage Browser Caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access 1 year"
+  ExpiresByType image/jpeg "access 1 year"
+  ExpiresByType image/gif "access 1 year"
+  ExpiresByType image/png "access 1 year"
+  ExpiresByType text/css "access 1 month"
+  ExpiresByType text/html "access 1 month"
+  ExpiresByType application/pdf "access 1 month"
+  ExpiresByType text/x-javascript "access 1 month"
+  ExpiresByType application/x-shockwave-flash "access 1 month"
+  ExpiresByType image/x-icon "access 1 year"
+  ExpiresDefault "access 1 month"
+</IfModule>
+
+<IfModule mod_expires.c>
+# Enable expirations
+ExpiresActive On 
+# Default directive
+ExpiresDefault "access plus 1 month"
+# My favicon
+ExpiresByType image/x-icon "access plus 1 year"
+# Images
+ExpiresByType image/gif "access plus 1 month"
+ExpiresByType image/png "access plus 1 month"
+ExpiresByType image/jpg "access plus 1 month"
+ExpiresByType image/jpeg "access plus 1 month"
+# CSS
+ExpiresByType text/css "access plus 1 month"
+# Javascript
+ExpiresByType application/javascript "access plus 1 year"
+</IfModule>
+
+
+<IfModule mod_headers.c>
+  <filesmatch "\.(ico|flv|jpg|jpeg|png|gif|css|swf)$">
+  Header set Cache-Control "max-age=2678400, public"
+  </filesmatch>
+<filesMatch "\.(css)$">
+    Header set Cache-Control "max-age=604800, public"
+  </filesMatch>
+ <filesMatch "\.(xml|txt)$">
+    Header set Cache-Control "max-age=216000, public, must-revalidate"
+  </filesMatch>
+  <filesMatch "\.(html|htm|php)$">
+    Header set Cache-Control "max-age=1, private, must-revalidate"
+  </filesMatch>
+  <filesmatch "\.(pdf)$">
+  Header set Cache-Control "max-age=86400, public"
+  </filesmatch>
+  <filesmatch "\.(js)$">
+  Header set Cache-Control "max-age=2678400, private"
+  </filesmatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css|woff2)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
+
+
+RewriteRule ^login/?$ login.php
+RewriteRule ^sign-up/?$ sign_up.php
+RewriteRule ^logout/?$ logout.php
+RewriteRule ^forgot-password/?$ forget_password.php
+RewriteRule ^password-change/?$ forget_password_change.php
+
+## USER CREATOR 
+
+RewriteRule ^join/([a-zA-Z0-9_-]+)/checkout/one_time/([a-zA-Z0-9_-]+)/?$ checkout_one_time.php?u=$1&pid=$2
+RewriteRule ^join/([a-zA-Z0-9_-]+)/checkout/one_time/?$ checkout_one_time.php?u=$1
+
+
+RewriteRule ^join/([a-zA-Z0-9_-]+)/checkout/([a-zA-Z0-9_-]+)/?$ checkout.php?u=$1&tid=$2
+RewriteRule ^join/([a-zA-Z0-9_-]+)/checkout/?$ checkout.php?u=$1
+
+
+
+RewriteRule ^join/([a-zA-Z0-9_-]+)/?$ join.php?u=$1
+RewriteRule ^join/?$ user_creator.php
+
+RewriteRule ^profile/u/([a-zA-Z0-9_-]+)/post/?$ user_profile.php?u=$1&type=post
+RewriteRule ^profile/u/([a-zA-Z0-9_-]+)/overview/?$ user_profile.php?u=$1&type=overview
+RewriteRule ^profile/u/([a-zA-Z0-9_-]+)/?$ user_profile.php?u=$1
+
+RewriteRule ^profile/([a-zA-Z0-9_-]+)/post/?$ user_profile.php?slug=$1&type=post
+RewriteRule ^profile/([a-zA-Z0-9_-]+)/overview/?$ user_profile.php?slug=$1&type=overview
+RewriteRule ^profile/([a-zA-Z0-9_-]+)/?$ user_profile.php?slug=$1
+RewriteRule ^profile/?$ user_creator.php
+
+RewriteRule ^creator/([a-zA-Z0-9_-]+)/post/?$ user_creator.php?slug=$1&type=post
+RewriteRule ^creator/([a-zA-Z0-9_-]+)/overview/?$ user_creator.php?slug=$1&type=overview
+RewriteRule ^creator/([a-zA-Z0-9_-]+)/?$ user_creator.php?slug=$1
+
+
+RewriteRule ^user-creator/([a-zA-Z0-9_-]+)/post/?$ user_creator.php?slug=$1&type=post
+RewriteRule ^user-creator/([a-zA-Z0-9_-]+)/overview/?$ user_creator.php?slug=$1&type=overview
+RewriteRule ^user-creator/([a-zA-Z0-9_-]+)/?$ user_creator.php?slug=$1
+RewriteRule ^user-creator/?$ user_creator.php
+
+RewriteRule ^edit/review/?$ profile_submit.php
+
+RewriteRule ^edit/post/([a-zA-Z0-9_-]+)/?$ edit_user_post_edit.php?edit_id=$1
+RewriteRule ^edit/post/?$ edit_user_post.php
+
+RewriteRule ^edit/statistics/?$ edit_user_graph.php
+RewriteRule ^edit/payment/?$ edit_user_payment.php
+RewriteRule ^edit/payment/?$ edit_user_payment.php
+RewriteRule ^edit/thanks/?$ edit_user_thanks.php
+RewriteRule ^edit/goals/([a-zA-Z0-9_-]+)/?$ edit_user_goal_edit.php?edit_id=$1
+RewriteRule ^edit/goals/?$ edit_user_goal.php
+RewriteRule ^edit/tiers/([a-zA-Z0-9_-]+)/?$ edit_user_tier_edit.php?edit_id=$1
+RewriteRule ^edit/tiers/?$ edit_user_tier.php
+RewriteRule ^edit/about/?$ edit_user.php
+RewriteRule ^edit/?$ edit_user.php
+
+RewriteRule ^settings/?$ profile_edit.php
+RewriteRule ^change-password/?$ change_password.php
+RewriteRule ^explore/?$ explore.php
+
+
+
+## POST CREATOR (fan)
+RewriteRule ^home/?$ post_creator.php
+RewriteRule ^post-creator/?$ post_creator.php
+RewriteRule ^create/?$ create.php
+RewriteRule ^find-creators/?$ find_creators.php
+
+
+
+RewriteRule ^my-membership/?$ membership.php
+
+
+RewriteRule ^search/?$ search_creator.php
+RewriteRule ^verify/create/([a-zA-Z0-9_-]+)/?$ verify.php?reg_type=log&utype=create&slug=$1
+RewriteRule ^verify/ucreate/([a-zA-Z0-9_-]+)/?$ verify.php?reg_type=log&utype=ucreate&slug=$1
+RewriteRule ^verify/creator/ucreate/([a-zA-Z0-9_-]+)/?$ verify.php?reg_type=creator&utype=ucreate&slug=$1
+RewriteRule ^verification/?$ verification.php
+
+
+RewriteRule ^message/?$ message.php
+RewriteRule ^terms-conditions/?$ terms.php
+RewriteRule ^response/?$ response.php
+RewriteRule ^response_one_time/?$ response_one_time.php
+
+RewriteRule ^post/create/([a-zA-Z0-9_-]+)/?$ post_details_user.php?slug=$1
+
+RewriteRule ^post/([a-zA-Z0-9_-]+)/?$ post_details.php?slug=$1
+RewriteRule ^notification/?$ notification.php
+
+
+
+
+
+
+
+
+
+
+
+
+
+

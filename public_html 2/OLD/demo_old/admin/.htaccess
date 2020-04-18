@@ -1,0 +1,18 @@
+# SEO Friendly Rewrites
+Options +FollowSymLinks
+Options -Indexes
+RewriteEngine on
+
+
+
+RewriteRule ^index/?$ index.php
+RewriteRule ^dashboard/?$ home.php
+RewriteRule ^admin-profile/?$ user_profile_edit.php
+RewriteRule ^company-profile/?$ profile_edit.php
+RewriteRule ^change-password/?$ change_password.php
+RewriteRule ^logout/?$ logout.php
+
+
+
+
+

@@ -1,0 +1,6 @@
+[6-Aug-2019 12:56:42 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-06 12:56:42 PM' where id=1, Error: 0-
+[6-Aug-2019 14:06:00 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-06 02:06:00 PM' where id=1, Error: 0-
+[6-Aug-2019 15:50:42 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-06 03:50:42 PM' where id=1, Error: 0-
+[6-Aug-2019 17:40:38 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('Tushar','oldviners2@gmail.com','8dfef873269436f90b08d68709a1285a','2019-08-06 05:40:38 PM','web'), Error: 0-
+[6-Aug-2019 17:59:02 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('Tushar','randomthoughtbullets@gmail.com','8dfef873269436f90b08d68709a1285a','2019-08-06 05:59:02 PM','web'), Error: 0-
+[6-Aug-2019 18:20:26 (IST)] File: banner.php, Method/Function: get_detail(), Query: select * from impact_post where id=, Error: 0-

@@ -1,0 +1,1 @@
+[5-Aug-2019 19:27:56 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('CGP Grey','zaklance96@gmail.com','0a011843e6b7298f77ea094107c2903e','2019-08-05 07:27:56 PM','web'), Error: 0-

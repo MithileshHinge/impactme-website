@@ -1,0 +1,2 @@
+[30-Jul-2019 17:23:23 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('Tushar','oldviners2@gmail.com','8dfef873269436f90b08d68709a1285a','2019-07-30 05:23:23 PM','web'), Error: 0-
+[30-Jul-2019 17:34:51 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-07-30 05:34:51 PM' where id=1, Error: 0-

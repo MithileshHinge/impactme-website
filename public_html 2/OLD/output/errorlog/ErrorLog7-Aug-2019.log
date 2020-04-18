@@ -1,0 +1,9 @@
+[7-Aug-2019 11:04:27 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('chetan','chetan.tawale@gmail.com','58a39bfab24f8c96bfdd68b0c296cf7e','2019-08-07 11:04:27 AM','web'), Error: 0-
+[7-Aug-2019 11:05:43 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('Ritesh','ritesh_murkute@yahoo.co.in','25f9e794323b453885f5181f1b624d0b','2019-08-07 11:05:43 AM','web'), Error: 0-
+[7-Aug-2019 11:06:15 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-07 11:06:15 AM' where id=1, Error: 0-
+[7-Aug-2019 12:15:35 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('sarika','info@mrinfotech.com','e10adc3949ba59abbe56e057f20f883e','2019-08-07 12:15:35 PM','web'), Error: 0-
+[7-Aug-2019 12:16:26 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-07 12:16:26 PM' where id=1, Error: 0-
+[7-Aug-2019 12:18:10 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-07 12:18:10 PM' where id=11, Error: 0-
+[7-Aug-2019 12:18:46 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-07 12:18:46 PM' where id=12, Error: 0-
+[7-Aug-2019 12:24:28 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-07 12:24:28 PM' where id=1, Error: 0-
+[7-Aug-2019 12:34:16 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-07 12:34:16 PM' where id=12, Error: 0-
