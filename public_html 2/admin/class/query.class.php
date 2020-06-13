@@ -1025,28 +1025,47 @@ else
 function verification_email($email_id, $email_from , $mail,  $verify_link)
 {
  
- $sql_web = $this->fetch_object("select email_id,site_url,site_name,image_path from web_settings where web_id=1");  
-  $logo_path ="https://www.impactme.in/demo/logo.png";
+//$sql_web = $this->fetch_object("select email_id,site_url,site_name,image_path from web_settings where web_id=1");  
+$logo_path ="https://www.impactme.in/images/logo/6311445511578056086yo2.png";
  
-  $name = "ImpactMe";
+$name = "ImpactMe";
 
 $email_subject = "Confirm your email to get started on ImpactMe" ;
 
 $message = '
-<table width="100%"  class="table" cellpadding="0" cellspacing="0" align="center">
+<table class="table" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody>
 <tr>
-    <td width="465" height="50" valign="middle"><div align="center"><a href="https://www.impactme.in" target="_blank"><img src="'.$logo_path.'" ></a></div></td>
+<td valign="middle" width="465" height="50">
+<div align="center"><a href="https://www.impactme.in" target="_blank" rel="noopener"><img src="'.$logo_path.'" /></a></div>
+</td>
 </tr>
+</tbody>
 </table>
 <fieldset>
-<table>
-<tr><td><h2 style="text-align:center">Request Email Confirmation</h2></td></tr>
-<tr><td><p style="text-align:center; font-weight:bold">Lets make sure this email is active. Please click on the button below to validate your email address and confirm that you are the owner of this account.</p></td></tr>
-<tr><td><div align="center" style="margin-top:34px; margin-bottom:34px;" ><a href="'.  $verify_link.'"  target="_blank" style="background-color: #184c6d;font-size: 20px;font-weight: 400; color: #fff;text-decoration: none;padding: 14px;border: 2px solid #ffffff;border-radius: 27px;"> Confirm Email</a> </div></td></tr>
-</table></fieldset>' ;
+<table class="table" style="font-family: "Montserrat", sans-serif;" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody>
+<tr>
+<td>
+<h2 style="text-align: center; color: #14181b;">Request Email Confirmation</h2>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center; color: #455058;">Lets make sure this email is active. Please click on the button below to validate your email address and confirm that you are the owner of this account.</p>
+</td>
+</tr>
+<tr>
+<td>
+<div style="margin-top: 34px; margin-bottom: 34px;" align="center"><a style="background-color: #3a9cb5; font-size: 16px; font-weight: 300; color: #f2f5fa; text-decoration: none; padding: 14px;" href="'.  $verify_link.'" target="_blank" rel="noopener"> Confirm email</a></div>
+</td>
+</tr>
+</tbody>
+</table>
+</fieldset>';
 
 
-$Email_msg = $message;
+/*$Email_msg = $message;
 $Email_msg2 = str_replace("\n", "", $Email_msg);;
 $Email_to =$email_id ;
 
@@ -1060,10 +1079,12 @@ $mail->IsHTML(true);                               // send as HTML
 $mail->Subject  =  $email_subject;
 $mail->Body     =  $Email_msg2;
 $mail->AltBody  =  $Email_msg;
-if(!$mail->Send())
+
+if(!$mail->Send())*/
+if(!mail($email_id, $email_subject, $message, "From:".EMAIL_FROM."\r\nContent-Type: text/html; charset=UTF-8\r\n"))
 {
    echo "Message was not sent <p>";
-   echo "Mailer Error: " . $mail->ErrorInfo;
+   //echo "Mailer Error: " . $mail->ErrorInfo;
    $msg= "<span style='color:red'>Try Again.......</span>";
   // exit;
 }

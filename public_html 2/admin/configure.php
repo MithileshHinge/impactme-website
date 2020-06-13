@@ -62,18 +62,18 @@ define("CONTACT_LINK", $sql_web->email_id);
 define("ID_NUMBER", "10000000");
 
 
-define("MAIL_HOST",  "mail.impactme.in"); // SMTP host
-define("MAIL_USER", "no-reply@impactme.in"); //SMTP username
-define("MAIL_PASSWORD",  "info@2359"); // SMTP password
+//define("MAIL_HOST",  "localhost"); // SMTP host
+//define("MAIL_USER", "no-reply@impactme.in"); //SMTP username
+//define("MAIL_PASSWORD",  "info@2359"); // SMTP password
 define("EMAIL_FROM",  "no-reply@impactme.in");
 require("class.phpmailer.php"); 
 $mail = new PHPMailer();
 
-$mail->IsSMTP();                                   // send via SMTP
-$mail->Host     = MAIL_HOST; // SMTP servers
-$mail->SMTPAuth = true;     // turn on SMTP authentication
-$mail->Username = MAIL_USER;  // SMTP username
-$mail->Password = MAIL_PASSWORD; // SMTP password
+//$mail->IsSMTP();                                   // send via SMTP
+//$mail->Host     = MAIL_HOST; // SMTP servers
+//$mail->SMTPAuth = true;     // turn on SMTP authentication
+//$mail->Username = MAIL_USER;  // SMTP username
+//$mail->Password = MAIL_PASSWORD; // SMTP password
 
 
 $fav_icon = $image_url.$sql_web->fav_icon;
