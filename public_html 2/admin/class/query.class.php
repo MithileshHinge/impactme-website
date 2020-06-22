@@ -1295,9 +1295,9 @@ else
 		 $tier_link = BASEPATH.'/join/'.$row_post->user_id.'/checkout/'.$row_post->tier_id.'/';
 		 $html = '<div class="project-vedio">
                    <a href="" class="vedio-lock">
-				   <i class="fa fa-lock"></i><span class="unlock">Unlock this post by becoming a impact</span></a>
+				   <i class="fa fa-lock"></i><span class="unlock">Unlock this and other exclusive posts</span></a>
 				   
-                   <a href="'.$tier_link.'" class="join creater-point" style="    float: left;">Join '.CURRENCY. $sql_tier->price.' Tier</a>
+                   <a href="'.$tier_link.'" class="join creater-point" style="    float: left;">Make '.CURRENCY. $sql_tier->price.' Pact</a>
                  </div>';
 		 }
 		 }

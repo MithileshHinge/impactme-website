@@ -48,8 +48,15 @@ $atom_payment_hash_request_key = "f594716d32a09f3a1b"; // f594716d32a09f3a1b
 $atom_payment_hash_response_key = "3cca0d08d9e7ab503c"; // 3cca0d08d9e7ab503c
 }
 
+$razorpay_live = 0;
 
-
+if($razorpay_live == 1){
+	$razorpay_id = "rzp_live_2Q0Lnuw3Zqk6xL";
+	$razorpay_secret = "24W4ErCk0mrPm5n3CBog6qaQ";
+}else {
+	$razorpay_id = "rzp_test_5ywxjtGTzegjUB";
+	$razorpay_secret = "JwBYcayJ12WR1sXekIB0VyK6";
+}
 
 
 ?>

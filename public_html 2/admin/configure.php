@@ -19,20 +19,19 @@ error_reporting((DISPLAY_ERRORS)?(1):(0));
 
 ignore_user_abort (true);
 
-	define("LOG_TABLE", "admin_user");
+define("LOG_TABLE", "admin_user");
 
-    date_default_timezone_set( 'Asia/kolkata' );
+date_default_timezone_set('Asia/Calcutta');
 
 
 
 define("DB_HOST", "localhost");	
-
-if($_SERVER['REMOTE_ADDR']=="127.0.0.1" || $_SERVER['REMOTE_ADDR']=="::1") 
+if($_SERVER['REMOTE_ADDR']=="192.168.10.1" || $_SERVER['REMOTE_ADDR']=="::1") 
 {
-define("DB_USER", "root");	
-define("DB_PASSWORD", "");	
-define("DB_NAME", "impact_new");
- define("BASEPATH","http://localhost/impact_new");
+define("DB_USER", "homestead");	
+define("DB_PASSWORD", "secret");	
+define("DB_NAME", "demo_impact");
+ define("BASEPATH","https://impactme.local");
 } 
 else
 {
