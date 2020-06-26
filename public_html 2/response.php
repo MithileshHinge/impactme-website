@@ -33,7 +33,6 @@ $error = "Payment Failed";
 
 if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id']) === false)
 {
-    $api = new Api($keyId, $keySecret);
     $tier_id = $_REQUEST['tier_id'];
     $row_payment = end($db_query->runQuery("select * from impact_payment where user_id=".$row_user->user_id." and tier_id=".$tier_id." and status='created'"));
     $subscription_id = $row_payment["subscription_id"];
@@ -75,17 +74,31 @@ if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id'
             $db_query->add_notification_payment($row_user->user_id,  $row_payment["tier_id"] , "payment");
         }else{
             $success = false;
-            date_default_timezone_set('Asia/Calcutta');
             $error = "Invalid signature";
             $response_message = "Payment failed";
             $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'paid_timestamp' => strtotime("now"),  'status' => 'authentication failed'));   
         }
+}else if (isset($_POST['upgrade']) and $_POST['upgrade'] == "1" and isset($_POST['tier_id']) and isset($_POST['tier_id_old'])) {
+    $tier_id = $_REQUEST['tier_id'];
+    $api = new Api($razorpay_id, $razorpay_secret);
+    $row_tier = $db_query->fetch_object("select * from impact_tier where tier_id = '".$tier_id."'");
+    $row_subscription_old = $db_query->fetch_object("select * from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$row_tier->user_id."' and tier_id='".$_POST['tier_id_old']."' and (status='authenticated' or status='active')");
+    $subscription_old = $api->subscription->fetch($row_subscription_old->subscription_id);
+    if ($row_subscription_old->paid_amount < $row_tier->tier_price){
+        // Upgrade subscription
+        $subscription_new = $subscription_old->update(array('plan_id' => $row_tier->plan_id));
+        $success = true;
+        $response_message = "Upgrade request sent: You will be notified shortly";
+      }else {
+        $success = false;
+        $response_message = "Pact upgrade failed";
+        $error = "Cannot upgrade to lower price pact.";
+      }
 }else {
-  $success = false;
-  date_default_timezone_set('Asia/Calcutta');
-  $error = "Invalid signature";
-  $response_message = "Payment failed";
-  $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'paid_timestamp' => strtotime("now"),  'status' => 'authentication failed'));   
+    $success = false;
+    $error = "Invalid signature 0x07";
+    $response_message = "Payment failed";
+    $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'paid_timestamp' => strtotime("now"),  'status' => 'authentication failed'));   
 }
 
 /*

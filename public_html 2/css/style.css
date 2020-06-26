@@ -2679,6 +2679,15 @@ height: 40px;
     padding: 12px 7% 12px 7%;
     color: #f2f5fa;
     font-size: 14px;
+    border: none;
+    transition: 0.5s;
+}
+.join_btn_disabled
+{
+    background-color: #a8a8a8;
+    padding: 12px 7% 12px 7%;
+    color: #f2f5fa;
+    font-size: 14px;
     transition: 0.5s;
 }
 span.creater-post.about p
@@ -3237,7 +3246,10 @@ outline: medium none;
     color:#f2f5fa;
     background-color:#007a99;
 }
-
+.join_btn_disabled:hover{
+    color:#f2f5fa;
+    background-color:#949494;
+}
 .owl-carousel .owl-dots.disabled, .owl-carousel .owl-nav.disabled {
     display:block !important
 }

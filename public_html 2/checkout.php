@@ -14,25 +14,27 @@ if(isset($_GET['u']))
 	$userID = $_GET['u'];	
 	$rowUser = $db_query->fetch_object("select * from impact_user where user_id='$userID'");
 }
+
+$upgrade_subscription = false;
 if(isset($_GET['tid']))
 {
 	$tier_id = $_GET['tid'];
 	if($tier_id >0) {
 		$row_tier = $db_query->fetch_object("select IFNULL(tier_price,0) price, tier_id, tier_name , description, plan_id from impact_tier where tier_id = '".$tier_id."'");
+		$api = new Api($razorpay_id, $razorpay_secret);
+		$plan_id = $row_tier->plan_id;
 
-		$row_prev_payment_check = $db_query->fetch_object("select count(*) c from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$rowUser->user_id."' and tier_id='".$tier_id."' and (status='authenticated' or status='active')");
+		$row_prev_payment_check = $db_query->fetch_object("select count(*) c from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$rowUser->user_id."' and (status='authenticated' or status='active')");
 		if ($row_prev_payment_check->c == 0){
-			$api = new Api($razorpay_id, $razorpay_secret);
 
-			$plan_id = $row_tier->plan_id;
+			// Create new subscription
 
-			date_default_timezone_set('Asia/Calcutta');
 			$start_at = strtotime('+2 days', strtotime('first day of next month'));
 
 			//for ($i=0; $i < 10; $i++) { 
 				$subscription = $api->subscription->create(array(
 					'plan_id' => $plan_id,
-					'total_count' => 6,
+					'total_count' => 120,
 					'start_at' => $start_at,
 					'customer_notify' => 1,
 					'addons' => array(
@@ -57,12 +59,21 @@ if(isset($_GET['tid']))
 				'status' => $subscription->status
 				)
 			);
+		}else {
+			$row_subscription_old = $db_query->fetch_object("select * from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$rowUser->user_id."' and (status='authenticated' or status='active')");
+			if ($row_subscription->paid_amount < $row_tier->price){
+				$tier_id_old = $row_subscription_old->tier_id;
+				$upgrade_subscription = true;
+			}else {
+				header("location:".BASEPATH);
+			}
 		}
 	}
 	else
 	{
-		$row_tier = $db_query->fetch_object("select '50.00' price, '0' tier_id, 'Custom Pledge' tier_name  ");
+		//Custom pledge code
 
+		//$row_tier = $db_query->fetch_object("select '50.00' price, '0' tier_id, 'Custom Pledge' tier_name  ");
 	}
 
 }
@@ -230,8 +241,12 @@ if($_REQUEST['mode']=="card")
                         <input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=$row_tier->price?>" <?php if($tier_id!=0){?>readonly<?php } ?>>
                         <input type="hidden" name="custom" id="custom" class="rupees-payment" <?php if($tier_id!=0){?>value="N"<?php } else { ?> value="Y" <?php } ?>>
                         */?>
-                        <input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=$row_tier->price?>" readonly>
 
+                        <?php if ($upgrade_subscription) {?>
+                        	<input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=($row_tier->price - $row_subscription->paid_amount)?>" readonly>
+                        <?php }else {?>
+                        	<input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=$row_tier->price?>" readonly>
+                        <?php } ?>
                     </div>
 
                     <div class="col-md-4 debit-payment">
@@ -256,37 +271,49 @@ if($_REQUEST['mode']=="card")
 
                 	<p style="font-size: 16px;color:#455058;    padding: 0 0 0 18px;"><?=date('F')?> payment<span class="price">₹<span id="price2" style="padding:0 26px 0 0;"> <?=$row_tier->price?></span></span></p>
 
-                	<p class="pacifi-time">You will be charged  <?=CURRENCY?> <span id="price3"><?=$row_tier->price?></span></span> on <?=date('d M, Y')?> , Pacific Time and then the 3st of each month going forward.</p>
+                	<p class="pacifi-time">You will be charged  <?=CURRENCY?> <span id="price3"><?=$row_tier->price?></span></span> on <?=date('d M, Y')?>  and then the 3rd of each month going forward.</p>
 
                 	<p class="pacifi-time">You can cancel or edit your payment at any time. By making this payment, you agree to ImapctMe's <a href="<?=BASEPATH?>/terms-conditions" target="_blank">Terms of Use.</a></p>
 
-                	<p class="pacifi-time" style="    font-size: 14px;">*Depending on your location your bank might charge an additional foreign transaction fee for your membership to this Creator. <?php echo $subscription->id?></p>
+                	<p class="pacifi-time" style="    font-size: 14px;">*Depending on your location your bank might charge an additional foreign transaction fee for your membership to this Creator.</p>
 
                 	<div class="wrap-nav-pledge digital-payment">
-                		<form action="<?=$BASEPATH.'/response'?>" method="post">
+                		
                 		<?php
-                		if ($row_prev_payment_check->c==0){ 
+                		if ($upgrade_subscription){ 
                 		?>
-	                		<script
-	                		src="https://checkout.razorpay.com/v1/checkout.js"
-	                		data-key="<?php echo $razorpay_id?>"
-	                		data-amount="<?php echo $row_tier->price * 100?>"
-	                		data-currency="INR"
-	                		data-name="ImpactMe"
-	                		data-description="Monthly payment to <?=$rowUser->full_name?>"
-	                		data-prefill.name="<?php echo $row_user->impact_name?>"
-	                		data-prefill.email="<?php echo $row_user->email_id?>"
-	                		data-subscription_id="<?php echo $subscription->id?>"
-	                		data-display_amount="<?php echo $row_tier->price?>"
-	                		data-display_currency="INR"
-	                		>
-	                		</script>
+                		<form action="<?=BASEPATH.'/response'?>" method="post">
+                			<input type="hidden" name="tier_id" value="<?=$tier_id?>">
+                			<input type="hidden" name="tier_id_old" value="<?=$tier_id_old?>">
+	                		<input type="hidden" name="creator_name" value="<?=$rowUser->full_name?>">
+                			<input type="hidden" name="upgrade" value="1">
+                			<button type="submit" class="join_btn"  style="color:white;">Upgrade to <?=CURRENCY.$row_tier->price?> Pact</button>
+                		</form>
                 		<?php
+                		} else {
+                		?>
+                		<form action="<?=$BASEPATH.'/response'?>" method="post">
+	                		<script
+		                		src="https://checkout.razorpay.com/v1/checkout.js"
+		                		data-key="<?php echo $razorpay_id?>"
+		                		data-amount="<?php echo $row_tier->price * 100?>"
+		                		data-currency="INR"
+		                		data-name="ImpactMe"
+		                		data-description="Monthly payment to <?=$rowUser->full_name?>"
+		                		data-prefill.name="<?php echo $row_user->impact_name?>"
+		                		data-prefill.email="<?php echo $row_user->email_id?>"
+		                		data-subscription_id="<?php echo $subscription->id?>"
+		                		data-display_amount="<?php echo $row_tier->price?>"
+		                		data-display_currency="INR"
+		                		>
+		                	</script>
+
+	                	<?php
                 		}
                 		?>
 
-                		<input type="hidden" name="tier_id" value="<?=$tier_id?>">
-                		<input type="hidden" name="creator_name" value="<?=$rowUser->full_name?>">
+	                		<input type="hidden" name="tier_id" value="<?=$tier_id?>">
+	                		<input type="hidden" name="creator_name" value="<?=$rowUser->full_name?>">
                 		<!--button class="pay-card" id="pay_card">Pay  <span id="price3">₹<span id="price_4"><?=$row_tier->price?></span></span></button-->
                 		</form>
 
