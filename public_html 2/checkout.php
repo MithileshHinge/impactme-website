@@ -50,8 +50,11 @@ if(isset($_GET['tid']))
 				);
 			//}
 
+			
+            $fan = $db_query->fan_check($row_user->email_id);
+
 			$db->insertDataArray("impact_payment", array(
-				'user_id' => $row_user->user_id,
+				'user_id' => $fan->user_id,
 				'creator_id' => $rowUser->user_id,
 				'tier_id' => $tier_id,
 				'subscription_id' => $subscription->id,
@@ -59,6 +62,21 @@ if(isset($_GET['tid']))
 				'status' => $subscription->status
 				)
 			);
+
+			$creator = $db_query->creator_check($row_user->email_id);
+			
+			if (!empty($creator) and !empty($creator->user_id)){
+			$db->insertDataArray("impact_payment", array(
+				'user_id' => $creator->user_id,
+				'creator_id' => $rowUser->user_id,
+				'tier_id' => $tier_id,
+				'subscription_id' => $subscription->id,
+				'paid_amount' => $row_tier->price,
+				'status' => $subscription->status
+				)
+			);
+			}
+
 		}else {
 			$row_subscription_old = $db_query->fetch_object("select * from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$rowUser->user_id."' and (status='authenticated' or status='active')");
 			if ($row_subscription->paid_amount < $row_tier->price){

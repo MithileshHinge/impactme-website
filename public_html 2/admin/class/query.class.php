@@ -759,7 +759,7 @@ function cwUpload($field_name = '', $target_folder = '', $file_name = '', $thumb
 	str_replace(" ", "_", $_FILES['userfile']['name']);
 	//$fileName = rand().time().basename($fileName);
 	if($file_save_name=='') {
-	$fileName = rand().time().str_replace(" ", "_",basename($fileName));
+	$fileName = rand().time().str_replace(" ", "_",basename($fileName).str_replace("'", "", basename($filename)));
 	}
 	else
 	{
@@ -955,8 +955,11 @@ function fan_check($email_id)
 function notification_msg($email_id){
  $creator = $this->creator_check($email_id);
  $fan = $this->fan_check($email_id);
- 
- $sql = $this->fetch_object("select count(*) c from impact_message where to_id in ($creator->user_id, $fan->user_id) and status=0");	
+
+ if (empty($creator->user_id))
+  $sql = $this->fetch_object("select count(*) c from impact_message where to_id=$fan->user_id and status=0");
+ else
+  $sql = $this->fetch_object("select count(*) c from impact_message where to_id in ($creator->user_id, $fan->user_id) and status=0");	
  if($sql->c>0)
   return $sql->c;
  else
@@ -1065,7 +1068,7 @@ $message = '
 </fieldset>';
 
 
-/*$Email_msg = $message;
+$Email_msg = $message;
 $Email_msg2 = str_replace("\n", "", $Email_msg);;
 $Email_to =$email_id ;
 
@@ -1080,11 +1083,14 @@ $mail->Subject  =  $email_subject;
 $mail->Body     =  $Email_msg2;
 $mail->AltBody  =  $Email_msg;
 
-if(!$mail->Send())*/
-if(!mail($email_id, $email_subject, $message, "From:".EMAIL_FROM."\r\nContent-Type: text/html; charset=UTF-8\r\n"))
-{
+if(!$mail->Send()){
+//if(!mail($email_id, $email_subject, $message, "From:".EMAIL_FROM."\r\nContent-Type: text/html; charset=UTF-8\r\n"))
    echo "Message was not sent <p>";
-   //echo "Mailer Error: " . $mail->ErrorInfo;
+   $fpmailerr = $fopen("mailerr.txt", 'w');
+   fwrite($fpmailerr, var_dump($mail).'\n');
+   fwrite($fpmailerr, $mail->ErrorInfo);
+   fclose($fpmailerr);
+   echo "Mailer Error: " . $mail->ErrorInfo;
    $msg= "<span style='color:red'>Try Again.......</span>";
   // exit;
 }
@@ -1310,7 +1316,7 @@ else
 	 
 	  else if($row_post->price_type=="one_time") 
 	 {
-		 $sql_check = $this->fetch_object("select count(*) c from impact_payment where user_id = '".$user_log_id."' and post_id = '".$post_id."' and tier_type='One Time'");
+		 $sql_check = $this->fetch_object("select count(*) c from impact_pay_onetime where user_id = '".$user_log_id."' and post_id = '".$post_id."' and status='success'");
 		 if($sql_check->c>0) 
 		 {
 			 $html =  '<div class="editor-content">'.$this->getPostImageDiv($row_post->post_id, 350).'</div>';  	 
@@ -1373,7 +1379,7 @@ else
 	 
 	  else if($row_post->price_type=="one_time") 
 	 {
-		 $sql_check = $this->fetch_object("select count(*) c from impact_payment where user_id = '".$user_log_id."' and post_id = '".$post_id."' and tier_type='One Time'");
+		 $sql_check = $this->fetch_object("select count(*) c from impact_pay_onetime where user_id = '".$user_log_id."' and post_id = '".$post_id."'");
 		 if($sql_check->c>0) 
 		 {
 			$show = 1; 	 
@@ -1423,11 +1429,11 @@ if($notify_type=="Comment_add")
 	  
      $sql_fetch_post = $this->fetch_object("select u.impact_name name, p.user_id,p.post_id, p.post_title from impact_post p, impact_user u where u.user_id=p.user_id and p.post_id='$sql_comment->post_id'"); 
 
-     $description = $sql_user->name . " Reply on post ". $sql_fetch_post->post_title;
+     $description = $sql_user->name . " replied to you comment on post ". $sql_fetch_post->post_title;
 	
 	 
 	 
-     $sql1 = "INSERT INTO impact_notification(user_id, from_user_id, post_id, description, notify_date, notification_type) VALUES ('" . $sql_comment->user_id. "','" . $from_user_id . "','" . $post_id . "','" . $description . "' ,'" . date('Y-m-d H:i:s') . "' ,'" . $notify_type . "')";
+     $sql1 = "INSERT INTO impact_notification(user_id, from_user_id, post_id, description, notify_date, notification_type) VALUES ('" . $sql_comment->user_id. "','" . $from_user_id . "','" . $sql_fetch_post->post_id . "','" . $description . "' ,'" . date('Y-m-d H:i:s') . "' ,'" . $notify_type . "')";
     $result1 = $this->Query($sql1); 
 	return $result1; 
  }

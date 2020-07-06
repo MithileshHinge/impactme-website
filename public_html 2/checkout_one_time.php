@@ -1,5 +1,9 @@
 <?php include('admin_path.php'); 
 include('include/access.php');
+require('razorpay-php/Razorpay.php');
+use Razorpay\Api\Api;
+use Razorpay\Api\Errors\SignatureVerificationError;
+
 if($_SESSION['is_user_login']==0)
  
 {
@@ -7,26 +11,43 @@ header('location:'.BASEPATH.'/sign-up/');
 }
 ?>
 <?php
-if(isset($_GET['u']))
+if(isset($_GET['u']) and isset($_GET['pid']))
 {
- $userID = $_GET['u'];	
- $rowUser = $db_query->fetch_object("select * from impact_user where user_id='$userID'");
-}
-if(isset($_GET['pid']))
-{
+	$userID = $_GET['u'];	
+	$rowUser = $db_query->fetch_object("select * from impact_user where user_id='$userID'");
 	$post_id = $_GET['pid'];
 	if($post_id >0) {
 		$sql = "select IFNULL(one_time_amount,0) price, post_id tier_id,post_title  tier_name , 'One Time Payment' description from impact_post where post_id = '".$post_id."'";
 		//echo $sql;
-$row_tier = $db_query->fetch_object($sql);
+		$row_post = $db_query->fetch_object($sql);
+	}else{
+		header('location:'.BASEPATH);
 	}
-	
 
+	$row_check_prev_payment = $db_query->fetch_object("select count(*) c from impact_pay_onetime where user_id=".$row_user->user_id." and post_id=".$post_id." and status='success");
+	if ($row_check_prev_payment->c != 0){
+		header('location:'.BASEPATH);
+	}
+
+	$api = new Api($razorpay_id, $razorpay_secret);
+ 	$order = $api->order->create([
+ 		'amount' => $row_post->price*100, //In paise
+ 		'currency' => 'INR',
+ 		'payment_capture' => 1
+ 	]);
+
+ 	$db->insertDataArray('impact_pay_onetime', array(
+ 		'user_id' => $row_user->user_id,
+ 		'creator_id' => $userID,
+ 		'post_id' => $post_id,
+ 		'order_id' => $order->id,
+ 		'paid_amount' => $row_post->price,
+ 		'status' => 'created'
+ 	));
 }
 else
 {
-	$tier_id = 0;
-	$row_tier = $db_query->fetch_object("select '50.00' price, '0' tier_id, 'Custom Pledge' tier_name  ");
+	header('location:'.BASEPATH);
 }
 
 	
@@ -49,12 +70,13 @@ if(strlen($row_user->tag_line)>0) {
  {
   $page_title = "One Time Checkout | ".PROJECT_TITLE;
  }
- 
+
+/* 
  if($_REQUEST['mode']=="card")
  {
+
    $pay_amount = $_REQUEST['pay_amount'];
   
-	    date_default_timezone_set('Asia/Calcutta');
 		$datenow = date("d/m/Y h:m:s");
 		$transactionDate = str_replace(" ", "%20", $datenow);
 		
@@ -104,6 +126,7 @@ if(strlen($row_user->tag_line)>0) {
   }
   
 }
+*/
 ?>
 
 <!DOCTYPE html>
@@ -146,7 +169,6 @@ if(strlen($row_user->tag_line)>0) {
 
 </div>
 
-<form action="" method="post">
 <section style="background-color: white;">
 
         <div class="container">
@@ -168,14 +190,14 @@ if(strlen($row_user->tag_line)>0) {
 
                         <label class="label-dooler"><?=CURRENCY?> </label>
 
-                        <input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=$row_tier->price?>" readonly>
+                        <input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=$row_post->price?>" readonly>
                         <input type="hidden" name="custom" id="custom" class="rupees-payment" value="N">
 
                     </div>
 
                    
                     <div class="col-md-4 credit-payment">
-                        <p style="font-size: 18px;color: black;" id="tier_name"><?=$row_tier->tier_name?></p>
+                        <p style="font-size: 18px;color: black;" id="tier_name"><?=$row_post->tier_name?></p>
                       
 
                     </div>
@@ -188,15 +210,28 @@ if(strlen($row_user->tag_line)>0) {
 
                     <h2 style="color: black;    padding: 0 0 12px 0;">Summary</h2>
 
-                    <p style="font-size: 16px;color:black;">One Time Payment<span class="price"><?=CURRENCY?><span id="price2"> <?=$row_tier->price?></span></span></p>
+                    <p style="font-size: 16px;color:black;">One Time Payment<span class="price"><?=CURRENCY?><span id="price2"> <?=$row_post->price?></span></span></p>
 
                    
 
                     <div class="wrap-nav-pledge digital-payment">
-                    
-                     <input type="hidden" name="mode" value="card">
-                     <button class="pay-card" id="pay_card">Pay with Card</button>
-                      
+                    	<form action="<?=BASEPATH.'/response_one_time/'?>" method="post">
+		                    <script
+		                    	src="https://checkout.razorpay.com/v1/checkout.js"
+							    data-key="<?=$razorpay_id?>" // Enter the Key ID generated from the Dashboard
+							    data-amount="<?=$row_post->price?>" // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+							    data-currency="INR"
+							    data-order_id="<?=$order->id?>"//This is a sample Order ID. Pass the `id` obtained in the response of the previous step.
+							    data-buttontext="Pay <?=CURRENCY.' '.$row_post->price?> One time"
+							    data-name="ImpactMe"
+							    data-description="One time payment to unlock post"
+							    data-prefill.name="<?=$row_user->impact_name?>"
+							    data-prefill.email="<?=$row_user->email_id?>"
+							></script>
+
+							<input type="hidden" name="post_id" value="<?=$post_id?>">
+							<input type="hidden" name="creator_name" value="<?=$rowUser->full_name?>">
+                 		</form>
 
                     </div>
 
@@ -209,8 +244,8 @@ if(strlen($row_user->tag_line)>0) {
         </div>
 
     </section>
-    
-    </form>
+  
+
 <?php //include('include/footer.php');
 include('include/footer_js.php');?>
 

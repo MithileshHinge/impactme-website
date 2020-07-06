@@ -5,6 +5,7 @@ define('DISPLAY_EXCEPTIONS', true);
 
 set_time_limit(0);
 
+phpinfo();
 ini_set('memory_limit',-1);
 
 ini_set('max_execution_time',-1);
@@ -26,7 +27,7 @@ date_default_timezone_set('Asia/Calcutta');
 
 
 define("DB_HOST", "localhost");	
-if($_SERVER['REMOTE_ADDR']=="192.168.10.1" || $_SERVER['REMOTE_ADDR']=="::1") 
+/*if($_SERVER['REMOTE_ADDR']=="192.168.10.1" || $_SERVER['REMOTE_ADDR']=="::1") 
 {
 define("DB_USER", "homestead");	
 define("DB_PASSWORD", "secret");	
@@ -34,12 +35,12 @@ define("DB_NAME", "demo_impact");
  define("BASEPATH","https://impactme.local");
 } 
 else
-{
-define("DB_USER", "demo_impact");	
-define("DB_PASSWORD", "demo_impact");	
+{*/
+define("DB_USER", "homestead");	
+define("DB_PASSWORD", "secret");	
 define("DB_NAME", "demo_impact");	
- define("BASEPATH","https://www.impactme.in");
-}
+ define("BASEPATH","https://a24b7b23da50.in.ngrok.io");
+//}
 
 $admin_folder_name = "admin";
 $admin_path = BASEPATH."/".$admin_folder_name;
@@ -64,16 +65,35 @@ define("ID_NUMBER", "10000000");
 //define("MAIL_HOST",  "localhost"); // SMTP host
 //define("MAIL_USER", "no-reply@impactme.in"); //SMTP username
 //define("MAIL_PASSWORD",  "info@2359"); // SMTP password
-define("EMAIL_FROM",  "no-reply@impactme.in");
-require("class.phpmailer.php"); 
+//define("EMAIL_FROM",  "no-reply@impactme.in");
+define("EMAIL_FROM",  "impactmeteam@gmail.com");
+define("MAIL_PASSWORD",  "donotforget");
+
+//require("class.phpmailer.php"); 
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'include/Exception.php';
+require 'include/PHPMailer.php';
+require 'include/SMTP.php';
+
 $mail = new PHPMailer();
 
-//$mail->IsSMTP();                                   // send via SMTP
+//$mail->SetLanguage("uk", '/home/mithi/public_html/include/language/');
+$mail->IsSMTP();                                   // send via SMTP
+$mail->Mailer = "smtp";
+$mail->SMTPDebug  = 3;
+$mail->SMTPAuth   = TRUE;
+$mail->SMTPSecure = "tls";
+$mail->Port       = 587;
+$mail->Host       = "smtp.gmail.com";
+$mail->Username   = "impactmeteam@gmail.com";
+$mail->Password   = "donotforget";
 //$mail->Host     = MAIL_HOST; // SMTP servers
 //$mail->SMTPAuth = true;     // turn on SMTP authentication
 //$mail->Username = MAIL_USER;  // SMTP username
 //$mail->Password = MAIL_PASSWORD; // SMTP password
-
 
 $fav_icon = $image_url.$sql_web->fav_icon;
 

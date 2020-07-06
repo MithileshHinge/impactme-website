@@ -1,5 +1,9 @@
 <?php include('admin_path.php'); 
 include('include/access.php');
+require('razorpay-php/Razorpay.php');
+use Razorpay\Api\Api;
+use Razorpay\Api\Errors\SignatureVerificationError;
+
 if($_SESSION['is_user_login']==0)
  
 {
@@ -22,8 +26,36 @@ if(strlen($row_user->image_path)>0)
 else
  $user_image = IMAGEPATH.'icon_man.png'; 
 
+if (empty($_POST['razorpay_payment_id']) ===false and empty($_POST['post_id']) === false){
+  $post_id = $_POST['post_id'];
+  $row_payment = end($db_query->runQuery("select * from impact_pay_onetime where user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'"));
 
 
+  $expectedSignature = hash_hmac('sha256', $row_payment['order_id'] . '|' . $_POST['razorpay_payment_id'], $razorpay_secret);
+
+  if ($expectedSignature === $_POST['razorpay_signature']){
+    $db->updateArray('impact_pay_onetime', array('transaction_id' => $_POST['razorpay_payment_id'], 'status' => 'success'), "user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'");
+
+    $response_message = "Payment successful";
+
+    $db_query->add_notification_payment_one_time($row_user->user_id,  $row_pay->post_id , "payment_one_time");
+  }else{
+    $success = false;
+    $error = "Invalid signature 0x07";
+    $response_message = "Payment failed";
+    $db->updateArray('impact_pay_onetime', array('status' => 'authentication fail'), "user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'");
+  }
+
+
+
+
+}else{
+  $success = false;
+  $error = "Invalid signature 0x07";
+  $response_message = "Payment failed";
+  $db->updateArray('impact_pay_onetime', array('status' => 'authentication fail'), "user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'");
+}
+/*
 require_once 'payment/TransactionResponse.php';
 $transactionResponse = new TransactionResponse();
 $transactionResponse->setRespHashKey($atom_payment_hash_response_key);
@@ -86,7 +118,7 @@ if($sql_check->c>0)
 	}
 	if( $_POST['f_code']=="F"   ) { $response_message = "Payment Failed";}
 }
-
+*/
 
 ?>
 
@@ -149,16 +181,14 @@ if($sql_check->c>0)
               <div class="form form-profile">
            
                 <h4><?=$response_message?><? //=$xml['VERIFIED']?></h4>
-               <? //=print_r($_POST);?>
-               <?php if($_POST['f_code']=="Ok") {?>
-               <h4><?=$desc?> </h4><br>
-               <h4>Merchant Id: <?=$_POST['mmp_txn']?></h4>
-                <h4>Transaction Id: <?=$_POST['mer_txn']?></h4>
+               <?php if($success === false) {?>
+               <h4><?=$error?></h4><br>
+               <?php } ?>
+                <h4>Transaction Id: <?=$_POST['razorpay_payment_id']?></h4>
                  <h4>Date: <?=date('Y-m-d')?></h4>
-                  <h4>Post For : <?=$row_pay_user->full_name?></h4>
-                   <h4>Amount: <?=$_POST['amt']?></h4>
+                  <h4><a href="<?=BASEPATH.'/post/'.$post_id?>">Go to <?=$_POST['creator_name']?>'s post</a></h4>
+                   <h4>Amount: <?=$row_payment['paid_amount']?></h4>
 <br>
-<?php } ?>
    <? //=print_r($xml);?>
             
               </div>

@@ -105,7 +105,7 @@ $sql_rows = $db_query->runQuery($sql1);
 					 
 					
 
-                     $total_impact = $db_query->fetch_object("select count(*) c, ifnull(sum(a.b),0) p from (select p.user_id, sum(paid_amount) b from impact_payment p, impact_user u where u.user_id=p.user_id and p.creator_id='$row_post[user_id]' and p.paid_status='Success' group by p.user_id) a");
+                     $total_impact = $db_query->fetch_object("select count(*) c, ifnull(sum(a.b),0) p from (select p.user_id, sum(paid_amount) b from impact_payment p, impact_user u where u.user_id=p.user_id and p.creator_id='$row_post[user_id]' and (p.status='authenticated' or p.status='active') group by p.user_id) a");
 					 
 					?> 
                      <div class="project-short larger">

@@ -6,12 +6,16 @@
 	var id = e.target.id;   //get form ID
 	
     id = id.match(/\[(.*?)\]/)[1];
+    var str = $("#frm-comment"+id).serialize().trim();
+
+    if(str != ""){
    // console.log(post_id);
      listComment(id);
 	//
       form_submit(id);
         e.preventDefault();
         return false;
+    }
     }
 });
  

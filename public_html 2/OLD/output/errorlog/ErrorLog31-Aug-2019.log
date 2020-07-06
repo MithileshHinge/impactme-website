@@ -1,5 +1,0 @@
-[31-Aug-2019 06:12:42 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-31 06:12:42 AM' where id=1, Error: 0-
-[31-Aug-2019 06:57:15 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-31 06:57:15 AM' where id=1, Error: 0-
-[31-Aug-2019 06:58:51 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-31 06:58:51 AM' where id=1, Error: 0-
-[31-Aug-2019 09:14:21 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-31 09:14:21 AM' where id=1, Error: 0-
-[31-Aug-2019 11:16:29 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-08-31 11:16:29 AM' where id=1, Error: 0-

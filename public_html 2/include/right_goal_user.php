@@ -59,6 +59,8 @@
 									  $g=1;
 				  $sql_goal_count = $db_query->fetch_object("select count(*) c from impact_goal where user_id='$row_user1->user_id'");
 									$sql_goal = $db_query->runQuery("select * from impact_goal where user_id='$row_user1->user_id'");
+
+          $goal_creator = $db_query->creator($row_user1->email_id);
 				foreach($sql_goal as $row_goal) {
 					
 			//	echo	$sql_g = "select sum(p1.paid_amount) p from impact_payment p1, impact_user u where u.user_id=p1.user_id and p1.creator_id='".$row_goal['user_id']."'  and p1.paid_date between '".$row_goal['create_date']."' and '".date('Y-m-d')."' and p1.paid_status='Success' ";
@@ -67,17 +69,18 @@
 				
 				
 					/*$row_goal_user = $db_query->fetch_object("select count(*) c ,  ifnull(sum(tier_price),0) p from impact_join where user_id='".$row_goal['user_id']."' and join_date between '".$row_goal['create_date']."' and '".date('Y-m-d')."'");	*/
+
 				if($row_goal['goal_type']=='earning')
 				{
-				$sql_g = "select sum(p1.paid_amount) p from impact_payment p1, impact_user u where u.user_id=p1.user_id and p1.creator_id='".$row_goal['user_id']."'  and date(p1.paid_date) between '".date('Y-m-d',strtotime($row_goal['create_date']))."' and '".date('Y-m-d')."' and p1.paid_status='Success' ";
-				$row_goal_user = $db_query->fetch_object($sql_g );		 
+				$sql_g = "select sum(p1.paid_amount) p from impact_payment p1, impact_user u where u.user_id=p1.user_id and u.user_type='create' and p1.creator_id='".$goal_creator->user_id."' and (p1.status='authenticated' or p1.status='active')";
+				$row_goal_user = $db_query->fetch_object($sql_g );
 				  $total_price_user = $row_goal_user->p;
 				  $goal_price = $row_goal['goal_price'];
 				}
 				
 				else
 				{
-				$sql_g = "select count(*) c from (select p1.user_id u from impact_payment p1, impact_user u where u.user_id=p1.user_id and p1.creator_id='".$row_goal['user_id']."' and date(p1.paid_date) between '".date('Y-m-d',strtotime($row_goal['create_date']))."' and '".date('Y-m-d')."' and p1.paid_status='Success' group by p1.user_id) a";
+				$sql_g = "select count(*) c from (select p1.user_id u from impact_payment p1, impact_user u where u.user_id=p1.user_id and u.user_type='create' and p1.creator_id='".$goal_creator->user_id."' and (p1.status='authenticated' or p1.status='active') group by p1.user_id) a";
 				$row_goal_user = $db_query->fetch_object($sql_g );	
 				
 					 $total_price_user = $row_goal_user->c;

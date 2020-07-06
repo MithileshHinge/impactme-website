@@ -13,8 +13,7 @@ if($sql_tier_check->c==0) {?>
                  <?php } else { ?>
 				  <div class="wrap-lst-category" style="box-shadow: 0 1px 4px rgba(0,0,0,.1);">
                    <h3 class="tier">
-                       Waves  
-                   <a href="#" class="become" onClick="alert('You cannot join your own tiers')">See all</a>
+                       Waves
                    </h3>
                 <?php $sql_tier = $db_query->runQuery("select * from impact_tier where user_id='$row_user->user_id' order by tier_price");
 				foreach($sql_tier as $row_tier) { 

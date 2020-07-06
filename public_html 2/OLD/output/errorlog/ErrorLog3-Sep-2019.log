@@ -1,4 +1,0 @@
-[3-Sep-2019 01:02:35 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-09-03 01:02:35 AM' where id=1, Error: 0-
-[3-Sep-2019 01:57:30 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-09-03 01:57:30 AM' where id=1, Error: 0-
-[3-Sep-2019 03:34:15 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-09-03 03:34:15 AM' where id=1, Error: 0-
-[3-Sep-2019 05:04:05 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-09-03 05:04:05 AM' where id=1, Error: 0-

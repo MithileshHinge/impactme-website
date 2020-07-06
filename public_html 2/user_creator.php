@@ -181,9 +181,10 @@ if(strlen($row_user->tag_line)>0) {
 			  if($sql_post_check1->c>0) {?>
               <div class="box-marked-project project-short" style="margin:15px 0 15px 0;">
                      
-                    <span class="creater-post about" style="padding: 0 18px 0 18px;    text-align: justify;margin-bottom:20px;"><p style="font-size: 19px;
-    color: #5c666b;
-    text-align: center;padding:0 0 0 0;">Posts from <?=$row_user->full_name?></p></span>
+                    <span>
+                      <h5 class="tier" style="display:inline-block; margin: 24px 0 24px 0; border-bottom: 0px; padding: 0 0 0 20px">Your Posts</h5>
+                      <a href="<?=BASEPATH.'/edit/post/'?>" class="join_btn" style="float:right; margin:12px 12px 0 0">Create new post</a>
+                    </span>
                   </div>
                       <?php include('include/user_post.php');?>
               

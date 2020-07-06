@@ -137,11 +137,11 @@ $title = "Home | ".PROJECT_TITLE;
                     <p class="page-live">You do not belong to any pact. Your favourite creators may already have a page with exclusive content. Follow and support them to never miss out on any of their content.</p>
                     <a href="<?=BASEPATH?>/explore/" class="find">Explore creators</a>
                     <?php } else { ?>
-                    <?php $sql_check_join = $db_query->fetch_object("select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and p.paid_status='Success' ");
+                    <?php $sql_check_join = $db_query->fetch_object("select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active')");
 					if($sql_check_join->c>0) { ?>
                     <ul style="list-style:none;padding:0 0 0 0;">
                     <?php
-			  $sql_c = "select u.* from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and p.paid_status='Success' group by p.creator_id";
+			  $sql_c = "select u.* from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active') group by p.creator_id";
 
 					 $sql_check_join_user = $db_query->runQuery($sql_c);
 					 foreach( $sql_check_join_user as $row_join) {

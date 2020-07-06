@@ -1,4 +1,0 @@
-[31-Aug-2019 10:16:53 UTC] PHP Notice:  Undefined index: hauth_return_to in /home/ffke7qkibpol/public_html/demo/hybridauth/Hybrid/Providers/Facebook.php on line 57
-[31-Aug-2019 10:17:27 UTC] PHP Notice:  Undefined index: hauth_return_to in /home/ffke7qkibpol/public_html/demo/hybridauth/Hybrid/Providers/Facebook.php on line 57
-[31-Aug-2019 10:17:38 UTC] PHP Notice:  Undefined index: hauth_return_to in /home/ffke7qkibpol/public_html/demo/hybridauth/Hybrid/Providers/Facebook.php on line 57
-[31-Aug-2019 10:18:59 UTC] PHP Notice:  Undefined index: hauth_return_to in /home/ffke7qkibpol/public_html/demo/hybridauth/Hybrid/Providers/Facebook.php on line 57

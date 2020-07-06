@@ -179,8 +179,8 @@ RewriteRule ^find-creators/?$ find_creators.php
 
 
 
-RewriteRule ^my-membership/?$ membership.php
-
+#RewriteRule ^my-membership/?$ membership.php
+RewriteRule ^my-subscriptions/?$ membership.php
 
 RewriteRule ^search/?$ search_creator.php
 RewriteRule ^verify/create/([a-zA-Z0-9_-]+)/?$ verify.php?reg_type=log&utype=create&slug=$1

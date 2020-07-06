@@ -7,11 +7,15 @@
 	
     id = id.match(/\[(.*?)\]/)[1];
    // console.log(post_id);
+   var str = $("#frm-comment"+id).serialize();
+   str = str.replace(/\+/g, '%20');
+    if(decodeURIComponent(str.split("&", 2)[0].split("=", 2)[1]).replace(/^\s+|\s+$/g, '') != ""){
      listComment(id);
 	//
       form_submit(id);
         e.preventDefault();
         return false;
+    }
     }
 });
  

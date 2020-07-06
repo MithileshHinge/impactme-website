@@ -1,4 +1,0 @@
-[22-Jul-2019 11:15:19 (IST)] File: banner.php, Method/Function: get_detail(), Query: select * from impact_tier where id=, Error: 0-
-[22-Jul-2019 11:18:19 (IST)] File: banner.php, Method/Function: get_detail(), Query: select * from impact_post where id=, Error: 0-
-[22-Jul-2019 12:36:54 (IST)] File: banner.php, Method/Function: get_detail(), Query: select * from impact_tier where id=, Error: 0-
-[22-Jul-2019 12:38:23 (IST)] File: function.database.php, Method/Function: add_record(), Query: INSERT INTO impact_users (`fname`,`email`,`password`,`rdate`,`user_type`) VALUES ('Zak Lance','zaklance96@gmail.com','f6c75133d06f6100349df4c1438df174','2019-07-22 12:38:23 PM','web'), Error: 0-

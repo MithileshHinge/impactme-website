@@ -1,2 +1,0 @@
-[15-Jul-2019 16:25:08 (IST)] File: edithome.php, Method/Function: aboutEdit(), Query: SELECT * FROM impact_users WHERE email='ksamayrananda@gmail.com' and password='e10adc3949ba59abbe56e057f20f883e' , Error: 0-
-[15-Jul-2019 16:25:08 (IST)] File: , Method/Function: , Query: update impact_users set llogin='2019-07-15 04:25:08 PM' where id=, Error: 0-

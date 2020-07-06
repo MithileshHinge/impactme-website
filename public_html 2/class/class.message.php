@@ -208,7 +208,7 @@ a  order by a.send_date desc  )b";
              });">
             <div class="chat_list <?php if($i==1){ ?> active_chat<?php } ?>" id="ChatActive<?=$row_user->user_id;?>">
               <div class="chat_people">
-                <div class="chat_img"> <img src="<?=$feature_image?>" alt="sunil" class="message-sendimage"> </div>
+                <div class="chat_img"> <img src="<?=$feature_image?>" class="message-sendimage"> </div>
                 <div class="chat_ib">
                   <h5><?=$this->db->filter($row_user->impact_name)?> <?php if($sql_count->c>0){?><span class="chat_date" style="color:red">( <?=$sql_count->c?> )</span> <?php } ?><!--<span class="chat_date"><?=date('Y-m-d',strtotime($row_fetch['send_date']))?></span>--></h5>
                   
@@ -602,7 +602,7 @@ a  order by a.send_date desc  )b";
              
             <div class="chat_list chat_list2 <?php if($i==1){ ?> active_chat<?php } ?>" id="ChatActive2<?=$row_user->user_id;?>">
               <div class="chat_people">
-                <div class="chat_img"> <img src="<?=$feature_image?>" alt="sunil" class="message-sendimage"> </div>
+                <div class="chat_img"> <img src="<?=$feature_image?>" class="message-sendimage"> </div>
                 <div class="chat_ib">
                   <h5><?=$this->db->filter($row_user->impact_name)?><!--<span class="chat_date"><?=date('Y-m-d',strtotime($row_fetch['send_date']))?></span>--> <?php if($sql_count->c>0){?><span class="chat_date" style="color:red">( <?=$sql_count->c?> )</span> <?php } ?></h5>
                   
@@ -669,7 +669,7 @@ a  order by a.send_date desc  )b";
         <div id="ErrorMsg2" ></div>
         <div id="SuccessMsg2"></div>
          <label for="uname"><b style="font-size: 20px;">From <?=$this->impact($email_id,"impact_name") ?> (Impact)</b></label><br>
-          <?php $sql_check = $this->db->fetch_object(  "select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$impact_id' and p.paid_status='Success'   order by u.full_name");
+          <?php $sql_check = $this->db->fetch_object(  "select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$impact_id' and (p.status='authenticated' or p.status='active') order by u.full_name");
 		  
 	
   

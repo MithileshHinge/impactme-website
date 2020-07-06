@@ -132,11 +132,17 @@ else
   
   
   <div class="col-md-12 user-photo" style="background-image:url(<?=$cover_image?>); background-size:cover;">
-                    
-    <div class="creater-photo" style="background-image:url(<?=$user_image?>);  background-size:cover;">
+    <?php
+    if (strlen($row_user1->slug)<=0){
+      $user1_path = BASEPATH.'/profile/u/'.$row_user1->user_id.'/';
+    }else{
+      $user1_path = BASEPATH.'/profile/'.$row_user1->slug.'/';
+    }
+    ?>
+    <div class="creater-photo" style="background-image:url(<?=$user_image?>);  background-size:cover; cursor:pointer;" onclick="location.href='<?=$user1_path?>';">
     <div>&nbsp;</div>
     </div>
-    <p class="gio"><?=$row_user1->tag_line?> </p>
+    <p class="gio" style="cursor:pointer;" onclick="location.href='<?=$user1_path?>'"><?=$row_user1->tag_line?> </p>
   </div>
   
   

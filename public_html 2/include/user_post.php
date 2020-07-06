@@ -64,7 +64,7 @@ $allcount =  $sql_c22_count->c;
                        </a>
                            <div class="media-body">
                          <div class="input-row">
-                      <textarea class="comment input-field com<?=$row_post['post_id']?>" type="text" name="comment" id="comment[<?=$row_post['post_id']?>]" placeholder="Add a Comment">  </textarea> 
+                      <textarea class="comment input-field com<?=$row_post['post_id']?>" type="text" name="comment" id="comment[<?=$row_post['post_id']?>]" placeholder="Add a Comment"></textarea> 
                  </div>
                        </div>
                                 <input  type="hidden" name="name" id="name<?=$row_post['post_id']?>" value="<?=$row_user->full_name?>" />

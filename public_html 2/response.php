@@ -54,15 +54,21 @@ if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id'
         
         if ($expectedSignature === $_POST['razorpay_signature']){
             $success = true;
-            $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'],  'status' => 'authenticated'), "user_id=".$row_user->user_id." and tier_id=".$tier_id." and status='created'");
+            $creator = $db_query->creator_check($row_user->email_id);
+            $fan = $db_query->fan_check($row_user->email_id);
+
+            if (!empty($creator) and !empty($creator->user_id)){
+              $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'],  'status' => 'authenticated'), "(user_id=".$fan->user_id." or user_id=".$creator->user_id.") and tier_id=".$tier_id." and status='created'");
+            }else{
+              $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'],  'status' => 'authenticated'), "user_id=".$fan->user_id." and tier_id=".$tier_id." and status='created'");
+            }
             //$db_query->Query("update impact_payment set status='authenticated', paid_timestamp = ".strtotime("now").", transaction_id='".$_POST['razorpay_payment_id']."' where ");
             $response_message = "Payment successful";
 
             // TODO: Add row to Notifications table (see commented code)
             $row_pay_user = $db_query->fetch_object("select * from impact_user where user_id='". $row_payment["creator_id"]."'");
             $insert_array = $insert_array2 = array();
-            $creator = $db_query->creator_check($row_user->email_id);
-            $fan = $db_query->fan_check($row_user->email_id);
+            
             $insert_array['user_id'] =  $creator->user_id;
             $insert_array2['user_id'] = $fan->user_id;
             $insert_array2['creator_id'] = $insert_array['creator_id'] = $row_payment["creator_id"];
@@ -76,7 +82,7 @@ if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id'
             $success = false;
             $error = "Invalid signature";
             $response_message = "Payment failed";
-            $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'paid_timestamp' => strtotime("now"),  'status' => 'authentication failed'));   
+            $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'status' => 'authentication fail'), "user_id=".$row_user->user_id." and tier_id=".$tier_id." and status='created'");   
         }
 }else if (isset($_POST['upgrade']) and $_POST['upgrade'] == "1" and isset($_POST['tier_id']) and isset($_POST['tier_id_old'])) {
     $tier_id = $_REQUEST['tier_id'];
@@ -98,7 +104,7 @@ if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id'
     $success = false;
     $error = "Invalid signature 0x07";
     $response_message = "Payment failed";
-    $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'paid_timestamp' => strtotime("now"),  'status' => 'authentication failed'));   
+    $db->updateArray("impact_payment", array('status' => 'authentication fail'), "user_id=".$row_user->user_id." and tier_id=".$tier_id." and status='created'");   
 }
 
 /*
@@ -230,10 +236,10 @@ if($sql_check->c>0)
                <?php if($success === false) {?>
                <h4><?=$error?></h4><br>
                <?php } ?>
-               <h4>Subscription Id: <?=$subscription_id?></h4>
-               <h4>Tier Id: <?=$_REQUEST['tier_id']?>, <?=var_dump($row_payment)?></h4>
-                <h4>Transaction Id: <?=$_POST['razorpay_payment_id'].",  ".$_POST['razorpay_signature']?></h4>
-                 <h4>Date: <?=date('Y-m-d').",  ".$expectedSignature?></h4>
+               <!--h4>Subscription Id: <?=$subscription_id?></h4>
+               <h4>Tier Id: <?=$_REQUEST['tier_id']?>, <?=var_dump($row_payment)?></h4-->
+                <h4>Transaction Id: <?=$_POST['razorpay_payment_id'] /*.",  ".$_POST['razorpay_signature']*/?></h4>
+                 <h4>Date: <?=date('Y-m-d') /*.",  ".$expectedSignature*/?></h4>
                   <h4>Creator : <?=$_POST["creator_name"]?></h4>
                    <h4>Amount: <?=$row_payment["paid_amount"]?></h4>
 <br>

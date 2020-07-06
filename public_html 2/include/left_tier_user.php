@@ -6,7 +6,6 @@ if($sql_tier_check->c>0) {?>
 <div class="wrap-lst-category">
 	<h3 class="tier">
 		Waves
-		<a href="#" class="become" onClick="alert('You cannot join your own tiers')">See all</a>
 	</h3>
 	<?php $sql_tier = $db_query->runQuery("select * from impact_tier where user_id='$row_user1->user_id' and plan_id is not null and not plan_id='' order by tier_price");
 	$check_subscription = $db_query->fetch_object("select IFNULL(tier_id, 0) tier_id from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$row_user1->user_id."' and (status='authenticated' or status='active')");

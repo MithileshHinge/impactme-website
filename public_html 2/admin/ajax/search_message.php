@@ -9,7 +9,7 @@ $s = trim($_POST['user_nameCreator']);
 $user_id = trim($_POST['userID']);
 //$sql_query = "select DISTINCT  u.* from impact_payment p, impact_user u where u.user_id=p.creator_id and p.creator_id='".base64_decode($_SESSION['user_id'])."' and p.paid_status='Success'  and  (u.full_name like '%$s%' or u.impact_name  like '%$s%' ) group by p.creator_id order by u.full_name" ;
 
-$sql_query = "select u.*  from impact_payment p, impact_user u where p.user_id=u.user_id and  p.creator_id='".base64_decode($_SESSION['user_id'])."' and p.paid_status='Success' and (u.full_name like '%$s%' or u.impact_name  like '%$s%' ) group by p.user_id";
+$sql_query = "select u.*  from impact_payment p, impact_user u where p.user_id=u.user_id and  p.creator_id='".base64_decode($_SESSION['user_id'])."' and (p.status='authenticated' or p.status='active') and (u.full_name like '%$s%' or u.impact_name  like '%$s%' ) group by p.user_id";
 //echo $sql_query;
 
 
@@ -57,7 +57,7 @@ $s = trim($_POST['user_nameImpact']);
 $user_id = trim($_POST['userID']);
 
   $sql_query = "
-  select u.* from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$user_id' and p.paid_status='Success' and (u.full_name like '%$s%' or u.impact_name like '%$s%' )   group by p.creator_id order by u.full_name
+  select u.* from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$user_id' and (p.status='authenticated' or p.status='active') and (u.full_name like '%$s%' or u.impact_name like '%$s%' )   group by p.creator_id order by u.full_name
 ";
  // echo $sql_query;
   

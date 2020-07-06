@@ -270,7 +270,7 @@ close
                 <li><a href="<?=BASEPATH?>/explore/">Explore Creators</a></li>
               <?php } ?>
               
-              <li><a href="#">My subscriptions</a></li>
+              <li><a href="<?=BASEPATH?>/my-subscriptions/">My subscriptions</a></li>
               <li><a href="<?=BASEPATH?>/settings/">Profile Settings</a></li>
               <!-- <li><a href="<?=BASEPATH?>/change-password/">Change Password</a></li>-->
               <li><a href="#">Help and FAQ</a></li>
@@ -370,7 +370,7 @@ close
                                 <li><a href="<?=BASEPATH?>/create/">Become a Creator</a></li>
                               <?php } ?>
                               
-                              <li><a href="#">My subscriptions</a></li>
+                              <li><a href="<?=BASEPATH?>/my-subscriptions/">My Subscriptions</a></li>
                               <li><a href="<?=BASEPATH?>/settings/">Profile Settings</a></li>
                               <!-- <li><a href="<?=BASEPATH?>/change-password/">Change Password</a></li>-->
                               <li><a href="#">Help and FAQ</a></li>

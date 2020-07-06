@@ -66,7 +66,7 @@ $title = "Message | ".PROJECT_TITLE;
 .message-image{
 	width: 50px;
     height: 50px;
-  border:1px solid #0000000d;
+  /*border:1px solid #0000000d;*/
     float: left;
        margin: 7px 0 2px 0;
 
@@ -608,7 +608,7 @@ div#set{
                                               activeClass = 'is-active';
 
                                           $tabButtonItem.first().addClass(activeClass);
-                                          $tabContents.not(':first').hide();
+                                          $tabContents.not(':first').not('#tab0111').hide();
 
                                           $tabButtonItem.find('a').on('click', function(e) {
                                             var target = $(this).attr('href');
@@ -616,7 +616,7 @@ div#set{
                                             $tabButtonItem.removeClass(activeClass);
                                             $(this).parent().addClass(activeClass);
                                             $tabSelect.val(target);
-                                            $tabContents.hide();
+                                            //$tabContents.hide();
                                             $(target).show();
                                             e.preventDefault();
                                           });
@@ -627,7 +627,7 @@ div#set{
 
                                             $tabButtonItem.removeClass(activeClass);
                                             $tabButtonItem.eq(targetSelectNum).addClass(activeClass);
-                                            $tabContents.hide();
+                                            //$tabContents.hide();
                                             $(target).show();
                                           });
                                         });
@@ -648,7 +648,7 @@ div#set{
                                               activeClass = 'is-active';
 
                                           $tabButtonItem.first().addClass(activeClass);
-                                          $tabContents.not(':first').hide();
+                                          $tabContents.not(':first').not('#tab0111').hide();
 
                                           $tabButtonItem.find('a').on('click', function(e) {
                                             var target = $(this).attr('href');
@@ -656,7 +656,7 @@ div#set{
                                             $tabButtonItem.removeClass(activeClass);
                                             $(this).parent().addClass(activeClass);
                                             $tabSelect.val(target);
-                                            $tabContents.hide();
+                                            //$tabContents.hide();
                                             $(target).show();
                                             e.preventDefault();
                                           });
@@ -667,7 +667,7 @@ div#set{
 
                                             $tabButtonItem.removeClass(activeClass);
                                             $tabButtonItem.eq(targetSelectNum).addClass(activeClass);
-                                            $tabContents.hide();
+                                            //$tabContents.hide();
                                             $(target).show();
                                           });
                                         }
@@ -681,7 +681,7 @@ div#set{
                                               activeClass = 'is-active';
 
                                           $tabButtonItem.first().addClass(activeClass);
-                                          $tabContents.not(':first').hide();
+                                          $tabContents.not(':first').not('#tab0111').hide();
 
                                           $tabButtonItem.find('a').on('click', function(e) {
                                             var target = $(this).attr('href');
@@ -689,7 +689,7 @@ div#set{
                                             $tabButtonItem.removeClass(activeClass);
                                             $(this).parent().addClass(activeClass);
                                             $tabSelect.val(target);
-                                            $tabContents.hide();
+                                            //$tabContents.hide();
                                             $(target).show();
                                             e.preventDefault();
                                           });
@@ -700,7 +700,7 @@ div#set{
 
                                             $tabButtonItem.removeClass(activeClass);
                                             $tabButtonItem.eq(targetSelectNum).addClass(activeClass);
-                                            $tabContents.hide();
+                                            //$tabContents.hide();
                                             $(target).show();
                                           });
                                         });

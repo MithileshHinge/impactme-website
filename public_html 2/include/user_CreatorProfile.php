@@ -1,10 +1,10 @@
 <?php 
 $rowperpage = PAGINATION;
- $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and p.paid_status='Success' group by p.creator_id) order by create_date desc"); 
+ $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active') group by p.creator_id) order by create_date desc"); 
  
 $allcount =  $sql_c22_count->c;
  
- $sql_c22 = "select * from impact_post where user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and p.paid_status='Success' group by p.creator_id) order by create_date desc limit 0,$rowperpage";
+ $sql_c22 = "select * from impact_post where user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active') group by p.creator_id) order by create_date desc limit 0,$rowperpage";
 
 
   
