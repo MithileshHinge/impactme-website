@@ -15,6 +15,8 @@ if(isset($_GET['u']))
 	$rowUser = $db_query->fetch_object("select * from impact_user where user_id='$userID'");
 }
 
+$ids = $db_query->get_ids_sql($row_user->user_id);
+
 $upgrade_subscription = false;
 if(isset($_GET['tid']))
 {
@@ -24,7 +26,7 @@ if(isset($_GET['tid']))
 		$api = new Api($razorpay_id, $razorpay_secret);
 		$plan_id = $row_tier->plan_id;
 
-		$row_prev_payment_check = $db_query->fetch_object("select count(*) c from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$rowUser->user_id."' and (status='authenticated' or status='active')");
+		$row_prev_payment_check = $db_query->fetch_object("select count(*) c from impact_payment where user_id in $ids and creator_id='".$rowUser->user_id."' and (status='authenticated' or status='active')");
 		if ($row_prev_payment_check->c == 0){
 
 			// Create new subscription
@@ -78,8 +80,8 @@ if(isset($_GET['tid']))
 			}
 
 		}else {
-			$row_subscription_old = $db_query->fetch_object("select * from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$rowUser->user_id."' and (status='authenticated' or status='active')");
-			if ($row_subscription->paid_amount < $row_tier->price){
+			$row_subscription_old = $db_query->fetch_object("select * from impact_payment where user_id in $ids and creator_id='".$rowUser->user_id."' and (status='authenticated' or status='active')");
+			if ($row_subscription_old->paid_amount < $row_tier->price){
 				$tier_id_old = $row_subscription_old->tier_id;
 				$upgrade_subscription = true;
 			}else {
@@ -114,8 +116,8 @@ if(strlen($row_user->image_path)>0)
 	$user_image = IMAGEPATH.$row_user->image_path;
 else
 	$user_image = IMAGEPATH.'icon_man.png'; 
-if(strlen($row_user->tag_line)>0) { 
-	$page_title = $row_user->tag_line." | Checkout | ".PROJECT_TITLE;
+if(strlen($rowUser->tag_line)>0) { 
+	$page_title = "Checkout | ".$rowUser->tag_line." | ".PROJECT_TITLE;
 }
 else
 {
@@ -197,6 +199,7 @@ if($_REQUEST['mode']=="card")
 <html>
 <head>
 	<title><?=$page_title?></title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="<?=$sql_web->meta_description?>" /> 
 	<meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -261,7 +264,7 @@ if($_REQUEST['mode']=="card")
                         */?>
 
                         <?php if ($upgrade_subscription) {?>
-                        	<input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=($row_tier->price - $row_subscription->paid_amount)?>" readonly>
+                        	<input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=($row_tier->price - $row_subscription_old->paid_amount)?>" readonly>
                         <?php }else {?>
                         	<input type="text" name="pay_amount" id="pay_amount" class="rupees-payment" value="<?=$row_tier->price?>" readonly>
                         <?php } ?>
@@ -269,7 +272,7 @@ if($_REQUEST['mode']=="card")
 
                     <div class="col-md-4 debit-payment">
 
-                    	<p class="gio-payment">Your Tier</p>
+                    	<p class="gio-payment">Your Pact</p>
 
                     </div>
 
@@ -277,7 +280,7 @@ if($_REQUEST['mode']=="card")
                     	<p style="font-size: 18px;color: #455058;" id="tier_name"><?=$row_tier->tier_name?></p>
                     	<!--p style="font-size: 16px;color: #455058;">Custom Pledge <a href="javascript:void(0)" style="margin: 0 0 0 6px;color: red; " id="custome_pledge">Edit</a></p-->
 
-                    </div>
+                    </div>                    
 
                     <div class="col-md-12"><p class="checkout-issue">ImpactMe does not issue refunds on behalf of creators. <a href="<?=$BASEPATH.'/terms-conditions/#terms_payments'?>" style="text-decoration: underline;">Learn more.</a></p></div>
 
@@ -289,13 +292,11 @@ if($_REQUEST['mode']=="card")
 
                 	<p style="font-size: 16px;color:#455058;    padding: 0 0 0 18px;"><?=date('F')?> payment<span class="price">₹<span id="price2" style="padding:0 26px 0 0;"> <?=$row_tier->price?></span></span></p>
 
-                	<p class="pacifi-time">You will be charged  <?=CURRENCY?> <span id="price3"><?=$row_tier->price?></span></span> on <?=date('d M, Y')?>  and then the 3rd of each month going forward.</p>
+                	<p class="pacifi-time">You will be charged  ₹<span id="price3"><?=$row_tier->price?></span></span> on <?=date('d M, Y')?>  and then the 3rd of each month going forward.</p>
 
-                	<p class="pacifi-time">You can cancel or edit your payment at any time. By making this payment, you agree to ImapctMe's <a href="<?=BASEPATH?>/terms-conditions" target="_blank">Terms of Use.</a></p>
+                	<p class="pacifi-time">You can cancel or edit your payment at any time. By making this payment, you agree to ImpactMe's <a href="<?=BASEPATH?>/terms-conditions" target="_blank"><u>Terms of Use</u></a>.</p>
 
-                	<p class="pacifi-time" style="    font-size: 14px;">*Depending on your location your bank might charge an additional foreign transaction fee for your membership to this Creator.</p>
-
-                	<div class="wrap-nav-pledge digital-payment">
+                	<div class="wrap-nav-pledge digital-payment" style="padding:0 0 0 18px;">
                 		
                 		<?php
                 		if ($upgrade_subscription){ 
@@ -317,8 +318,8 @@ if($_REQUEST['mode']=="card")
 		                		data-amount="<?php echo $row_tier->price * 100?>"
 		                		data-currency="INR"
 		                		data-name="ImpactMe"
-		                		data-description="Monthly payment to <?=$rowUser->full_name?>"
-		                		data-prefill.name="<?php echo $row_user->impact_name?>"
+		                		data-description="Monthly payment to <?=$rowUser->impact_name?>"
+		                		data-prefill.name="<?php echo $row_user->full_name?>"
 		                		data-prefill.email="<?php echo $row_user->email_id?>"
 		                		data-subscription_id="<?php echo $subscription->id?>"
 		                		data-display_amount="<?php echo $row_tier->price?>"
@@ -337,7 +338,7 @@ if($_REQUEST['mode']=="card")
 
                 	</div>
 
-                	<div class="col-md-12"><p class="question">Questions? 94.8% of people who visit our <a href="#" style="text-decoration: underline;">Help Center</a> find what they're looking for.</p></div>
+                	<div class="col-md-12"><p class="question">Questions? Visit our <a href="<?=BASEPATH?>/help/" style="text-decoration: underline;">Help and FAQ page</a></p></div>
 
                 </div>
 
@@ -348,10 +349,10 @@ if($_REQUEST['mode']=="card")
     </section>
     
 
-<?php //include('include/footer.php');
+<?php include('include/footer.php');
 include('include/footer_js.php');?>
 
-<script type="text/javascript">
+<!--script type="text/javascript">
 $(document).ready(function() {
 	$("#custome_pledge").click(function(){ 
 		$('#pay_amount').val('');
@@ -384,7 +385,7 @@ $(document).ready(function() {
 
 });
 
-</script>
+</script-->
 
 </div>
 </body>

@@ -15,7 +15,7 @@ else
 if(strlen($row_user->image_path)>0)
  $user_image = IMAGEPATH.$row_user->image_path;
 else
- $user_image = IMAGEPATH.'icon_man.png'; 
+ $row_user->image_path = $db_query->assign_default_profile_image($row_user->email_id); 
  
  if($_REQUEST['mode']=="profile")
  {
@@ -60,7 +60,7 @@ else
   }
  
  $db->updateArray("impact_user",$_REQUEST,"user_id=".$row_user->user_id);
- header('location:'.BASEPATH.'/edit/about/');
+ header('location:'.BASEPATH.'/edit/about?msg=1');
  
  
  }
@@ -96,6 +96,7 @@ else
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -132,9 +133,62 @@ else
 	</style>
 </head>
 
-<body style="background-image:url(<?=BASEPATH?>/images/setting-back.jpg); ">
+<!--body style="background:url('<?=BASEPATH?>/images/settings-back-transparent.png') 0 0%, url('<?=BASEPATH?>/images/settings-back-transparent.png') 82% 105%,url('<?=BASEPATH?>/images/settings-back-transparent.png') 94% 112.7%, url('<?=BASEPATH?>/images/settings-back-transparent.png') 121% 112.8%, #0c2f43; "-->
+<body class="body-bg">
 <div id="wrapper" >
 <?php include('include/header.php'); ?>
+
+<div class="modal fade" id="modalProfilePic" tabindex="-1" role="dialog" aria-labelledby="modalProfilePicLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalProfilePicLabel">Change Profile Picture</h5>
+      </div>
+      <div id="modalProfilePicBody" class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-profile-pic" type="button" class="btn btn-secondary">Cancel</button>
+        <button id="save-profile-pic" type="button" class="btn btn-primary" style="color:#fff;">Save</button>
+      </div>
+    </div>
+    <div class="loading-profile-spinner"></div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="modalCoverPic" tabindex="-1" role="dialog" aria-labelledby="modalCoverPicLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width:600px; max-width:initial;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalCoverPicLabel">Change Cover Picture</h5>
+      </div>
+      <div id="modalCoverPicBody" class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-cover-pic" type="button" class="btn btn-secondary">Cancel</button>
+        <button id="save-cover-pic" type="button" class="btn btn-primary" style="color:#fff;">Save</button>
+      </div>
+    </div>
+    <div class="loading-cover-spinner"></div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalConfirmDel" tabindex="-1" role="dialog" aria-labelledby="modalConfirmDelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalConfirmDelLabel">Confirm Delete?</h5>
+      </div>
+      <div id="modalConfirmDelBody" class="modal-body">This will permanently delete your Creator page. This operation cannot be undone. Do you wish to continue?
+        <br>Note: This will only delete your Creator page. If you want to permanently delete or temporarily de-activate your account, please visit <a href="<?=BASEPATH.'/settings/'?>" style="text-decoration:underline;">Profile Settings</a> page.
+      </div>
+      <div class="modal-footer">
+        <button id="confirm-del-no" type="button" class="btn btn-primary" style="color:#fff;" data-dismiss="modal">No</button>
+        <button id="confirm-del-yes" type="button" style="color:#fff;" class="btn btn-secondary">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="layout-2cols">
   <div class="content grid_12">
@@ -150,12 +204,11 @@ else
             <div class="tab-pane accordion-content active">
               <div class="form form-profile">
                 <form action="<?=$_SERVER['PHP_SELF']?>" name="profile" id="uploadForm" method="post" enctype="multipart/form-data" id="edit-createrform" >
-               <?php if(isset($msg)){?> <div  id="err_msg"><?=$msg?></div> <?php } ?>
                 <input type="hidden" name="mode" value="profile" />
                   <div class="row-item clearfix">
                     <label class="lbl" for="txt_name1">Name of your page:</label>
                     <div class="val">
-                      <input class="txt" type="text" id="impact_name" value="<?=$row_user->impact_name?>" onBlur="javascript:setText(this.value);" onKeyUp="javascript:setText(this.value);"  onKeyPress="javascript:setText(this.value);" onClick="javascript:setText(this.value);" name="impact_name" >
+                      <input class="txt" type="text" id="impact_name" required value="<?=$row_user->impact_name?>" onBlur="javascript:setText(this.value);" onKeyUp="javascript:setText(this.value);"  onKeyPress="javascript:setText(this.value);" onClick="javascript:setText(this.value);" name="impact_name"/>
                       
                     </div> 
                   
@@ -164,7 +217,7 @@ else
                   <div class="row-item clearfix">
                     <label class="lbl" for="txt_location">What are you creating? :</label>
                     <div class="val">
-                      <input class="txt" type="text" id="creating_for" value="<?=$row_user->creating_for?>" onBlur="setWord(this.value)" onKeyUp="setWord(this.value)" name="creating_for" >
+                      <input class="txt" type="text" id="creating_for" required value="<?=$row_user->creating_for?>" onBlur="setWord(this.value)" onKeyUp="setWord(this.value)" name="creating_for"/>
                     </div>
                   </div>
                   <div class="row-item clearfix">
@@ -215,8 +268,7 @@ else
                             <div class="percent">0%</div>
                           </div>
                           <div class=" profile-change" id="imgChange"><span>
-                              <i class="material-icons time-editcreate" style="font-size: 30px;
-    margin: 19px 0 0 56px;">photo_camera</i></span>
+                              <i class="material-icons time-editcreate" style="font-size: 30px; margin: 19px 0 0 56px;">photo_camera</i></span>
                             <input type="file" accept="image/*" name="image_upload_file" id="image_upload_file">
                           </div>
                   
@@ -232,10 +284,10 @@ else
                     <label class="lbl" for="txt_name2">Profile URL:</label>
                     <div class="val">
                       
-                      <input class="txt" type="text" id="slug"  name="slug" value="<?=$row_user->slug?>" placeholdertext="John Doe">
+                      <input class="txt" type="text" id="slug"  name="slug" value="<?=$row_user->slug?>" placeholdertext="johndoe" onKeyPress="JavaScript: return keyRestrict(event,'abcdefghijklmnopqrstuvwxyz0123456789._-');">
                       <p class="rs display-val"  id="profile-link"><a href="#" class="be-fc-orange"><?=BASEPATH?>/profile/<?=$row_user->slug?></a></p>
                       <span id="slug_err" style="color:red;margin-left:19%"></span>
-                      <p class="rs description-input" id="profile-link">You can set a vanity URL here/ Ince set. this vanity URL can not be changed.</p>
+                      <p class="rs description-input" id="profile-link">You can set a vanity URL here. Once set, this vanity URL can not be changed.</p>
                     </div>
                   </div> <?php 
 					if(strlen($row_user->cover_image_path)>0) 
@@ -288,11 +340,11 @@ else
                     <label id="public-earning"> 
                     <input  type="radio" value="0" name="earning_visibility" <?=($row_user->earning_visibility==0)?'checked':''?> style="    margin: 0 0 0 0;">
                      <span>Private</span><br>
-                        <span style="    margin: 0 0 0 15px;">Only you can see how much you earn. Your earnings will be hidden from your page and goals.</span></label>
+                        <span style="    margin: 0 0 0 15px;">Only you can see how much you earn. Your earnings will be hidden from your page.</span></label>
                     </div>
                   </div>
                   <div class="row-item clearfix">
-                    <label class="lbl" for="txt_time_zone" >Patronage Visibility:</label>
+                    <label class="lbl" for="txt_time_zone" >Supporters Visibility:</label>
                     <div class="val" id="user-earning">
                      <label id="public-earning"> 
                      <input  type="radio" value="1" name="patronage_visibility" <?=($row_user->patronage_visibility==1)?'checked':'checked'?> style="margin:0 0 0 0;" >
@@ -302,18 +354,31 @@ else
                      <label id="public-earning"> 
                      <input  type="radio" value="0" name="patronage_visibility" <?=($row_user->patronage_visibility==0)?'checked':''?> style="margin:0 0 0 0;">
                       <span>Private</span><br>
-                        <span style="    margin: 0 0 0 15px;">Only you can see how many supporters you have. The number of supporters you have will be hidden from your page and goals.</span></label>
+                        <span style="    margin: 0 0 0 15px;">Only you can see how many supporters you have. The number of supporters you have will be hidden from your page.</span></label>
                     </div>
                   </div>
                   <div class="row-item clearfix">
-                    <label class="lbl" style="width:100%; text-align:left !important;" for="txt_location">About your impact page:</label>
+                    <label class="lbl" for="txt_time_zone" >One-time Payments Visibility:</label>
+                    <div class="val" id="user-earning">
+                     <label id="public-earning"> 
+                     <input  type="radio" value="1" name="onetime_visibility" <?=($row_user->onetime_visibility==1)?'checked':'checked'?> style="margin:0 0 0 0;" >
+                      <span>Public (recommended)</span><br>
+                        <span style="    margin: 0 0 0 15px;">Anyone who visits your page will see the total amount of one time payments you have received.</span></label>
+                      <br>
+                     <label id="public-earning"> 
+                     <input  type="radio" value="0" name="onetime_visibility" <?=($row_user->onetime_visibility==0)?'checked':''?> style="margin:0 0 0 0;">
+                      <span>Private</span><br>
+                        <span style="    margin: 0 0 0 15px;">Only you can see the total amount of one time payments you have received. It will be hidden from your page.</span></label>
+                    </div>
+                  </div>
+                  <div class="row-item clearfix">
+                    <label class="lbl" style="width:100%; text-align:left !important;" for="txt_location">About your ImpactMe page:</label>
                     
                     <p class="frist-potet">This is the first thing potential supporters will see when they land on your page, so make sure you paint a compelling picture of how they can join you on this journey.</p>
                     <div class="val" style="    margin: 28px 0 0 0;">
-                     <textarea  class="form-control" name="about_page" id="about_page" parsley-trigger="change"  > <?=trim(stripslashes($row_user->about_page))?>
-                              </textarea>
+                     <textarea  class="form-control" name="about_page" id="about_page" parsley-trigger="change" style="height:200px;"><?=trim(stripslashes($row_user->about_page))?></textarea>
                               
-                              <script>
+                              <!--script>
 	CKEDITOR.replace('about_page',{
                        
                        filebrowserWindowWidth: '900',
@@ -325,15 +390,14 @@ else
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
                     </div>
-                    <p class="frist-potet">Many creators on Impact have both a text and video description for their page. This combo is incredibly motivating for fans — it shows how real this is to you and how much you value their participation in your journey.</p>
+                    <p class="frist-potet">Many creators on ImpactMe have both a text and video description for their page. This combo is incredibly motivating for fans — it shows how real this is to you and how much you value their participation in your journey.</p>
                   </div>
                   <div class="row-item clearfix">
-                    <label class="lbl" for="txt_location" style="padding-top: 43px;text-align: left !important;
+                    <label class="lbl intro-video-label" for="txt_location" style="padding-top: 14px;text-align: left !important;
     margin: 0 0 0 17%;
     width: 130px;">Intro Video:</label>
-                    <p style="font-size: 13px;">Make the best intro video with our guide.</p>
                     <div class="val">
                    <?php if(!empty($dbUser[0]['intro_video'])){?>
                     <img src="<?=$db_query->getYoutubeImage($row_user->intro_video)?>" alt="">
@@ -344,7 +408,7 @@ else
                   <div class="row-item clearfix">
                     <label class="lbl" for="txt_location"  id="user-social" style="font-size:17px;">Social Media :</label>
                     
-                    <p>Give your supporters confidence - securely verify your accounts and display links on your page. We’ll never post on your behalf.</p>
+                    <p style="margin-left:265px" class="display-social-links-p">Display your social links on your page</p>
                     
                      <?php
 				   $sql_facebook = $db_query->fetch_object("select count(*) c, oauth_uid oid from social_users where user_id='$row_user->user_id' and oauth_provider='facebook'");
@@ -366,7 +430,10 @@ else
                     
                     <div class="social"> 
                     <span class="facebook"><i class="fa fa-facebook-square" style="    margin: 0 12px 0 0;"></i>Facebook</span> 
-                    <span class="connect" style="color:white;"><a href="<?=htmlspecialchars($facebookURL)?>" class="connecting"><?=$facebook_button_name?></a></span> 
+                    <span class="connect" style="left:284px;">
+                      <a style="display:none;" href="<?=htmlspecialchars($facebookURL)?>" class="connecting"><?=$facebook_button_name?></a>
+                      <input class="instragram-link" type="text" placeholder="facebook page link" name="facebook_link" id="facebook_link" value="<?=$row_user->facebook_link?>">
+                    </span> 
                     </div>
                     
                    <?php
@@ -394,12 +461,15 @@ else
                     
                     <div class="social"> 
                     <span class="facebook"><i class="fa fa-youtube" style="    margin: 0 12px 0 0;"></i>Youtube</span> 
-                    <span class="connect youtube" style="color:white;"><a href="<?=htmlspecialchars($googleURL)?>" class="connecting"><?=$google_button_name?></a></span>
+                    <span class="connect youtube" style="left:283px;">
+                      <a style="display:none;" href="<?=htmlspecialchars($googleURL)?>" class="connecting"><?=$google_button_name?></a>
+                      <input class="instragram-link" type="text" placeholder="youtube channel link" name="youtube_link" id="youtube_link" value="<?=$row_user->youtube_link?>">
+                    </span>
                     </div>
                     
                     <div class="social"> <span class="facebook" style="margin-top: 5px;"><i class="fa fa-instagram" style="    margin: 0 12px 0 0;"></i>Instagram ID</span> 
                        <span class="connect">
-                           <input class="instragram-link" type="text" placeholder="instagram id" name="instagram" id="instagram" value="<?=$row_user->instagram?>">
+                           <input class="instragram-link" type="text" placeholder="instagram_username" name="instagram" id="instagram" value="<?=$row_user->instagram?>">
                        </span> 
                     </div>
                     
@@ -412,26 +482,25 @@ else
                 </form>
               </div>
               
-              <div class="" style="margin: -70px 0 0 72px;    padding: 0 0 48px 0;">
+              <div class="delete-page-section" style="margin: -70px 0 0 72px;    padding: 0 0 48px 0;">
               
               
                <h2>Delete Page</h2>
-               <p>Careful! This will permanently disable your account. You won't be able to log in again after you do this.</p>
+               <p>Careful! This will permanently delete your Creator Page. This action cannot be undone.</p>
 <br>
                
-                   <button class="btn  btn-submit-all newtier" id="del" style="margin:0 0 0 0;padding: 10px 26px;">Delete Account </button>
+                   <button class="btn  btn-submit-all newtier" id="del" style="margin:0 0 0 0;padding: 10px 26px;">Delete Creator Page</button>
             
            
               </div>
               
-              <div id="myModal" class="modal fade" role="dialog">
+              <!--div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog  modal-dialog-centered">
 
-    <!-- Modal content-->
+    < Modal content>
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
+        <h4 class="modal-title">Please provide your password to delete your page.</h4>
       </div>
       <div class="modal-body">
       <span id="modalMsg" style="color:red"></span>
@@ -459,7 +528,42 @@ else
     </div>
 
   </div>
-</div>
+</div-->
+
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modalDelPassLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document" style="width:400px;">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalDelPassLabel">Please provide your password to delete your page.</h5>
+                    </div>
+                    <div id="modalDelPassBody" class="modal-body">
+                      <span id="modalMsg" style="color:red"></span>
+                      <form class="form-horizontal" role="form" id="f2" method="post" action="" onSubmit="return false;">
+                        <input type="hidden" name="user_id" id="UserID" value="<?=$row_user->user_id?>">
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="inputPassword3" >Password</label>
+                          <div class="col-sm-10">
+                              <input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Password"/>
+                          </div>
+                        </div>
+                  
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="btn btn-default" id="modal_check">Submit</button>
+                    </div>
+                  </div>
+                </form>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
             </div>
             <!--end: .tab-pane --> 
           </div>
@@ -473,6 +577,13 @@ else
   
   <div class="clear"></div>
 </div>
+<?php if($_GET['msg'] == 1){?>
+<div class="fixed-top d-flex justify-content-center">
+<div class="alert alert-success fade in" style="width:fit-content; margin-top:67px;" role="alert" id="save-success-alert">
+  All changes have been saved successfully.
+</div>
+</div>
+<?php } ?>
 
 
 </div>
@@ -524,11 +635,18 @@ function setWord(wrdval){
 
  $(document).ready(function() {
 
+  //dismiss alert if shown
+  setTimeout(function () {
+    $("#save-success-alert").alert('close');
+  }, 4000);
+
 $("#slug").keyup(function(){
 
     
       var slug = $("#slug").val();
-  
+
+      $('#profile-link > a').html('<?=BASEPATH?>/profile/'+slug);
+
 	  
 	  if(slug != "") {
 
@@ -566,20 +684,13 @@ $("#slug").keyup(function(){
 	
 
   $("#del").click(function(){
-  $('#myModal').modal();
-  var result = confirm("Want to delete?");
-if (result) {
-    //window.location.href="<?=BASEPATH?>/profile_edit.php?delete=1";
-	//$('#myModal').modal('show'); 
-	$('#myModal').modal();
-}
-else {
-    return false;
-}
-});
+    $('#modalConfirmDel').modal('show');
+  });
 
-
-
+  $("#confirm-del-yes").click(function(){
+    $('#modalConfirmDel').modal('hide');
+    $('#myModal').modal('show');
+  });
 
 $("#modal_check").click(function(){
  
@@ -637,7 +748,169 @@ $("#modal_check").click(function(){
 </script>
 <!--<script src="<?=BASEPATH?>/image_upload_js/jquery.min.js"></script>-->
 <script src="<?=BASEPATH?>/image_upload_js/jquery.form.js"></script>
+<link rel="stylesheet" href="https://www.impactme.in/croppie/croppie.css" />
+<script src="https://www.impactme.in/croppie/croppie.js"></script>
 <script>
+
+/*<=========== Change Profile Pic ============>*/
+
+var myProfileModal = $('#modalProfilePic');
+var modalProfileBodyCroppie = $('#modalProfilePicBody');
+
+var myProfileCroppie = modalProfileBodyCroppie.croppie({
+    viewport: {
+        width: 250,
+        height: 250,
+        type: 'circle'
+    },
+    boundary: {
+        width: 300,
+        height: 250
+    }
+});
+
+$('#image_upload_file').on('change', function () {
+  if($('#image_upload_file').val() != ''){
+    myProfileModal.modal({backdrop: 'static', keyboard: false});
+    myProfileModal.modal('show');
+  }
+});
+
+myProfileModal.on('shown.bs.modal', function(){ 
+    //myCroppie.croppie('bind', bindOpts);
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      myProfileCroppie.croppie('bind', {
+        url: e.target.result
+      }).then(function(){
+        console.log('jQuery bind complete');
+      });
+      
+    }
+    reader.readAsDataURL($('#image_upload_file').get(0).files[0]);
+});
+
+$('#save-profile-pic').on('click', function(event){
+  $(".loading-profile-spinner").show(0, function(){
+    myProfileCroppie.croppie('result', {
+      type: 'canvas',
+      size: 'viewport'
+    }).then(function (response) {
+      $.ajax({
+        url: '<?=BASEPATH?>/uploadFileCroppie.php',
+        type: "POST",
+        data:  {"type": "creator_profile" ,"image" : response},
+        beforeSend: function(){
+        },
+        success: function(data){
+          obj = $.parseJSON(data);
+          if (obj.status){
+            $("#imgArea>img").prop('src',obj.image_medium);
+            $(".photo-nav").css("background-image", "url(" + obj.image_medium + ")");
+          }else {
+            alert('Error');
+          }
+          myProfileModal.modal('hide');
+          $(".loading-profile-spinner").hide();
+          $("#image_upload_file").val('');
+        }
+      });
+    });
+  });
+});
+
+$('#cancel-profile-pic').on('click', function(event){
+  $("#image_upload_file").val('');
+  myProfileModal.modal('hide');
+});
+
+
+
+/*<========== Change Cover Pic =============>*/
+
+var myCoverModal = $('#modalCoverPic');
+var modalCoverBodyCroppie = $('#modalCoverPicBody');
+
+var window_h = $(window).height();
+var window_w = $(window).width();
+
+if (window_w < 550){
+  croppie_w = window_w-50;
+  croppie_h = (window_w-50)/5;
+}else {
+  croppie_w = 500;
+  croppie_h = 100;
+}
+
+var myCoverCroppie = modalCoverBodyCroppie.croppie({
+    viewport: {
+        width: croppie_w,
+        height: croppie_w/5,
+        type: 'square'
+    },
+    boundary: {
+        width: croppie_w,
+        height: croppie_w*4/5
+    },
+    enforceBoundary: true,
+});
+
+$('#cover_image_upload_file').on('change', function () {
+  if($('#cover_image_upload_file').val() != ''){
+    myCoverModal.modal({backdrop: 'static', keyboard: false});
+    myCoverModal.modal('show');
+  }
+});
+
+myCoverModal.on('shown.bs.modal', function(){ 
+    //myCroppie.croppie('bind', bindOpts);
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      myCoverCroppie.croppie('bind', {
+        url: e.target.result
+      }).then(function(){
+        console.log('jQuery bind complete');
+      });
+      
+    }
+    reader.readAsDataURL($('#cover_image_upload_file').get(0).files[0]);
+});
+
+$('#save-cover-pic').on('click', function(event){
+  $(".loading-cover-spinner").show(0, function(){
+    myCoverCroppie.croppie('result', {
+      type: 'canvas',
+      size: {width: 1440}
+    }).then(function (response) {
+      $.ajax({
+        url: '<?=BASEPATH?>/uploadFileCroppie.php',
+        type: "POST",
+        data:  {"type": "creator_cover" ,"image" : response},
+        beforeSend: function(){
+        },
+        success: function(data){
+          obj = $.parseJSON(data);
+          if (obj.status){
+            $("#imgAreaCover>img").prop('src',obj.image_medium);
+          }else {
+            alert('Error');
+          }
+          myCoverModal.modal('hide');
+          $(".loading-cover-spinner").hide();
+          $("#cover_image_upload_file").val('');
+        }
+      });
+    });
+  });
+});
+
+$('#cancel-cover-pic').on('click', function(event){
+  $("#cover_image_upload_file").val('');
+  myCoverModal.modal('hide');
+});
+
+
+/*
 $(document).on('change', '#image_upload_file', function () {
 var progressBar = $('.progressBar'), bar = $('.progressBar .bar'), percent = $('.progressBar .percent');
 
@@ -706,7 +979,7 @@ $('#uploadForm').ajaxForm({
 }).submit();		
 
 });
-
+*/
 
 </script>
 

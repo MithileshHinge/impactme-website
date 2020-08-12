@@ -6,37 +6,54 @@
 
 if(isset($_REQUEST['mode'])=="forgot_password")
 {
-  $user_type = $_GET['ut'];
-  $password = $db_query->filter($_REQUEST['npassword']); 
-   $cpassword = $db_query->filter($_REQUEST['cpassword']); 
-  if(!empty($password) || !empty($cpassword) )
-  {
-	  if($password==$cpassword)
-	  {
-		  if(!empty($_SESSION['emailId']))
-		  {
-		  $sql_check = $db_query->Query("update impact_user set password='".$password."' where email_id='".$_SESSION['emailId']."'");
-		  if($sql_check)
-		  {
-			 unset( $_SESSION['emailId']);
-			 $success_msg = "Password Changed Successfully";
-		  }
-		  }
-		  else
-		  {
-			$msg = "Email ID Not Found";  
-		  }
-	  }
-	  else
-	  {
-		  $msg = '<span style="color:red">Both Password Not Matched</span>';
-	  }
-  
-  }
-  else
-  {
-   $msg = '<span style="color:red">Password Can not Be Blank.</span>';
-  }
+
+	if (!empty($_POST['token']) and !empty($_POST['id'])){
+		$token = $_REQUEST['token'];
+		$id = $_REQUEST['id'];
+		$res = $db_query->fetch_object("select count(*) c from password_reset where email='$id' and token='$token' and timestampdiff(hour, `create_time`, current_timestamp())<1");
+		$db_query->Query("delete from password_reset where email='$id'");
+		if ($res->c > 0){
+			$_SESSION['emailId'] = $id;
+
+			  $user_type = $_GET['ut'];
+			  $password = $db_query->filter($_REQUEST['npassword']); 
+			   $cpassword = $db_query->filter($_REQUEST['cpassword']); 
+			  if(!empty($password) || !empty($cpassword) )
+			  {
+				  if($password==$cpassword)
+				  {
+					  if(!empty($_SESSION['emailId']))
+					  {
+					  	$password = password_hash($password, PASSWORD_BCRYPT);
+					  $sql_check = $db_query->Query("update impact_user set password='".$password."' where email_id='".$_SESSION['emailId']."'");
+					  if($sql_check)
+					  {
+						 unset( $_SESSION['emailId']);
+						 $success_msg = "Password changed successfully. Please log in to continue.";
+					  }
+					  }
+					  else
+					  {
+						$msg = "Email address not found";
+					  }
+				  }
+				  else
+				  {
+					  $msg = '<span style="color:red">Passwords do not match</span>';
+				  }
+			  
+			  }
+			  else
+			  {
+			   $msg = '<span style="color:red">Password cannot be blank.</span>';
+			  }
+
+			
+
+		}else{
+			header("location: ".BASEPATH);
+		}
+	}
 }
 
 
@@ -47,6 +64,7 @@ if(isset($_REQUEST['mode'])=="forgot_password")
 <html>
 <head>
  <title>CHANGE PASSWORD | <?=$sql_web->page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -75,6 +93,8 @@ if(isset($_REQUEST['mode'])=="forgot_password")
             <label class="pass" style="margin: 31px 0 0 46px;color: #6161ff; ">Confirm Password</label><br>
             <input type="password" name="cpassword" id="cpassword" class="col-md-10 email">
             <label class="pass" style="margin: 2px 0 0 46px;"><span class="error" id="email_err1"></span></label>
+            <input type="hidden" name="id" value="<?=$_REQUEST['id']?>"/>
+            <input type="hidden" name="token" value="<?=$_REQUEST['token']?>"/>
 
             <button type="submit" class=" reset-pass" id="login">Change Password</button>
 

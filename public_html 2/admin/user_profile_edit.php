@@ -135,7 +135,7 @@ include('include/menubar.php');
                               </textarea>
                              </div>
                             </div>
-                             <script>
+                             <!--script>
 	CKEDITOR.replace('address',{
                        
                        filebrowserWindowWidth: '900',
@@ -147,7 +147,7 @@ include('include/menubar.php');
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
                             
                             
                           <!--   <div class="form-group ">

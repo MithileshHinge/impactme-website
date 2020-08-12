@@ -1,13 +1,22 @@
     <script type="text/javascript" src="<?=BASEPATH?>/js/raphael-min.js"></script>
     <script type="text/javascript" src="<?=BASEPATH?>/js/jquery-1.9.1.min.js"></script>
+    <script src="<?=BASEPATH?>/image_upload_js/jquery.form.js"></script>
 	<script type="text/javascript" src="<?=BASEPATH?>/js/jquery-migrate-1.2.1.min.js"></script>
     <script type="text/javascript" src="<?=BASEPATH?>/js/jquery.touchwipe.min.js"></script>
 	<script type="text/javascript" src="<?=BASEPATH?>/js/md_slider.min.js"></script>
 	<script type="text/javascript" src="<?=BASEPATH?>/js/jquery.sidr.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!-- <script type="text/javascript" src="js/jquery.tweet.min.js"></script> -->
     <script type="text/javascript" src="<?=BASEPATH?>/js/pie.js"></script>
     <script type="text/javascript" src="<?=BASEPATH?>/js/script.js"></script>
     
+    <script type="text/javascript">
+    $(document).ready(function () {
+    	$('[data-toggle="tooltip"]').tooltip();
+    });
+    </script>
+
     <script>
 	function textCounter(field,cntfield,maxlimit) {
 if (field.value.length > maxlimit) // if too long...trim it!
@@ -22,6 +31,8 @@ cntfield.value = maxlimit - field.value.length;
     <?php } else { ?>
     <script type="text/javascript" src="<?=BASEPATH?>/js/comment.js"></script>
     <?php } ?>
+    
+    <?php if(empty($row_user)){?>
     <script>
     
      $(document).ready(function() {
@@ -71,7 +82,7 @@ $('input, :input').attr('autocomplete', 'off');
                     }
 					if(len==5)
 					{
-					  $("#searchResult").append("<li><a href='<?=BASEPATH?>/search/?s="+search+"'><div class='see-result'>See all Result</div></li>");
+					  $("#searchResult").append("<li><a href='<?=BASEPATH?>/search/?s="+search+"'><div class='see-result'>See all Results</div></li>");
 					  }
 
                 }
@@ -87,6 +98,7 @@ $('input, :input').attr('autocomplete', 'off');
  });
  
  </script>
+ <?php } else {?>
  <script>
     
      $(document).ready(function() {
@@ -110,7 +122,7 @@ $('input, :input').attr('autocomplete', 'off');
             $.ajax({
                 url: '<?=BASEPATH?>/ajax/search_user.php',
                 type: 'post',
-                data: {user_name:search},
+                data: {user_name:search, self_id:<?=$row_user->user_id?>},
                 dataType: 'json',
                 success:function(response){
                
@@ -136,7 +148,7 @@ $('input, :input').attr('autocomplete', 'off');
                     }
 					if(len==5)
 					{
-					  $("#searchResult").append("<li><a href='<?=BASEPATH?>/search/?s="+search+"'><div class='see-result'>See all Result</div></li>");
+					  $("#searchResult").append("<li><a href='<?=BASEPATH?>/search/?s="+search+"'><div class='see-result'>See all Results</div></li>");
 					  }
 
                 }
@@ -152,6 +164,7 @@ $('input, :input').attr('autocomplete', 'off');
  });
  
  </script>
+ <?php } ?>
  
  <script>
     

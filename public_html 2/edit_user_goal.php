@@ -68,32 +68,52 @@ else
  
  
  }
- if($_GET[msg]==1)
+
+if($_GET[msg]==1)
 {
-$msg = "<span style='color:green;font-weight:bold; margin-bottom:10px;'>Added Successfully</span>";
-$error_type = "success";
-	$sign = "fa-check";
- }
+  $msg = "Goal added successfully.";
+  $error_type = "success";
+}
 
 if($_GET[msg]=="update")
 {
-$msg = "<span style='color:green;font-weight:bold; margin-bottom:10px;'>Updated Successfully</span>";
-$error_type = "success";
-	$sign = "fa-check";
- } 
+  $msg = "Goal updated successfully.";
+  $error_type = "success";
+}
+if($_GET[msg]=="deleted")
+{
+  $msg = "Goal deleted successfully.";
+  $error_type = "success";
+}
+
  
  if($_GET['id'])
 {
 	$id=$_GET['id'];
 	
-	$sql="DELETE FROM ".$table_name." WHERE ".$table_id."='$id'";
-	$res=$db_query->runQuery($sql);
+	$sql="DELETE FROM ".$table_name." WHERE ".$table_id."='$id' and user_id='$row_user->user_id'";
+	$res=$db_query->Query($sql);
 	if($res)
 	{
-		$msg='Record Deleted Sucessfully';
-		header("location:".$view_page);
+		header("location:".$view_page."?msg=deleted");
 	}
 }
+
+if($_GET['deleteall']){
+  $sql="DELETE FROM ".$table_name." WHERE user_id='$row_user->user_id'";
+  $res=$db_query->Query($sql);
+  $goal_type = $_REQUEST['goal_type'];
+  if ($goal_type == 'community'){
+    $db_query->Query("update impact_user set goal_type='earning' where user_id='$row_user->user_id'");
+  }else {
+    $db_query->Query("update impact_user set goal_type='community' where user_id='$row_user->user_id'");
+  }
+  if($res)
+  {
+    header("location:".$view_page."?msg=deleted");
+  } 
+}
+
  $sql_goal_check = $db_query->fetch_object("select count(*) c from impact_goal where user_id='$row_user->user_id'");   
 
 ?>
@@ -102,6 +122,7 @@ $error_type = "success";
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -138,7 +159,7 @@ $error_type = "success";
 	</style>
 </head>
 
-<body>
+<body class="body-bg">
 <div id="wrapper" style="background-image:url(<?=BASEPATH?>/images/setting-back.jpg); ">
 <?php include('include/header.php'); ?>
 
@@ -146,8 +167,7 @@ $error_type = "success";
   <div class="content grid_12" >
    
     <div class="project-detail">
-      <div class="project-tab-detail tabbable accordion edit-about">
-      <?php if(isset($msg)){?> <div  id="err_msg"><?=$msg?></div> <?php } ?>
+      <div class="project-tab-detail tabbable accordion edit-about">      
        <?php include('include/user_menu.php');?>
         
         
@@ -160,16 +180,16 @@ $error_type = "success";
             
              <h2 class="excited">What would you like to work toward with your supporters?</h2>
                 <p class="goal">Goals are the best way to get supporters excited about the next big step of your creative journey. Paint a picture of what you'll work towards together.</p>
-                <p class="goal" style="color: black;font-weight: 900;">What type of goal are you working towards?</p>
+                <h3 class="goal" style="font-weight: 600;">What type of goal are you working towards?</h3>
                 <p class="goal">You can change your mind at any time. You'll keep your supporter earnings regardless of hitting your goals.</p>
                 <div class="row-item clearfix" style="position: relative;top: 50px;">
                   <div class="val">
                     <form action="<?=$_SERVER['PHP_SELF']?>" name="myForm"  method="post" enctype="multipart/form-data" id="myForm">
-                    <label style="font-size: 16px;    margin: -18px 0 41px 25px;">
+                      <label style="font-size: 16px;    margin: -18px 0 41px 25px;">
                     <p style="color:#3a9cb5">Earnings-based goals</p>
                     <br>
-                    <p><input type="radio" value="earning" name="goal_type"<?php if($row_user->goal_type=="earning"){?> checked<?php } ?> id="goal_type">&nbsp;Your goals are based on how much you earn on supporter"</p>
-                    <p>"When I reach ₹ 500 per month, I'll start a special podcast series where I interview 1 supporter every month.</p>
+                    <p class="goal-radio-text"><input type="radio" value="earning" name="goal_type"<?php if($row_user->goal_type=="earning"){?> checked<?php } ?> id="goal_type_earning">&nbsp;Your goals are based on how much you earn</p>
+                    <p class="goal-radio-text">"When I reach ₹50000 per month, I'll start a special monthly giveaway contest for my supporters.</p>
                     </label>
                     <br>
                    
@@ -177,8 +197,8 @@ $error_type = "success";
                     <label style="font-size: 16px;    margin: -18px 0 0px 25px;">
                     <p style="color:#3a9cb5">Community-based goals</p>
                     <br>
-                    <p><input type="radio" value="community" name="goal_type"<?php if($row_user->goal_type=="community"){?> checked<?php } ?> id="goal_type">&nbsp; Your goals are based on how many supporters you have on Impact. </p>
-                    <p>"When I reach 500 supporter, I'll hire an editor to help me release 2 videos per week instead of 1."</p>
+                    <p class="goal-radio-text"><input type="radio" value="community" name="goal_type"<?php if($row_user->goal_type=="community"){?> checked<?php } ?> id="goal_type_community">&nbsp; Your goals are based on how many supporters you have on ImpactMe. </p>
+                    <p class="goal-radio-text">"When I reach 500 supporters, I'll hire an editor to help me release 2 videos per week instead of 1."</p>
                     </label>
                   
                 
@@ -191,20 +211,20 @@ $error_type = "success";
                   <div class="row-item clearfix" id="goal" <?php if($row_user->goal_type=="community" || $row_user->goal_type==""){?> style="display:none"<?php } ?>>
                     <label class="lbl" for="txt_location">Goal Earning Amount:</label>
                     <div class="val">
-                      <input class="txt" type="text" name="goal_price" id="goal_price" value="<?=(isset($_REQUEST['goal_price'])) ? $_REQUEST['goal_price']:'0';?>" onKeyPress="JavaScript: return keyRestrict(event,'0123456789.');"  >
+                      <input class="txt" type="text" name="goal_price" id="goal_price" value="<?=(isset($_REQUEST['goal_price'])) ? $_REQUEST['goal_price']:'0';?>" onKeyPress="JavaScript: return keyRestrict(event,'0123456789');"  >
                     </div>
                   </div>
                  
                    <div class="row-item clearfix" id="patron" <?php if($row_user->goal_type=="earning" || $row_user->goal_type==""){?> style="display:none"<?php } ?>>
-                    <label class="lbl" for="txt_location">Number Of Patrons:</label>
+                    <label class="lbl" for="txt_location">Number Of Supporters:</label>
                     <div class="val">
-                      <input class="txt" type="text" name="patron_number" id="patron_number" value="<?=(isset($_REQUEST['patron_number'])) ? $_REQUEST['patron_number']:'0';?>" onKeyPress="JavaScript: return keyRestrict(event,'0123456789.');"  >
+                      <input class="txt" type="text" name="patron_number" id="patron_number" value="<?=(isset($_REQUEST['patron_number'])) ? $_REQUEST['patron_number']:'0';?>" onKeyPress="JavaScript: return keyRestrict(event,'0123456789');"  >
                     </div>
                   </div>
                  
                   
                   
-                  <div class="row-item clearfix">
+                  <div id="goal_description_div" class="row-item clearfix">
                     <label class="lbl" for="txt_time_zone">Description:</label>
                     <div class="val">
                      <textarea name="description" id="summary"  onKeyDown="textCounter(document.myForm.summary,document.myForm.text_count,300)"
@@ -219,7 +239,7 @@ onKeyUp="textCounter(document.myForm.summary,document.myForm.text_count,300)" cl
                   
                  <input type="hidden" name="setGoal" id="setGoal" value="<?=$row_user->goal_type?>">  
                      <input type="hidden" name="mode" value="add">  
-                    <button class="btn  btn-submit-all newtier" id="goal-submit">Submit</button>
+                    <button class="btn  btn-submit-all newtier" id="goal-submit">Add Goal</button>
                   
                   
 
@@ -252,7 +272,7 @@ onKeyUp="textCounter(document.myForm.summary,document.myForm.text_count,300)" cl
         
         <div class="col-md-12 " style="padding:0; background-color:#fff;">
             
-            <h3 style="text-align:center;font-weight: 700;">Manage Your Goal</h3>
+            <h3 style="text-align:center;font-weight: 700;">Manage Your Goals</h3>
               <?php $sql_tier = $db_query->runQuery("select * from ".$table_name." where user_id='$row_user->user_id'");
 			  foreach($sql_tier as $row_tier)
 			  {?>
@@ -261,7 +281,7 @@ onKeyUp="textCounter(document.myForm.summary,document.myForm.text_count,300)" cl
                       <?=($row_tier['goal_type']=='earning')?'Earnings Based Goals':'Community Based Goals'?>
                     </h3>
                 <?php if($row_tier['goal_type']=='earning') { ?>
-              <h2 class="doller-become"><?=$row_tier['goal_price']?> INR</h2>
+              <h2 class="doller-become">₹<?=$row_tier['goal_price']?></h2>
               <?php } else { ?>
               
               <h2 class="doller-become"><?=$row_tier['patron_number']?></h2>
@@ -291,62 +311,147 @@ onKeyUp="textCounter(document.myForm.summary,document.myForm.text_count,300)" cl
 
 
 </div>
+
+<?php if(isset($msg)){?>
+    <div class="fixed-top d-flex justify-content-center">
+    <div class="alert alert-<?=$error_type?> fade in" style="width:fit-content; margin-top:67px;" role="alert" id="save-success-alert">
+      <?=$msg?>
+    </div>
+    </div>
+    <?php } ?>
+
+<div class="modal fade" id="modalConfirmDel" tabindex="-1" role="dialog" aria-labelledby="modalConfirmDelLabel" aria-hidden="true">
+<div class="modal-dialog" role="document" style="width:400px;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modalConfirmDelLabel">Confirm delete goal?</h5>
+    </div>
+    <div id="modalConfirmDelBody" class="modal-body">This operation cannot be undone. Do you wish to continue?
+      <input type="hidden" name="modal_goal_id" id="modal_goal_id" value="0"/>
+    </div>
+    <div class="modal-footer">
+      <button id="confirm-del-no" type="button" class="btn btn-primary" style="color:#fff;" data-dismiss="modal">No</button>
+      <button id="confirm-del-yes" type="button" class="btn btn-secondary" style="color:#fff;">Yes</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="modalConfirmChange" tabindex="-1" role="dialog" aria-labelledby="modalConfirmChangeLabel" aria-hidden="true">
+<div class="modal-dialog" role="document" style="width:400px;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modalConfirmChangeLabel">Change goal type?</h5>
+    </div>
+    <div id="modalConfirmChangeBody" class="modal-body">You can only have either Earnings-based goals OR Community-based goals, not both. Changing goal type requires all existing goals to be deleted. Do you wish to continue?
+    </div>
+    <div class="modal-footer">
+      <button id="confirm-change-no" type="button" class="btn btn-primary" style="color:#fff;" data-dismiss="modal">No</button>
+      <button id="confirm-change-yes" type="button" class="btn btn-secondary" style="color:#fff;">Yes</button>
+    </div>
+  </div>
+</div>
+</div>
+
 <?php include('include/footer.php');
 include('include/footer_js.php');?>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
  <script language="JavaScript" >
 function deldata(id)
 {
-	if(confirm("Do you want to delete?"))
-	{
-		window.location.href="<?=$view_page?>?id="+id;
-	}
+  $("#modalConfirmDel").modal('show');
+  $("#modal_goal_id").val(id);
 }
+
+$('#confirm-del-yes').click(function () {
+  window.location.href="<?=$view_page?>?id="+$("#modal_goal_id").val();
+});
 </script>
 </div>
 
 <script type="text/javascript">
   $(document).ready(function() {
-   setTimeout(function(){ $("#err_msg").fadeOut(); }, 3000);
-   
-   
-	
-	$('#myForm input[type="radio"]').click(function(){
+    //dismiss alert if shown
+    setTimeout(function () {
+      $("#save-success-alert").alert('close');
+    }, 4000);
 
+    var setGoal = $("#setGoal").val();
+    if(setGoal=="earning")
+      {
+        $("#goal").css("display","block");
+        $("#patron").css("display","none");
+        $("#goal_description_div").css("display","block");
+      }
+      else if(setGoal=="community" )  
+      {
+         $("#goal").css("display","none");
+        $("#patron").css("display","block");
+        $("#goal_description_div").css("display","block");
+        
+      }
+      else
+        {
+        $("#goal").css("display","none");
+        $("#patron").css("display","none");
+        $("#goal_description_div").css("display","none");
+
+      }
+
+
+	$('#myForm input[type="radio"]').click(function(){
+    
         var goal_type = $(this).val();
 	    var setGoal = $("#setGoal").val();
+      console.log(goal_type+", "+setGoal);
         if(setGoal!="")
 		{
 		
 			if(setGoal!==goal_type)
 			{
-			
+
+        $('#modalConfirmChange').modal('show');
+      }
+    }
+		/*	
 			  confirm("Do you want to change Goal Type? \nAll existing goal will be deleted.");
 			}
 		}
-		
+		*/
 		
 			if(goal_type=="earning")
 			{
 			  $("#goal").css("display","block");
 			  $("#patron").css("display","none");
+        $("#goal_description_div").css("display","block");
 			}
 			else if(goal_type=="community" )  
 			{
 			   $("#goal").css("display","none");
 			  $("#patron").css("display","block");
+        $("#goal_description_div").css("display","block");
 			  
 			}
 			else
 		    {
 			  $("#goal").css("display","none");
 			  $("#patron").css("display","none");
+        $("#goal_description_div").css("display","none");
+
 			}
-		
 });
 
+  $('#modalConfirmChange').on('hide.bs.modal', function(){
+      $('#goal_type_'+$('#setGoal').val()).trigger('click');
 
   });
+
+  $('#confirm-change-yes').click(function(){
+    window.location.href="<?=$view_page?>?deleteall=1&goal_type="+$('#setGoal').val();
+  });
+
+});
  
 </script>
 

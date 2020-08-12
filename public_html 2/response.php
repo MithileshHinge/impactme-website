@@ -31,11 +31,15 @@ $success = false;
 
 $error = "Payment Failed";
 
-if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id']) === false)
+$ids = $db_query->get_ids_sql($row_user->user_id);
+
+if (empty($_POST['razorpay_payment_id']) == false and empty($_REQUEST['tier_id']) == false)
 {
-    $tier_id = $_REQUEST['tier_id'];
-    $row_payment = end($db_query->runQuery("select * from impact_payment where user_id=".$row_user->user_id." and tier_id=".$tier_id." and status='created'"));
-    $subscription_id = $row_payment["subscription_id"];
+  $tier_id = $_REQUEST['tier_id'];
+  $row_payment = end($db_query->runQuery("select * from impact_payment where user_id in $ids and tier_id=".$tier_id." and subscription_id='".$_POST['razorpay_subscription_id']."' and status='created' limit 1"));
+
+  if (!empty($row_payment) && !empty($row_payment["subscription_id"])){
+        $subscription_id = $row_payment["subscription_id"];
 
     
         // Please note that the razorpay order ID must
@@ -54,14 +58,8 @@ if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id'
         
         if ($expectedSignature === $_POST['razorpay_signature']){
             $success = true;
-            $creator = $db_query->creator_check($row_user->email_id);
-            $fan = $db_query->fan_check($row_user->email_id);
 
-            if (!empty($creator) and !empty($creator->user_id)){
-              $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'],  'status' => 'authenticated'), "(user_id=".$fan->user_id." or user_id=".$creator->user_id.") and tier_id=".$tier_id." and status='created'");
-            }else{
-              $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'],  'status' => 'authenticated'), "user_id=".$fan->user_id." and tier_id=".$tier_id." and status='created'");
-            }
+            $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'],  'status' => 'authenticated'), "user_id in $ids and tier_id=".$tier_id." and subscription_id='".$subscription_id."' and status='created'");
             //$db_query->Query("update impact_payment set status='authenticated', paid_timestamp = ".strtotime("now").", transaction_id='".$_POST['razorpay_payment_id']."' where ");
             $response_message = "Payment successful";
 
@@ -82,17 +80,19 @@ if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id'
             $success = false;
             $error = "Invalid signature";
             $response_message = "Payment failed";
-            $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'status' => 'authentication fail'), "user_id=".$row_user->user_id." and tier_id=".$tier_id." and status='created'");   
+            $db->updateArray("impact_payment", array('transaction_id' => $_POST['razorpay_payment_id'], 'status' => 'authentication fail'), "user_id in $ids and subscription_id='".$subscription_id."' tier_id=".$tier_id." and status='created'");   
         }
+      }
 }else if (isset($_POST['upgrade']) and $_POST['upgrade'] == "1" and isset($_POST['tier_id']) and isset($_POST['tier_id_old'])) {
     $tier_id = $_REQUEST['tier_id'];
     $api = new Api($razorpay_id, $razorpay_secret);
     $row_tier = $db_query->fetch_object("select * from impact_tier where tier_id = '".$tier_id."'");
-    $row_subscription_old = $db_query->fetch_object("select * from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$row_tier->user_id."' and tier_id='".$_POST['tier_id_old']."' and (status='authenticated' or status='active')");
+    $row_pay_user = $db_query->fetch_object("select * from impact_user where user_id='$row_tier->user_id'");
+    $row_subscription_old = $db_query->fetch_object("select * from impact_payment where user_id in $ids and creator_id='".$row_tier->user_id."' and tier_id='".$_POST['tier_id_old']."' and (status='authenticated' or status='active')");
     $subscription_old = $api->subscription->fetch($row_subscription_old->subscription_id);
     if ($row_subscription_old->paid_amount < $row_tier->tier_price){
         // Upgrade subscription
-        $subscription_new = $subscription_old->update(array('plan_id' => $row_tier->plan_id));
+        $subscription_new = $subscription_old->update(array('plan_id' => $row_tier->plan_id, 'schedule_change_at' => 'now'));
         $success = true;
         $response_message = "Upgrade request sent: You will be notified shortly";
       }else {
@@ -104,7 +104,7 @@ if (empty($_POST['razorpay_payment_id']) === false and empty($_REQUEST['tier_id'
     $success = false;
     $error = "Invalid signature 0x07";
     $response_message = "Payment failed";
-    $db->updateArray("impact_payment", array('status' => 'authentication fail'), "user_id=".$row_user->user_id." and tier_id=".$tier_id." and status='created'");   
+    $db->updateArray("impact_payment", array('status' => 'authentication fail'), "user_id in $ids and tier_id=".$tier_id." and subscription_id='".$_POST['razorpay_subscription_id']."' and status='created'");   
 }
 
 /*
@@ -177,6 +177,7 @@ if($sql_check->c>0)
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -202,6 +203,15 @@ if($sql_check->c>0)
 <meta name="twitter:description" content="<?=$sql_web->meta_description?>" />
 <meta name="twitter:image" content="<?=IMAGEPATH.$row_user->image_path?>" />
 
+<?php if (!empty($row_pay_user)){
+    if (!empty($row_pay_user->slug)){
+      $creator_profile_link = "/profile/".$row_pay_user->slug;
+    }else{
+      $creator_profile_link = "/profile/u/".$row_pay_user->user_id;
+    }
+?>
+<meta http-equiv="refresh" content="10;url=<?=BASEPATH.$creator_profile_link?>"/>
+<?php } ?>
 
     <?php include('include/titlebar.php'); ?>
     <style>
@@ -227,11 +237,10 @@ if($sql_check->c>0)
         
         <div class="tab-content">
           <div>
-            <h3 class="rs alternate-tab accordion-label">Payment</h3>
             <div class="tab-pane accordion-content active">
               <div class="form form-profile">
            
-                <h4><?=$response_message?><? //=$xml['VERIFIED']?></h4>
+                <h3><?=$response_message?><? //=$xml['VERIFIED']?></h3>
                <? //=print_r($_POST);?>
                <?php if($success === false) {?>
                <h4><?=$error?></h4><br>
@@ -242,7 +251,19 @@ if($sql_check->c>0)
                  <h4>Date: <?=date('Y-m-d') /*.",  ".$expectedSignature*/?></h4>
                   <h4>Creator : <?=$_POST["creator_name"]?></h4>
                    <h4>Amount: <?=$row_payment["paid_amount"]?></h4>
-<br>
+                <br>
+                <h4 id="timeLeft">You will automatically be redirected to the creator's profile in 10 seconds...</h4>
+                <script type="text/javascript">
+                  var timeleft = 10;
+                  var countdownTimer = setInterval(function(){
+                    if(timeleft < 0){
+                      clearInterval(downloadTimer);
+                    } else {
+                      document.getElementById("timeLeft").innerHTML = "You will automatically be redirected to the creator's profile in "+timeleft+" seconds...";
+                    }
+                    timeleft -= 1;
+                  }, 1000);
+                </script>
    <? //=print_r($xml);?>
             
               </div>

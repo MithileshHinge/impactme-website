@@ -11,8 +11,8 @@ define("PAGINATION",5);
 
 $token="";
 ##### FB App Configuration #####
-$fbappid = "411121872866105"; 
-$fbappsecret = "c8ceb0e9e4be0c27ef5a005819b5cb40"; 
+$fbappid = "291559185478909"; 
+$fbappsecret = "e723bef674d985a98b2d3dff0129d0ee"; 
 //$redirectURL = "http://impactme.in/demo/authenticate.php"; 
 $redirectURL = BASEPATH."/authenticate.php"; 
 $redirectURLGoogle = BASEPATH."/authenticate_google.php"; 
@@ -20,8 +20,8 @@ $fbPermissions = ['email'];
 
 
 
-$googleappid = "491092358088-mljc2efpbv1r4fo0soj76hl0t85h1l7i.apps.googleusercontent.com"; 
-$googleappsecret = "i6xqSNxJsECySBvhGMwZJObk"; 
+$googleappid = "138901300177-b1mnjf3cg1n4j1nnec9ddq78cb693nam.apps.googleusercontent.com"; 
+$googleappsecret = "4Ly1yN2or6Exezddr-tHMKkW"; 
 $atom_active = 0;
 
 if($atom_active ==0)
@@ -48,7 +48,7 @@ $atom_payment_hash_request_key = "f594716d32a09f3a1b"; // f594716d32a09f3a1b
 $atom_payment_hash_response_key = "3cca0d08d9e7ab503c"; // 3cca0d08d9e7ab503c
 }
 
-$razorpay_live = 0;
+$razorpay_live = 1;
 
 if($razorpay_live == 1){
 	$razorpay_id = "rzp_live_2Q0Lnuw3Zqk6xL";

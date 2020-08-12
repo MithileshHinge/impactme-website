@@ -26,7 +26,6 @@ $sql_check_slug = $db_query->fetch_object("select count(*) c, i.* from impact_us
 if($sql_check_slug->c>0)
 {
   $update = $db_query->runQuery("update impact_user set hash_active='Y', status=1 where hash='$hash' and user_type='$utype' and hash_active='N'");
-  $db_query->welcome_email($sql_check_slug->email_id, EMAIL_FROM, $mail);
   if($reg_type=="creator")
   {
      $_SESSION['is_user_login'] = 1;
@@ -53,6 +52,7 @@ else
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />

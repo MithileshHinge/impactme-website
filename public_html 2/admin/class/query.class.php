@@ -5,6 +5,20 @@ function redirect($page)
 {
  header("location:".$page);	
 }
+
+
+function random_bytes($length = 6)
+{
+    $characters = '0123456789';
+    $characters_length = strlen($characters);
+    $output = '';
+    for ($i = 0; $i < $length; $i++)
+        $output .= $characters[rand(0, $characters_length - 1)];
+
+    return $output;
+}
+
+
 function currency_code($val)
 {
  if($val=="EUR")
@@ -264,6 +278,83 @@ function send_forget_mail($email_id)
   }
 
 return $msg;
+}
+
+function send_password_reset_link($email_id, $mail)
+{
+  if (empty($email_id)) return false;
+
+  $logo_path ="https://www.impactme.in/images/logo/6311445511578056086yo2.png";
+  $name = "ImpactMe Team";
+  $email_subject = "ImpactMe | Password reset link";
+  $token = bin2hex($this->random_bytes(36));
+  $reset_link = BASEPATH."/password-change?id=".$email_id."&token=".$token;
+
+  $message = '
+  <table class="table" width="100%" cellspacing="0" cellpadding="0" align="center">
+  <tbody>
+  <tr>
+  <td valign="middle" width="465" height="50">
+  <div align="center"><a href="https://www.impactme.in" target="_blank" rel="noopener"><img src="'.$logo_path.'" /></a></div>
+  </td>
+  </tr>
+  </tbody>
+  </table>
+  <fieldset>
+  <table class="table" style="font-family: "Montserrat", sans-serif;" width="100%" cellspacing="0" cellpadding="0" align="center">
+  <tbody>
+  <tr>
+  <td>
+  <h2 style="text-align: center; color: #14181b;">Password reset link</h2>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <p style="text-align: center; color: #455058;">Please click on the link below to reset your password. This link is valid for only one hour.</p>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div style="margin-top: 34px; margin-bottom: 34px;" align="center"><a style="background-color: #3a9cb5; font-size: 16px; font-weight: 300; color: #f2f5fa; text-decoration: none; padding: 14px;" href="'.$reset_link.'" target="_blank" rel="noopener">Reset password</a></div>
+  </td>
+  </tr>
+  </tbody>
+  </table>
+  </fieldset>';
+
+
+  $Email_msg = $message;
+  $Email_msg2 = str_replace("\n", "", $Email_msg);;
+  $Email_to =$email_id ;
+
+  $mail->From     = EMAIL_FROM;
+  $mail->FromName = $name;
+  $mail->AddAddress($email_id); 
+
+  $mail->WordWrap = 50;                              // set word wrap
+  $mail->IsHTML(true);                               // send as HTML
+
+  $mail->Subject  =  $email_subject;
+  $mail->Body     =  $Email_msg2;
+  $mail->AltBody  =  $Email_msg;
+
+  if(!$mail->Send()){
+  //if(!mail($email_id, $email_subject, $message, "From:".EMAIL_FROM."\r\nContent-Type: text/html; charset=UTF-8\r\n"))
+     echo "Message was not sent <p>";
+     $fpmailerr = $fopen("mailerr.txt", 'w');
+     fwrite($fpmailerr, var_dump($mail).'\n');
+     fwrite($fpmailerr, $mail->ErrorInfo);
+     fclose($fpmailerr);
+     echo "Mailer Error: " . $mail->ErrorInfo;
+     $msg= "<span style='color:red'>Try Again.......</span>";
+     return false;
+    // exit;
+  }
+  else
+  {
+    $this->Query("insert into password_reset (email, token) values('$email_id', '$token')");
+    return true;
+  }
 }
 
 
@@ -739,6 +830,28 @@ function image_type($field_name)
  return $errors;	
 	
 }
+
+function croppie_upload($data, $target_path = ''){
+
+  //file name setup
+  $fileName = rand().time().'.png';
+
+  //upload image path
+  $upload_image_name = $fileName;
+  $upload_image = $target_path.$upload_image_name;
+  
+  //upload image
+  if(file_put_contents($upload_image, $data))
+  {
+    return $upload_image_name;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+
 function cwUpload($field_name = '', $target_folder = '', $file_name = '', $thumb = FALSE, $thumb_folder = '', $thumb_width = '', $thumb_height = '',$file_save_name){
 	//folder path setup
 	$target_path = $target_folder;
@@ -897,15 +1010,32 @@ if ($err) {
 
 
 }
+
+function startsWith($string, $prefix) {
+   return substr($string, 0, strlen($prefix)) == $prefix;
+}
+
+function endsWith( $haystack, $needle ) {
+    $length = strlen( $needle );
+    if( !$length ) {
+        return true;
+    }
+    return substr( $haystack, -$length ) === $needle;
+}
+
+
 function getYoutubeImage($e){
         //GET THE URL
         $url = $e;
 
-        $queryString = parse_url($url, PHP_URL_QUERY);
+        preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match);
+        $v = $match[1];
 
-        parse_str($queryString, $params);
+        //$queryString = parse_url($url, PHP_URL_QUERY);
 
-        $v = $params['v'];  
+        //parse_str($queryString, $params);
+
+        //$v = $params['v'];  
         //DISPLAY THE IMAGE
 		//$thumb1 = file_get_contents("http://img.youtube.com/vi/$vidID/0.jpg");
 //$thumb2 = file_get_contents("http://img.youtube.com/vi/$vidID/1.jpg");
@@ -916,7 +1046,7 @@ function getYoutubeImage($e){
 //http://img.youtube.com/vi/VideoID/mqdefault.jpg
 //http://img.youtube.com/vi/VideoID/sddefault.jpg
         if(strlen($v)>0){
-            echo "http://img.youtube.com/vi/$v/mqdefault.jpg";
+            return "https://img.youtube.com/vi/$v/mqdefault.jpg";
         }
     }
 	
@@ -972,26 +1102,52 @@ function notification_msg($email_id){
 function welcome_email($email_id, $email_from , $mail)
 {
  $sql_web = $this->fetch_object("select email_id,site_url,site_name,image_path from web_settings where web_id=1");  
- $logo_path ="https://www.impactme.in/demo/logo.png";
+ $logo_path ="https://www.impactme.in/images/logo/6311445511578056086yo2.png";
  
-  $name = "ImpactMe";
+  $name = "ImpactMe Team";
 
 $email_subject = "Welcome To ImpactMe" ;
 
 $message = '
 <table width="100%"  class="table" cellpadding="0" cellspacing="0" align="center">
-<tr>
-    <td width="465" height="50" valign="middle"><div align="center"><a href="https://www.impactme.in" target="_blank"><img src="'.$logo_path.'" ></a></div></td>
-</tr>
-</table>
-<fieldset>
-<table>
-<tr><td><h2 style="text-align:center">Welcome to ImpactMe</h2></td></tr>
-<tr><td><p style="text-align:left;">Let us be the first to say how excited we are to welcome you to ImpactMe! You have a whole team behind you at ImpactMe HQ dedicated to helping you build a membership business that allows you to create on your own terms. </p></td></tr>
-<tr><td></td></tr>
-<tr><td>Best Regards,</td></tr>
-<tr><td>ImpactMe Team</td></tr>
-</table></fieldset>' ;
+  <tbody>
+    <tr>
+      <td width="465" height="50" valign="middle">
+        <div align="center">
+          <a href="https://www.impactme.in" target="_blank">
+            <img src="'.$logo_path.'" >
+            </a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <fieldset>
+    <table class="table" style="font-family: "Montserrat", sans-serif;" width="100%" cellspacing="0" cellpadding="0" align="center">
+      <tbody>
+        <tr>
+          <td>
+            <h2 style="text-align: center; color: #374854; font-weight:400; font-size:21px;">Welcome to ImpactMe</h2>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p style="text-align: left; color: #455058;">Let us be the first to say how excited we are to welcome you onboard! You have a whole team behind you at ImpactMe HQ dedicated to helping you build a membership business that allows you to create on your own terms. </p>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+        </tr>
+        <tr>
+          <td><p style="text-align: left; color: #455058;">Best Regards,</p></td>
+        </tr>
+        <tr>
+          <td><p style="text-align: left; color: #455058;">ImpactMe Team</p></td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>' ;
 
 
 $Email_msg = $message;
@@ -1050,7 +1206,7 @@ $message = '
 <tbody>
 <tr>
 <td>
-<h2 style="text-align: center; color: #14181b;">Request Email Confirmation</h2>
+<h2 style="text-align: center; color: #374854; font-weight:400; font-size:21px;">Request Email Confirmation</h2>
 </td>
 </tr>
 <tr>
@@ -1086,8 +1242,8 @@ $mail->AltBody  =  $Email_msg;
 if(!$mail->Send()){
 //if(!mail($email_id, $email_subject, $message, "From:".EMAIL_FROM."\r\nContent-Type: text/html; charset=UTF-8\r\n"))
    echo "Message was not sent <p>";
-   $fpmailerr = $fopen("mailerr.txt", 'w');
-   fwrite($fpmailerr, var_dump($mail).'\n');
+   $fpmailerr = fopen("mailerr.txt", 'w');
+   fwrite($fpmailerr, print_r($mail).'\n');
    fwrite($fpmailerr, $mail->ErrorInfo);
    fclose($fpmailerr);
    echo "Mailer Error: " . $mail->ErrorInfo;
@@ -1197,19 +1353,19 @@ else
 	 if($row_post->post_type=="image")
 	 { 
 		$post_image = IMAGEPATH.$row_post->image_path;
-		$image_div = '<img src="'.$post_image.'" >';
+		$image_div = '<img src="'.$post_image.'" style="width:100%; height:'.$height.'">';
 	 }
 	 else if($row_post->post_type=="video")
 	 {
 		if($row_post->video_type=="video") 
 		{
 		  $post_image = $this->getYoutubeImage($row_post->video_link);
-		  $image_div = '<img src="'.$post_image.'" >';
+		  $image_div = '<img src="'.$post_image.'" style="width:100%; height:'.$height.'">';
 	    }
 		else
 		{
 			$post_image = IMAGEPATH.$row_post->video_path;
-			$image_div = '<video width="100%" height="'.$height.'" controls>
+			$image_div = '<video width="100%" height="'.$height.'" controls controlsList="nodownload">
 						  <source src="'.$post_image.'" type="video/mp4">
 						  <source src="'.$post_image.'" type="video/ogg">
 						  Your browser does not support the video tag.
@@ -1249,7 +1405,7 @@ else
 		else
 		{
 			$post_image = IMAGEPATH.$row_post->video_path;
-			$image_div = '<video width="100%" height="'.$height.'" controls>
+			$image_div = '<video width="100%" height="'.$height.'" controls controlsList="nodownload">
 						  <source src="'.$post_image.'" type="video/mp4">
 						  <source src="'.$post_image.'" type="video/ogg">
 						  Your browser does not support the video tag.
@@ -1270,6 +1426,11 @@ else
  
  function getImageUnlockDiv($post_id, $user_id=0, $page_link = '' , $user_log_id=0)
  {
+   if (!empty($user_log_id))
+    $ids = $this->get_ids_sql($user_log_id);
+   else
+    $ids = '(0)';
+
 	 $sql = "select * from impact_post where post_id='".$post_id."'";
 	 $row_post = $this->fetch_object($sql);
 	 if($user_id == $user_log_id){
@@ -1284,10 +1445,11 @@ else
 	 }
 	 else if($row_post->price_type=="tier") 
 	 {
-		 $sql_check = $this->fetch_object("select count(*) c from impact_join where user_id = '".$user_log_id."' and tier_id = '".$row_post->tier_id."' and creator_id='".$user_id."'");
+		 //$sql_check = $this->fetch_object("select count(*) c from impact_join where user_id in $ids and tier_id = '".$row_post->tier_id."' and creator_id='".$user_id."'");
+    $sql_check = $this->fetch_object("SELECT COUNT(*) c FROM impact_payment WHERE user_id IN $ids AND $tier_id='".$row_post->tier_id."' AND creator_id='".$user_id."' AND (status='active' OR status='authenticated')");
 		 if($sql_check->c==0) {
  
-		$sql_check_tier =  $this->fetch_object("select ifnull(max(tier_price),0) p from impact_join where user_id = '".$user_log_id."' and creator_id='".$user_id."'");
+		$sql_check_tier =  $this->fetch_object("SELECT paid_amount p from impact_payment where user_id in $ids and creator_id='".$user_id."' and (status='active' OR status='authenticated')");
 		 
 		 $sql_tier = $this->fetch_object("select tier_price price from impact_tier where tier_id = '".$row_post->tier_id."'");
 		 
@@ -1316,7 +1478,7 @@ else
 	 
 	  else if($row_post->price_type=="one_time") 
 	 {
-		 $sql_check = $this->fetch_object("select count(*) c from impact_pay_onetime where user_id = '".$user_log_id."' and post_id = '".$post_id."' and status='success'");
+		 $sql_check = $this->fetch_object("select count(*) c from impact_pay_onetime where user_id in $ids and post_id = '".$post_id."' and status='success'");
 		 if($sql_check->c>0) 
 		 {
 			 $html =  '<div class="editor-content">'.$this->getPostImageDiv($row_post->post_id, 350).'</div>';  	 
@@ -1342,6 +1504,9 @@ else
   function getImageUnlockDivStatus($post_id, $user_id=0, $page_link = '' , $user_log_id=0)
  {
   $show = 0;
+
+  $ids = $this->get_ids_sql($user_log_id);
+
 	 $sql = "select * from impact_post where post_id='".$post_id."'";
 	 $row_post = $this->fetch_object($sql);
 	 if($user_id == $user_log_id) {
@@ -1355,10 +1520,11 @@ else
 	 }
 	 else if($row_post->price_type=="tier") 
 	 {
-		 $sql_check = $this->fetch_object("select count(*) c from impact_join where user_id = '".$user_log_id."' and tier_id = '".$row_post->tier_id."' and creator_id='".$user_id."'");
+		 //$sql_check = $this->fetch_object("select count(*) c from impact_join where user_id = '".$user_log_id."' and tier_id = '".$row_post->tier_id."' and creator_id='".$user_id."'");
+    $sql_check = $this->fetch_object("SELECT COUNT(*) c FROM impact_payment WHERE user_id IN $ids AND $tier_id='".$row_post->tier_id."' AND creator_id='".$user_id."' AND (status='active' OR status='authenticated')");
 		 if($sql_check->c==0) {
  
-		$sql_check_tier =  $this->fetch_object("select ifnull(max(tier_price),0) p from impact_join where user_id = '".$user_log_id."' and creator_id='".$user_id."'");
+		$sql_check_tier =  $this->fetch_object("SELECT paid_amount p from impact_payment where user_id in $ids and creator_id='".$user_id."' and (status='active' OR status='authenticated')");
 		 
 		 $sql_tier = $this->fetch_object("select tier_price price from impact_tier where tier_id = '".$row_post->tier_id."'");
 		 
@@ -1379,7 +1545,7 @@ else
 	 
 	  else if($row_post->price_type=="one_time") 
 	 {
-		 $sql_check = $this->fetch_object("select count(*) c from impact_pay_onetime where user_id = '".$user_log_id."' and post_id = '".$post_id."'");
+		 $sql_check = $this->fetch_object("select count(*) c from impact_pay_onetime where user_id in $ids and post_id = '".$post_id."'");
 		 if($sql_check->c>0) 
 		 {
 			$show = 1; 	 
@@ -1402,16 +1568,16 @@ else
      $sql_fetch_post = $this->fetch_object("select u.impact_name name, p.user_id,p.post_id, p.post_title from impact_post p, impact_user u where u.user_id=p.user_id and p.post_id='$post_id'"); 
 if($notify_type=="Comment_add")
 	 {
-     $description = $sql_user->name . " Commented on your post ". $sql_fetch_post->post_title;
+     $description = $sql_user->name . " commented on your post \"". $sql_fetch_post->post_title."\"";
 	 }
 	 if($notify_type=="like")
 	 {
-     $description = $sql_user->name . " Like your post ". $sql_fetch_post->post_title;
+     $description = $sql_user->name . " liked your post \"". $sql_fetch_post->post_title."\"";
 	 }
 	 
 	 if($notify_type=="comment_like")
 	 {
-     $description = $sql_user->name . " Like your comment on". $sql_fetch_post->post_title;
+     $description = $sql_user->name . " liked your comment on \"". $sql_fetch_post->post_title."\"";
 	 }
 	 
 	 
@@ -1429,7 +1595,7 @@ if($notify_type=="Comment_add")
 	  
      $sql_fetch_post = $this->fetch_object("select u.impact_name name, p.user_id,p.post_id, p.post_title from impact_post p, impact_user u where u.user_id=p.user_id and p.post_id='$sql_comment->post_id'"); 
 
-     $description = $sql_user->name . " replied to you comment on post ". $sql_fetch_post->post_title;
+     $description = $sql_user->name . " replied to your comment on post \"". $sql_fetch_post->post_title."\"";
 	
 	 
 	 
@@ -1443,7 +1609,7 @@ if($notify_type=="Comment_add")
      $sql_fetch_post = $this->fetch_object("select u.impact_name name, p.user_id,p.tier_id, p.tier_name post_title, p.tier_price from impact_tier p, impact_user u where u.user_id=p.user_id and p.tier_id='$post_id'"); 
 if($notify_type=="payment")
 	 {
-     $description = $sql_user->name . " Paid ". $sql_fetch_post->tier_price." for your Tier ". $sql_fetch_post->post_title ;
+     $description = $sql_user->name . " paid ". $sql_fetch_post->tier_price." for your Pact \"". $sql_fetch_post->post_title."\"";
 	 }
 	
      $sql1 = "INSERT INTO impact_notification(user_id, from_user_id, tier_id, description, notify_date, notification_type) VALUES ('" . $sql_fetch_post->user_id . "','" . $from_user_id . "','" . $post_id . "','" . $description . "' ,'" . date('Y-m-d H:i:s') . "' ,'" . $notify_type . "')";
@@ -1457,7 +1623,7 @@ if($notify_type=="payment")
      $sql_fetch_post = $this->fetch_object("select u.impact_name name, p.user_id, p.post_title, p.one_time_amount price from impact_post p, impact_user u where u.user_id=p.user_id and p.post_id='$post_id'"); 
      if($notify_type=="payment_one_time")
 	 {
-     $description = $sql_user->name . " Paid ". $sql_fetch_post->price." for your One Time Post ". $sql_fetch_post->post_title ;
+     $description = $sql_user->name . " paid ". $sql_fetch_post->price." for your One Time Post \"". $sql_fetch_post->post_title ."\"";
 	 }
 	 
      $sql1 = "INSERT INTO impact_notification(user_id, from_user_id, post_id, description, notify_date, notification_type) VALUES ('" . $sql_fetch_post->user_id . "','" . $from_user_id . "','" . $post_id . "','" . $description . "' ,'" . date('Y-m-d H:i:s') . "' ,'" . $notify_type . "')";
@@ -1469,8 +1635,9 @@ if($notify_type=="payment")
 	 $sql_user = $this->fetch_object("select u.impact_name name  from  impact_user u where u.user_id='$from_user_id'"); 
      $sql_fetch_post = $this->fetch_object("select  p.user_id, p.post_title   from impact_post p where  p.post_id='$post_id'"); 
      
-     $description = $sql_user->name . " Added New Post ".$sql_fetch_post->post_title ;
-	 $sql_c1 = "select i.creator_id,i.user_id u, u.* from impact_join i, impact_user u where u.user_id=i.user_id and u.user_type='ucreate' and i.creator_id='$from_user_id' group by i.user_id";
+     $description = $sql_user->name . " added a new post \"".$sql_fetch_post->post_title."\"";
+	 //$sql_c1 = "select i.creator_id,i.user_id u, u.* from impact_join i, impact_user u where u.user_id=i.user_id and u.user_type='ucreate' and i.creator_id='$from_user_id' group by i.user_id";
+     $sql_c1 = "SELECT p.user_id user_id from impact_payment p, impact_user u where u.user_id=p.user_id and p.creator_id='$from_user_id' and (p.status='active' or p.status='authenticated') group by u.email_id";
 	$sql_c = $this->runQuery($sql_c1);
 	foreach($sql_c as $row){
 	
@@ -1510,9 +1677,9 @@ if ($show==1) {
   ?>
     <a href="<?=$post_path?>"> <h4 class="like"><?=$row_post->post_title?></h4></a>
     <?php if($desc=='') { ?>
-     <span  class="like"><?=mb_strimwidth(html_entity_decode(stripslashes($row_post->description)),0,500)?></span>
+     <span  class="like"><p><?=mb_strimwidth(stripslashes($row_post->description),0,500)?></p></span>
      <?php } else { ?>
-      <span  class="like"><?=html_entity_decode(stripslashes($row_post->description))?></span>
+      <span  class="like"><p><?=stripslashes($row_post->description)?></p></span>
      <?php } ?>
    <br />  
              
@@ -1574,14 +1741,17 @@ if ($show==1) {
  function get_notification_link($notification_id=0){
  $sql = "select * from impact_notification where notification_id='".$notification_id."'";
  $row = $this->fetch_object($sql);
- if($row->notification_type=="payment" || $row->notification_type=="payment_one_time" )
+ if($row->notification_type=="Comment_add" || $row->notification_type=="comment_like" || $row->notification_type=="like" || $row->notification_type=="post")
  {
-  $link = 'javascript:void(0)';
+    $row_post = $this->fetch_object("select slug,post_id from impact_post where post_id='".$row->post_id."'");
+    $link = BASEPATH.'/post/'.$row_post->post_id.'/';
+ }
+ else if ( $row->notification_type=='tier_delete'){
+  $link = BASEPATH.'/'.$this->get_creator_profile_link($row->from_user_id);
  }
  else
  {
-   $row_post = $this->fetch_object("select slug,post_id from impact_post where post_id='".$row->post_id."'");
-   $link = BASEPATH.'/post/'.$row_post->post_id.'/';
+   $link = 'javascript:void(0)';
  }
  return $link;
  }
@@ -1597,7 +1767,129 @@ if ($show==1) {
    $row= $this->fetch_object("select * from impact_user where email_id='".$email_id."' and user_type='create'");
    return $row;
   }
-    
+
+  function get_creator_profile_link($user_id){
+    $creator = $this->fetch_object("select * from impact_user where user_id='".$user_id."'");
+    if (!empty($creator->slug)){
+      return "profile/".$creator->slug;
+    }else{
+      return "profile/u/".$creator->user_id;
+    }
+  }
+
+  function get_ids_sql($user_id){
+    $email_id = $this->fetch_object("select email_id from impact_user where user_id=".$user_id."")->email_id;
+    $creator_prof = $this->creator($email_id);
+    if (!empty($creator_prof->user_id))
+      $mycreator_id = $creator_prof->user_id;
+    else
+      $mycreator_id = "NULL";
+
+    $fan_prof = $this->impact($email_id);
+    if (!empty($fan_prof->user_id))
+      $myfan_id = $fan_prof->user_id;
+    else
+      $myfan_id = "NULL";
+
+    return "(".$myfan_id.",".$mycreator_id.")";
+  }
+
+  function truncate($text, $length = 100, $ending = '...', $exact = true, $considerHtml = false) {
+    if (is_array($ending)) {
+        extract($ending);
+    }
+    if ($considerHtml) {
+        if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
+            return $text;
+        }
+        $totalLength = mb_strlen($ending);
+        $openTags = array();
+        $truncate = '';
+        preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
+        foreach ($tags as $tag) {
+            if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
+                if (preg_match('/<[\w]+[^>]*>/s', $tag[0])) {
+                    array_unshift($openTags, $tag[2]);
+                } else if (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag)) {
+                    $pos = array_search($closeTag[1], $openTags);
+                    if ($pos !== false) {
+                        array_splice($openTags, $pos, 1);
+                    }
+                }
+            }
+            $truncate .= $tag[1];
+
+            $contentLength = mb_strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $tag[3]));
+            if ($contentLength + $totalLength > $length) {
+                $left = $length - $totalLength;
+                $entitiesLength = 0;
+                if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE)) {
+                    foreach ($entities[0] as $entity) {
+                        if ($entity[1] + 1 - $entitiesLength <= $left) {
+                            $left--;
+                            $entitiesLength += mb_strlen($entity[0]);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                $truncate .= mb_substr($tag[3], 0 , $left + $entitiesLength);
+                break;
+            } else {
+                $truncate .= $tag[3];
+                $totalLength += $contentLength;
+            }
+            if ($totalLength >= $length) {
+                break;
+            }
+        }
+
+    } else {
+        if (mb_strlen($text) <= $length) {
+            return $text;
+        } else {
+            $truncate = mb_substr($text, 0, $length - strlen($ending));
+        }
+    }
+    if (!$exact) {
+        $spacepos = mb_strrpos($truncate, ' ');
+        if (isset($spacepos)) {
+            if ($considerHtml) {
+                $bits = mb_substr($truncate, $spacepos);
+                preg_match_all('/<\/([a-z]+)>/', $bits, $droppedTags, PREG_SET_ORDER);
+                if (!empty($droppedTags)) {
+                    foreach ($droppedTags as $closingTag) {
+                        if (!in_array($closingTag[1], $openTags)) {
+                            array_unshift($openTags, $closingTag[1]);
+                        }
+                    }
+                }
+            }
+            $truncate = mb_substr($truncate, 0, $spacepos);
+        }
+    }
+
+    $truncate .= $ending;
+
+    if ($considerHtml) {
+        foreach ($openTags as $tag) {
+            $truncate .= '</'.$tag.'>';
+        }
+    }
+
+    return $truncate;
+  }
+
+  function assign_default_profile_image($email_id)
+  {
+    $img = "default_user".rand(1,7).".jpg";
+    $this->Query("update impact_user set image_path='".$img."' where email_id='".$email_id."' and (image_path is null or image_path='')");
+    return $img;
+  }
+
+
+
 //  CLAS END
 }
 

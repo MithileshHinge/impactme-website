@@ -13,6 +13,9 @@ if(isset($_SESSION['is_user_login'])==1)
  }
  else
  {
+   if (strlen($row_user->account_number) > 4){
+    $row_user->account_number = str_repeat('X', strlen($row_user->account_number) - 4) . substr($row_user->account_number, -4);
+   }
    $basefile = basename($_SERVER['PHP_SELF']);
    $Cretor_Check = $db_query->creator_check($row_user->email_id);
    if($Cretor_Check->c>0)

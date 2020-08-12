@@ -1,12 +1,12 @@
 <?php
  $rowperpage = PAGINATION;
  
-  $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where user_id='$row_user1->user_id'  order by create_date desc"); 
+  $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where status=1 and user_id='$row_user1->user_id'  order by create_date desc"); 
  
 $allcount =  $sql_c22_count->c;
 
 
- $sql_post = $db_query->runQuery("select * from impact_post where user_id='$row_user1->user_id'  order by create_date desc limit 0,$rowperpage");
+ $sql_post = $db_query->runQuery("select * from impact_post where status=1 and user_id='$row_user1->user_id'  order by create_date desc limit 0,$rowperpage");
 			  foreach($sql_post as $row_post) {
 			   $sql_like_count = $db_query->fetch_object("select count(*) c from tbl_post_like where post_id='$row_post[post_id]'");
 			   $row_comment = $db_query->fetch_object("select count(*) c from tbl_comment where post_id='".$row_post['post_id']."'");
@@ -19,11 +19,11 @@ $allcount =  $sql_c22_count->c;
                  <?php list($show, $tier_link) =  $db_query->getImageUnlockDivStatus($row_post['post_id'], $row_user1->user_id, '', $row_user->user_id ); ?>
                  
                 <?php //if($show == 1) { ?> 
-                <p class="like" style="margin-left:20px;font-weight:bold;"><?=date('M d, Y', strtotime($row_post['create_date']))?> at <?=date('h:i a', strtotime($row_post['create_date']))?><span class="user-like"></span> <span class="post-like"><a href="javascript:void(0)" id="post_like" onclick="javascript:post_like(<?=$row_post['post_id']?>,<?=$row_user->user_id?>)"> 
+                <p class="like" style="margin-left:20px;font-weight:bold;"><?=date('M d, Y', strtotime($row_post['create_date']))?> at <?=date('h:i a', strtotime($row_post['create_date']))?><span class="user-like"></span> <span class="post-like">
                 
-                  <i class="fa fa-star fa-lg" aria-hidden="true"></i>
+                  <?php include('include/like_button.php');?>
                <!--  <img src="<?=BASEPATH?>/images/starfish-empty-20px.png" style="padding: 2px 0 7px 0;">-->
-                </a><span id="postLikeText<?=$row_post['post_id']?>"> <?=$sql_like_count->c?></span> Likes </span></p>
+                <span id="postLikeText<?=$row_post['post_id']?>"><?=$sql_like_count->c?></span> Likes </span></p>
                 <?php //} ?>
              <!--<p style="float: right;margin: 0 10px; 0 0"> Locked</p>-->
              <?php echo $db_query->getPostNameDescription($row_post['post_id'],0, $show,$tier_link);?>
@@ -89,7 +89,7 @@ $allcount =  $sql_c22_count->c;
 			  
               
                  <?php if( $allcount> PAGINATION )  { ?>
-                 <div class="box-marked-project project-short short hide_div" style="margin-bottom: 33px;    padding: 0 0 23px 0;">
+                 <div class="box-marked-project project-short short hide_div">
               <h1  class="load-more">Load More</h1>
               </div>
          

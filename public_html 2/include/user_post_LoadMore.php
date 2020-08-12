@@ -3,11 +3,11 @@
  $row = $_POST['row'];
  $rowperpage = PAGINATION;
  
-  $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where user_id='$row_user->user_id'  order by create_date desc"); 
+  $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where status=1 and user_id='$row_user->user_id'  order by create_date desc"); 
  
 $allcount =  $sql_c22_count->c;
 
- $sql_post = $db_query->runQuery("select * from impact_post where user_id='$row_user->user_id'  order by create_date desc limit $row,$rowperpage");
+ $sql_post = $db_query->runQuery("select * from impact_post where status=1 and user_id='$row_user->user_id'  order by create_date desc limit $row,$rowperpage");
  
  
  
@@ -25,17 +25,19 @@ $allcount =  $sql_c22_count->c;
                    
                  </div>
             
-               <p class="like" style="margin-left:20px;"><?=date('M d, Y', strtotime($row_post['create_date']))?> at <?=date('h:i a', strtotime($row_post['create_date']))?><span class="user-like"></span> <span class="post-like"><a href="javascript:void(0)" id="post_like" onclick="javascript:post_like(<?=$row_post['post_id']?>,<?=$row_user->user_id?>)"> 
+               <p class="like" style="margin-left:20px;"><?=date('M d, Y', strtotime($row_post['create_date']))?> at <?=date('h:i a', strtotime($row_post['create_date']))?><span class="user-like"></span> <span class="post-like">
                <!--<i class="fa fa-star" style="font-size: 18px;"></i> -->
-               <i class="fa fa-star fa-lg" aria-hidden="true"></i>
+               <?php include('include/like_button.php');?>
                <!--  <img src="<?=BASEPATH?>/images/starfish-empty-20px.png" style="padding: 2px 0 7px 0;">-->
-               </a><span id="postLikeText<?=$row_post['post_id']?>"> <?=$sql_like_count->c?></span> Likes </span></p>
+               <span id="postLikeText<?=$row_post['post_id']?>"><?=$sql_like_count->c?></span> Likes </span></p>
                
              <!--<p style="float: right;margin: 0 10px; 0 0"> Locked</p>-->
              <?php $post_path_link = BASEPATH.'/post/'.$row_post['post_id'].'/'; ?>  
-             <a href="<?=$post_path_link?>"> <h4 class="like"><?=$row_post['post_title']?></h4></a>
+             <?php echo $db_query->getPostNameDescription($row_post['post_id'],0, 1,"#");?>
+             <?php $tier_link1 = $db_query->getPostNameDescriptionLink($row_post['post_id'],0, 1,"#"); ?>
+             <!--a href="<?=$post_path_link?>"> <h4 class="like"><?=$row_post['post_title']?></h4></a>
     
-            <span  class="like"><?=mb_strimwidth(html_entity_decode(stripslashes($row_post['description'])),0,500)?></span>
+            <span  class="like"><?=mb_strimwidth(html_entity_decode(stripslashes($row_post['description'])),0,500)?></span-->
      
             <br />  
    

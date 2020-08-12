@@ -5,7 +5,6 @@ define('DISPLAY_EXCEPTIONS', true);
 
 set_time_limit(0);
 
-phpinfo();
 ini_set('memory_limit',-1);
 
 ini_set('max_execution_time',-1);
@@ -17,6 +16,7 @@ ini_set('display_errors', (DISPLAY_ERRORS)?(1):(0));
 ini_set('display_startup_errors', (DISPLAY_ERRORS)?(1):(0));
 
 error_reporting((DISPLAY_ERRORS)?(1):(0));
+//error_reporting(E_ALL);
 
 ignore_user_abort (true);
 
@@ -26,7 +26,7 @@ date_default_timezone_set('Asia/Calcutta');
 
 
 
-define("DB_HOST", "localhost");	
+define("DB_HOST", "127.0.0.1");	
 /*if($_SERVER['REMOTE_ADDR']=="192.168.10.1" || $_SERVER['REMOTE_ADDR']=="::1") 
 {
 define("DB_USER", "homestead");	
@@ -36,10 +36,10 @@ define("DB_NAME", "demo_impact");
 } 
 else
 {*/
-define("DB_USER", "homestead");	
-define("DB_PASSWORD", "secret");	
+define("DB_USER", "root");	
+define("DB_PASSWORD", "demo_impact");	
 define("DB_NAME", "demo_impact");	
- define("BASEPATH","https://a24b7b23da50.in.ngrok.io");
+ define("BASEPATH","https://www.impactme.in");
 //}
 
 $admin_folder_name = "admin";
@@ -66,8 +66,8 @@ define("ID_NUMBER", "10000000");
 //define("MAIL_USER", "no-reply@impactme.in"); //SMTP username
 //define("MAIL_PASSWORD",  "info@2359"); // SMTP password
 //define("EMAIL_FROM",  "no-reply@impactme.in");
-define("EMAIL_FROM",  "impactmeteam@gmail.com");
-define("MAIL_PASSWORD",  "donotforget");
+define("EMAIL_FROM",  "noreply@impactme.in");
+define("MAIL_PASSWORD",  "sL2kGqsFKEyt");
 
 //require("class.phpmailer.php"); 
 
@@ -83,13 +83,13 @@ $mail = new PHPMailer();
 //$mail->SetLanguage("uk", '/home/mithi/public_html/include/language/');
 $mail->IsSMTP();                                   // send via SMTP
 $mail->Mailer = "smtp";
-$mail->SMTPDebug  = 3;
+$mail->SMTPDebug  = 0;
 $mail->SMTPAuth   = TRUE;
-$mail->SMTPSecure = "tls";
-$mail->Port       = 587;
-$mail->Host       = "smtp.gmail.com";
-$mail->Username   = "impactmeteam@gmail.com";
-$mail->Password   = "donotforget";
+$mail->SMTPSecure = "ssl";
+$mail->Port       = 465;
+$mail->Host       = "smtp.zoho.in";
+$mail->Username   = EMAIL_FROM;
+$mail->Password   = MAIL_PASSWORD;
 //$mail->Host     = MAIL_HOST; // SMTP servers
 //$mail->SMTPAuth = true;     // turn on SMTP authentication
 //$mail->Username = MAIL_USER;  // SMTP username
@@ -111,7 +111,7 @@ if (!isset($_SESSION)) {
 
 $now = time();
 
-$limit = $now - 160*60;
+$limit = $now - 60*60*24*7;
 
 if (isset ($_SESSION['last_activity']) && $_SESSION['last_activity'] < $limit) 
 

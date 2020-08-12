@@ -15,6 +15,9 @@ $slug = $_GET['slug'];
 
  $row_user1 = $db_query->fetch_object("select count(*) c , i.* from impact_user i where  i.active_status=1 and i.status=1 and i.review_status=1 and  i.slug='$slug'");
  }
+
+if ($row_user1->user_id === $row_user->user_id)
+  header("location:".BASEPATH."/user-creator");
  
  if(strlen($row_user1->cover_image_path)>0)
  $cover_image = IMAGEPATH.$row_user1->cover_image_path;
@@ -82,6 +85,7 @@ if(strlen($row_user1->tag_line)>0) {
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="<?=$row_user1->impact_name?>" />
 <meta name="copyright" content="<?=PROJECT_TITLE?>" />
@@ -131,7 +135,7 @@ else
 <?php if($row_user1->c>0) {?>
   
   
-  <div class="col-md-12 user-photo" style="background-image:url(<?=$cover_image?>); background-size:cover;">
+  <div class="col-md-12 user-photo" style="background:url(<?=$cover_image?>) center center/auto 100% no-repeat; background-size:cover;">
     <?php
     if (strlen($row_user1->slug)<=0){
       $user1_path = BASEPATH.'/profile/u/'.$row_user1->user_id.'/';
@@ -182,7 +186,7 @@ else
                  <?php if(strlen($row_user1->about_page) >0) {?>
                   <div class="box-marked-project project-short" style="margin-bottom:20px;">
                        <h5 class="tier">Overview</h5>
-                    <span class="creater-post about" style="padding: 0 18px 0 18px;    text-align: justify;"><?=html_entity_decode(stripslashes($row_user1->about_page))?></span>
+                    <span class="creater-post about" style="padding: 0 18px 0 18px;    text-align: justify;"><p><?=html_entity_decode(stripslashes($row_user1->about_page))?></p></span>
                   </div>
                   <?php } ?>
                   <?php $row_post_count = $db_query->fetch_object("select count(*) c from impact_post where user_id='".$row_user1->user_id."'");
@@ -195,7 +199,8 @@ else
                    
                    
              
- <?php } else {?><img src="<?=BASEPATH?>/images/creater-impact.png" class="impact-post"><?php } ?>
+ <?php } else {?><img src="<?=BASEPATH?>/images/octopus3-impactme.png" class="impact-post"><?php } ?>
+                  <p class="follow" style="padding-bottom:24px;"> <?=$row_user1->full_name?> hasn't posted anything yet!.</p>
 
                 </div>
                 
@@ -262,7 +267,7 @@ else
               
 			      <?php }  else {?>
                 <div class="box-marked-project project-short short">
-                  <div class="editor-content"> <img  src="<?=BASEPATH?>/images/creater-impact.png" alt="" class="impact-post">
+                  <div class="editor-content"> <img  src="<?=BASEPATH?>/images/octopus3-impactme.png" alt="" class="impact-post">
                     <p class="user-posted"> <?=$row_user1->full_name?> haven't posted anything yet!.</p>
                   </div>
                   <!--<div class="project-btn-action" style="    padding: 0 0 40px 0"> <a class="ask" href="<?=BASEPATH?>/edit/post/" style=" background-color:red;">Make your first post</a> </div>-->

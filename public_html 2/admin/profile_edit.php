@@ -198,7 +198,7 @@ include('include/menubar.php');
                              <input type="text" name="address1" parsley-trigger="change"   class="form-control "   value="<?=$row->address1?>">
                              </div>
                             </div>
-                             <script>
+                             <!--script>
 	CKEDITOR.replace('address0',{
                        
                        filebrowserWindowWidth: '900',
@@ -210,7 +210,7 @@ include('include/menubar.php');
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
 
 
 <!--<div class="form-group ">
@@ -241,7 +241,7 @@ include('include/menubar.php');
                               </textarea>
                              </div>
                             </div>
-                             <script>
+                             <!--script>
 	CKEDITOR.replace('copyright',{
                        
                        filebrowserWindowWidth: '900',
@@ -253,7 +253,7 @@ include('include/menubar.php');
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
 
 
 <!--<div class="form-group ">
@@ -263,7 +263,7 @@ include('include/menubar.php');
                               </textarea>
                              </div>
                             </div>-->
-                             <script>
+                             <!--script>
 	CKEDITOR.replace('footer_contact',{
                        
                        filebrowserWindowWidth: '900',
@@ -275,7 +275,7 @@ include('include/menubar.php');
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
 
 
                         <!--   <div class="form-group ">

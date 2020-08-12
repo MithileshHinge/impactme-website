@@ -13,7 +13,12 @@ if(isset($_REQUEST['mode'])=="forgot_password")
 	  if($sql_check->c>0)
 	  {
 		  $_SESSION['emailId'] = $email_id;
-	    header("location:".BASEPATH.'/password-change/');
+      
+      if($db_query->send_password_reset_link($email_id, $mail))
+        $msg = '<span style="color:green">A link has been sent to your email account. It is valid for one hour.</span>';
+      else
+        $msg = '<span style="color:red">Could not send mail. Please try later.</span>';
+      //header("location:".BASEPATH.'/password-change/');
 	  }
 	  else
 	  {
@@ -35,6 +40,7 @@ if(isset($_REQUEST['mode'])=="forgot_password")
 <html>
 <head>
  <title>Forget Password | <?=$sql_web->page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />

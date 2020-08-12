@@ -1,5 +1,5 @@
 <div class="col-md-12 phone" style="    padding: 0 0 0 0;">
-    <div clas="col-md-12" style="background-color:#3a9cb5;">
+    <div class="col-md-12" style="background-color:#3a9cb5;">
               <h2>For Whom?</h2>
           </div>
          <div class="container">

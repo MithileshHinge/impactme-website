@@ -16,7 +16,9 @@ else
 if(strlen($row_user->image_path)>0)
  $user_image1 = IMAGEPATH.$row_user->image_path;
 else
- $user_image1 = IMAGEPATH.'nouser.png'; 
+ $row_user->image_path = $db_query->assign_default_profile_image($row_user->email_id);
+
+
 if(strlen($row_user->tag_line)>0) { 
  $page_title = $row_user->tag_line." | ".PROJECT_TITLE;
  }
@@ -39,8 +41,10 @@ if(strlen($row_user->tag_line)>0) {
  
 $title = "Home | ".PROJECT_TITLE; 
 
+
+$ids = $db_query->get_ids_sql($row_user->user_id);
  //$sql_check_impact = $db_query->creator_check($row_user->email_id);
- $sql_check_impact = $db_query->fetch_object("select count(*) c from impact_payment where user_id='".$row_user->user_id."' and (status='authenticated' or status='active')");
+ $sql_check_impact = $db_query->fetch_object("select count(*) c from impact_payment where user_id in $ids and (status='authenticated' or status='active')");
  
 ?>
 
@@ -48,6 +52,7 @@ $title = "Home | ".PROJECT_TITLE;
 <html>
 <head>
  <title><?=$title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -135,14 +140,14 @@ $title = "Home | ".PROJECT_TITLE;
                 <div class="wrap-lst-category" style="padding:0 0 20px 0">
                    <h3 class="tier">Your Pacts</h3>
                    <?php if($sql_check_impact->c==0) {?>
-                    <p class="page-live">You do not belong to any pact. Your favourite creators may already have a page with exclusive content. Follow and support them to never miss out on any of their content.</p>
+                    <p class="page-live">You haven't made any pacts. Your favourite creators may already have a page on ImpactMe. Follow and support them to never miss out on any of their exclusive content.</p>
                     <a href="<?=BASEPATH?>/explore/" class="find">Explore creators</a>
                     <?php } else { ?>
-                    <?php $sql_check_join = $db_query->fetch_object("select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active')");
+                    <?php $sql_check_join = $db_query->fetch_object("select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id in $ids and (p.status='authenticated' or p.status='active')");
 					if($sql_check_join->c>0) { ?>
                     <ul style="list-style:none;padding:0 0 0 0;">
                     <?php
-			  $sql_c = "select u.* from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active') group by p.creator_id";
+			  $sql_c = "select u.* from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id in $ids and (p.status='authenticated' or p.status='active') group by p.subscription_id";
 
 					 $sql_check_join_user = $db_query->runQuery($sql_c);
 					 foreach( $sql_check_join_user as $row_join) {
@@ -184,18 +189,18 @@ $title = "Home | ".PROJECT_TITLE;
 <div class="grid_6 marked-category">
                 <div class="project-tab-detail tabbable accordion">
                     <ul class="nav nav-tabs clearfix" style="border:0px solid">
-                      <li class="active"><a href="#" class="be-fc-orange">All Post</a></li>
+                      <li class="active"><a href="#" class="be-fc-orange">All Posts</a></li>
                       <li><a href="#" class="be-fc-orange">Pact-Only</a></li>
                       <!-- <li><a href="#" class="be-fc-orange">Backers (270)</a></li>
                       <li><a href="#" class="be-fc-orange">Comments (2)</a></li> -->
                       <!--<input type="text" name="text" placeholder="Showing:All Creater" class="allcreater">-->
                     </ul>
-                    <div class="tab-content" style="border: 1px solid #dddddd;">
+                    <div class="tab-content" style="border: 1px solid #dddddd; padding: 20px;">
                          <div>
                            <!--  <h3 class="rs alternate-tab accordion-label">Updates (0)</h3> -->
                             <div class="tab-pane active accordion-content">
                              <?php 
-                              $sq = "select count(*) c from impact_post where user_id in ( SELECT creator_id FROM impact_join WHERE user_id = '$row_user->user_id' group by creator_id)";
+                              $sq = "SELECT count(*) c from impact_post where user_id in (SELECT creator_id FROM impact_payment WHERE user_id in $ids AND (status='authenticated' or status='active') group by creator_id)";
                               $row_post_count = $db_query->fetch_object($sq);
                   if($sql_check_join->c==0) { ?>
 
@@ -203,7 +208,7 @@ $title = "Home | ".PROJECT_TITLE;
                                     <img  src="<?=BASEPATH?>/images/octupas-impact.png" alt="" class="impact-post">
                                         
                                     
-                                    <p class="follow">Support or follow creators to see posts in your feed.</p>
+                                    <p class="follow">Support creators to see posts in your feed.</p>
                                     
                                 </div>
                                 <div style="    padding: 0 0 40px 0">
@@ -223,20 +228,20 @@ $title = "Home | ".PROJECT_TITLE;
                            
                             <div class="tab-pane  accordion-content">
                               <?php 
-							  $sq = "select count(*) c from impact_post where user_id in ( SELECT creator_id FROM impact_join WHERE user_id = '$row_user->user_id' group by creator_id)";
+							  $sq = "SELECT count(*) c from impact_post where user_id in (SELECT creator_id FROM impact_payment WHERE user_id in $ids AND (status='authenticated' or status='active') group by creator_id)";
 							  $row_post_count = $db_query->fetch_object($sq);
 				  if($sql_check_join->c==0) { ?>
-                                <div class="editor-content">
+                                <div class="tab-pane-inside">
                                     
                                     
                                         <img  src="<?=BASEPATH?>/images/octupas-impact.png" alt="" class="impact-post">
                                         
                                     
-                                    <p class="follow">Support or follow creators to see posts in your feed.</p>
+                                    <p class="follow">Support creators to see posts in your feed.</p>
                                     
                                 </div>
                                 <div style="    padding: 0 0 40px 0">
-                                    <a  href="<?=BASEPATH?>/explore/" class="slider-page creater-love">Find Creators You Love</a>
+                                    <a  href="<?=BASEPATH?>/explore/" class="slider-page creater-love">Find creators you love</a>
                                    
                                 </div>
                                 
@@ -301,8 +306,10 @@ $title = "Home | ".PROJECT_TITLE;
                         </div>
                       </div>
 
-<?php include('include/footer.php');
-include('include/footer_js.php');?>
+<?php
+include('include/footer.php');
+include('include/footer_js.php');
+?>
 
 <script>
 $(document).ready(function(){

@@ -2,12 +2,12 @@
 include('access.php');
  $row = $_POST['row'];
 $rowperpage = PAGINATION;
+$ids = $db_query->get_ids_sql($row_user->user_id);
 
-
- $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active') group by p.creator_id) order by create_date desc"); 
+ $sql_c22_count = $db_query->fetch_object("select count(*) c from impact_post where status=1 and user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id in $ids and (p.status='authenticated' or p.status='active') group by p.creator_id) order by create_date desc"); 
  
  
-$sql_c22 = "select * from impact_post where user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$row_user->user_id' and (p.status='authenticated' or p.status='active') group by p.creator_id) order by create_date desc limit $row,$rowperpage";
+$sql_c22 = "select * from impact_post where status=1 and user_id in (select u.user_id id from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id in $ids and (p.status='authenticated' or p.status='active') group by p.creator_id) order by create_date desc limit $row,$rowperpage";
 
 
   
@@ -20,6 +20,12 @@ foreach($sql_user as $row_post)
          $row_userPost = $db_query->fetch_object("select * from impact_user where user_id='$row_post[user_id]'");
          $userImagN = IMAGEPATH.$row_userPost->image_path;
 		 $row_comment = $db_query->fetch_object("select count(*) c from tbl_comment where post_id='".$row_post['post_id']."'");
+
+     if(strlen($row_userPost->slug)>0) 
+       $page_path = BASEPATH.'/profile/'.$row_userPost->slug."/";
+    else
+       $page_path = BASEPATH.'/profile/u/'.$row_userPost->user_id."/";
+     
 			  ?>
               
               
@@ -28,10 +34,10 @@ foreach($sql_user as $row_post)
               <div class="post-creater-postname">
                   <ul style="padding: 0 0 0 8px;">
                       <li style="list-style:none;"> 
-                            <a href="<?=$path2?>" class="suppt-list">
+                            <a href="<?=$page_path?>" class="suppt-list">
                                 <div class="small-creater-support" style="background-image:url(<?=$userImagN?>);  background-size:cover;"></div>
                                 <div class="small_support">
-                                    <span class="creater-post-title"><?=stripslashes(ucwords(strtolower($row_userPost->full_name)))?></span>
+                                    <span class="creater-post-title"><?=stripslashes(ucwords(strtolower($row_userPost->impact_name)))?></span>
                                
                                 </div>
                             </a>
@@ -44,11 +50,11 @@ foreach($sql_user as $row_post)
                 <p class="like" style="margin-left:20px;font-weight:bold;"><?=date('M d, Y', strtotime($row_post['create_date']))?> at <?=date('h:i a', strtotime($row_post['create_date']))?>
                 <span class="user-like"></span> 
                 <span class="post-like">
-                <a href="javascript:void(0)" id="post_like" onclick="javascript:post_like(<?=$row_post['post_id']?>,<?=$row_user->user_id?>)">
-                <i class="fa fa-star fa-lg" aria-hidden="true"></i>
+                
+                <?php include('include/like_button.php');?>
                     <!--<img src="<?=BASEPATH?>/images/starfish-empty-20px.png" style="padding: 2px 0 7px 0;">-->
-                  </a>
-                <span id="postLikeText<?=$row_post['post_id']?>"> <?=$sql_like_count->c?></span> Likes </span></p>
+                  
+                <span id="postLikeText<?=$row_post['post_id']?>"><?=$sql_like_count->c?></span> Likes </span></p>
                <br />
                <?php echo $db_query->getPostNameDescription($row_post['post_id'],0, $show,$tier_link);?>
                <?php $tier_link1 = $db_query->getPostNameDescriptionLink($row_post['post_id'],0, $show,$tier_link); ?>

@@ -48,6 +48,7 @@ $page_title = $row_post->post_title." | ".PROJECT_TITLE;
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -170,8 +171,8 @@ $page_title = $row_post->post_title." | ".PROJECT_TITLE;
                    
                  </div>
             
-               <p class="like" style="margin-left:20px; font-weight:bold;"><?=$row_post->create_date?><span class="user-like"></span> <span class="post-like"><a href="javascript:void(0)" id="post_like" onclick="javascript:post_like(<?=$row_post->post_id?>,<?=$row_user->user_id?>)"> 
-               <i class="fa fa-star" style="font-size: 18px;"></i> </a><span id="postLikeText<?=$row_post->post_id?>"> <?=$sql_like_count->c?></span> Likes </span></p>
+               <p class="like" style="margin-left:20px; font-weight:bold;"><?=$row_post->create_date?><span class="user-like"></span> <span class="post-like">
+               <?php include('include/like_button.php');?><span id="postLikeText<?=$row_post->post_id?>"><?=$sql_like_count->c?></span> Likes </span></p>
                
              <!--<p style="float: right;margin: 0 10px; 0 0"> Locked</p>-->
               <?php echo $db_query->getPostNameDescription($row_post->post_id, $row_user->user_id, 1,'', 'full');?>

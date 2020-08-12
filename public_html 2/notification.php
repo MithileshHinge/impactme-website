@@ -5,7 +5,7 @@ include('include/access.php');
 $image_save_folder = "user";
 
 $s = $_GET['s'];
-$page_title = "All Notification| ".PROJECT_TITLE;
+$page_title = "All Notifications| ".PROJECT_TITLE;
 
 if(strlen($row_user->cover_image_path)>0)
  $cover_image = IMAGEPATH.$row_user->cover_image_path;
@@ -17,6 +17,8 @@ if(strlen($row_user->image_path)>0)
  $user_image = IMAGEPATH.$row_user->image_path;
 else
  $user_image = IMAGEPATH.'icon_man.png'; 
+
+$ids = $db_query->get_ids_sql($row_user->user_id);
 
 $sql = "select count(*) c from impact_user where status= 1 and review_status=1  and active_status=1 and user_type='ucreate' and (full_name like '%$s%' or impact_name  like '%$s%')";
 $sql1 = "select * from impact_user where status= 1 and active_status=1 and review_status=1 and user_type='ucreate' and (full_name like '%$s%' or impact_name  like '%$s%')";
@@ -30,6 +32,7 @@ $sql_rows = $db_query->runQuery($sql1);
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -74,12 +77,12 @@ $sql_rows = $db_query->runQuery($sql1);
         <div class="content grid_12">
             <div class="search-result-page">
                 <div class="top-lbl-val" style="    margin-top: 53px;">
-                    <h3 class="common-title"> <span class="fc-orange">All Notification</span></h3>
+                    <h3 class="common-title"> <span style="color: #3a9cb5">All Notifications</span></h3>
                    
                    
                 </div>
                 <div id="list-search-ajax" class="list-project-result">
-                     <?php $sql_notification_d1 = $db_query->runQuery("select * from impact_notification where user_id='$row_user->user_id' and from_user_id!='$row_user->user_id'  order by notification_id desc ");
+                     <?php $sql_notification_d1 = $db_query->runQuery("select * from impact_notification where user_id in $ids and not from_user_id in $ids  order by notification_id desc ");
 			  foreach($sql_notification_d1 as $row_notification_d) {
 			  
 			  $notify_link = $db_query->get_notification_link($row_notification_d['notification_id']);

@@ -27,6 +27,8 @@ $title = "Message | ".PROJECT_TITLE;
 <html>
 <head>
  <title><?=$title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+ <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -53,6 +55,9 @@ $title = "Message | ".PROJECT_TITLE;
 <meta name="twitter:image" content="<?=IMAGEPATH.$row_user->image_path?>" />
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
                                             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="https://rawgit.com/mervick/emojionearea/master/dist/emojionearea.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/mervick/emojionearea/master/dist/emojionearea.min.css">
+    <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 
     <?php include('include/titlebar.php'); ?>
     <style>
@@ -60,6 +65,12 @@ $title = "Message | ".PROJECT_TITLE;
     padding-top: 101px;
 }
 
+img.emoji {
+   height: 1em;
+   width: 1em;
+   margin: 0 .05em 0 .1em;
+   vertical-align: -0.1em;
+}
 
     
      /*=====message csss======*/
@@ -294,9 +305,12 @@ span.psw {
     
      <!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
                                         <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-                                        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                                        <!--script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script-->
+                                        <!--script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script-->
                                         
     <style>
+
+
 
 #searchResultCreator li,#searchResult1 li,#searchResultCreator2 li {
     list-style: none;
@@ -462,7 +476,7 @@ div#set{
 }
 .srch_bar .input-group-addon { margin: 0 0 0 -27px;}
 
-.chat_ib h5{ font-size:15px; color:#464646; margin:0 0 8px 0;}
+.chat_ib h5{ font-size:15px; color:#464646; margin:6px 0 6px -9px;}
 .chat_ib h5 span{ font-size:13px; float:right;}
 .chat_ib p{ font-size:14px; color:#989898; margin:auto}
 .chat_img {
@@ -537,18 +551,30 @@ div#set{
   float: right;
   width: 46%;
 }
+
+.input_msg_write {
+  width: 91%;
+  padding: 7px 0 0 0;
+}
+
 .input_msg_write input {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
   border: medium none;
   color: #4c4c4c;
   font-size: 15px;
   min-height: 48px;
-  width: 100%;
+  width: 92%;
 }
 
-.type_msg {border-top: 1px solid #c4c4c4;position: relative;}
+.type_msg {
+  border-top: 1px solid #c4c4c4;
+  position: relative;
+  padding: 0 0 0 12px;
+  margin: 15px 0 0 0;
+}
+
 .msg_send_btn {
-  background: #05728f none repeat scroll 0 0;
+  background: #3a9cb5 none repeat scroll 0 0;
   border: medium none;
   border-radius: 50%;
   color: #fff;
@@ -556,8 +582,8 @@ div#set{
   font-size: 17px;
   height: 33px;
   position: absolute;
-  right: 0;
-  top: 11px;
+  right: 8px;
+  top: 8px;
   width: 33px;
 }
 /*.plane{*/

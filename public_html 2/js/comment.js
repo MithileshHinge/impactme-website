@@ -19,22 +19,30 @@
     }
 });
  
-function	post_like(id,uid)
-  {
-     $.ajax({
-                    url: path_name+"include/comment_delete.php",
-                     data: {post_like_id:id,user_id :uid},
-                    type: 'post',
-					 dataType: 'json',
-                    success: function (response)
-                    {
-						//listComment(post_id);
-						
-						$("#postLikeText"+id).html(response);
-                     
-                    }
-                });
-  }
+function post_like(e, id,uid)
+{
+    if (e.innerHTML.includes("favorite_border")){
+        e.innerHTML = e.innerHTML.replace("favorite_border", "favorite");
+        e.children[0].style.color = '#da5454';
+    }else {
+        e.innerHTML = e.innerHTML.replace("favorite", "favorite_border");
+        e.children[0].style.color = '#455058';
+    }
+    $.ajax({
+        url: path_name+"include/comment_delete.php",
+         data: {post_like_id:id,user_id :uid},
+        type: 'post',
+         dataType: 'json',
+        success: function (response)
+        {
+            //listComment(post_id);
+            
+            $("#postLikeText"+id).html(response);
+         
+        }
+    });
+}
+
 	
  
            function postReply(commentId,post_id,fname, user_id) {

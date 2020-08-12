@@ -21,10 +21,14 @@ else
   	
 
  $db->updateArray("impact_user",$_REQUEST,"user_id=".$row_user->user_id);
- header('location:'.BASEPATH.'/edit/thanks/');
- 
- 
+ header('location:'.BASEPATH.'/edit/thanks?msg=1');
  }
+
+ if($_GET[msg]==1)
+{
+  $msg = "Thanks message updated successfully.";
+  $error_type = "success";
+}
  
 ?>
 
@@ -32,6 +36,7 @@ else
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -68,7 +73,7 @@ else
 	</style>
 </head>
 
-<body>
+<body class="body-bg">
 <div id="wrapper" style="background-image:url(<?=BASEPATH?>/images/setting-back.jpg); ">
 <?php include('include/header.php'); ?>
 
@@ -85,23 +90,21 @@ else
             <h3 class="rs alternate-tab accordion-label">Thanks</h3>
             <div class="tab-pane accordion-content active">
              <h2 class="excited">How do you want to thank your supporters?</h2>
-                <p class="goal">How amazing would it be if your supporters got a personal, secret thank you from you when they pledged? Don't worry, this text isn't required in order to launch. You can come back to this at any time.</p>
+                <p class="goal">How amazing would it be if your supporters got a personal, secret thank you from you when they make a Pact with you? Don't worry, this text isn't required in order to launch. You can come back to this at any time.</p>
               <div class="form form-profile"  id="thank-data">
                 <form action="<?=$_SERVER['PHP_SELF']?>" name="profile" method="post" enctype="multipart/form-data">
-               <?php if(isset($msg)){?> <div  id="err_msg"><?=$msg?></div> <?php } ?>
                 <input type="hidden" name="mode" value="profile" />
                  
                   <div class="row-item clearfix">
-                    <label class="lbl" style="width:100%; text-align:left" for="txt_location">Your Thanks Message:</label>
+                    <label class="lbl" style="width:100%; text-align:left !important;" for="txt_location">Your Thanks Message:</label>
                   
                   <br>
 <br>
 
                     <div class="val" style="    margin: 28px 0 0 0;">
-                     <textarea  class="form-control" name="thanks_message" id="thanks_message" parsley-trigger="change"  > <?=trim(stripslashes($row_user->thanks_message))?>
-                              </textarea>
+                     <textarea  class="form-control" name="thanks_message" id="thanks_message" parsley-trigger="change"  style="height: 200px;"><?=trim(stripslashes($row_user->thanks_message))?></textarea>
                               
-                              <script>
+                              <!--script>
 	CKEDITOR.replace('thanks_message',{
                        
                        filebrowserWindowWidth: '900',
@@ -113,14 +116,14 @@ else
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
                     </div>
                    
                   </div>
                  
                   <div class="row-item clearfix">
                   
-                    <button class="btn btn-red btn-submit-all newtier">Save all </button>
+                    <button class="btn btn-submit-all newtier">Save all </button>
                   </div>
                   <div class="row-item clearfix">&nbsp;</div>
                 </form>
@@ -141,14 +144,27 @@ else
 
 
 </div>
+
+<?php if(isset($msg)){?>
+    <div class="fixed-top d-flex justify-content-center">
+    <div class="alert alert-<?=$error_type?> fade in" style="width:fit-content; margin-top:67px;" role="alert" id="save-success-alert">
+      <?=$msg?>
+    </div>
+    </div>
+    <?php } ?>
+
+
 <?php include('include/footer.php');
 include('include/footer_js.php');?>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
 
 </div>
 <script type="text/javascript">
   $(document).ready(function() {
-   setTimeout(function(){ $("#err_msg").fadeOut(); }, 3000);
+   setTimeout(function () {
+      $("#save-success-alert").alert('close');
+    }, 4000);
   });
  
 </script>

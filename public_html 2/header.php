@@ -23,7 +23,7 @@
                     </div>
                     <div class="form-search"> 
                       <a href="<?=BASEPATH?>/login/?ut=ucreate&type=<?=md5(rand())?>" class="login">Start My Page</a> 
-                      <a href="<?=BASEPATH?>/sign-up/?ut=ucreate&type=<?=md5(rand())?>" class="login explore">Explore Creator</a> 
+                      <a href="<?=BASEPATH?>/explore/?>" class="login explore">Explore Creator</a> 
                     </div>
                     <?php } else {
 					if(strlen($row_user->image_path)>0)

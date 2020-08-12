@@ -13,17 +13,7 @@ else
 if(strlen($row_user->image_path)>0)
  $user_image = IMAGEPATH.$row_user->image_path;
 else
- $user_image = IMAGEPATH.'icon_man.png'; 
- 
- if($_REQUEST['mode']=="profile")
- {
-  	
-
- $db->updateArray("impact_user",$_REQUEST,"user_id=".$row_user->user_id);
- header('location:'.BASEPATH.'/edit/payment/');
- 
- 
- }
+ $user_image = IMAGEPATH.'icon_man.png';
  
  
 
@@ -33,6 +23,7 @@ else
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -70,14 +61,15 @@ else
 	</style>
 <style type="text/css">
 			#chart-container {
-				width: 640px;
+				width: 80%;
 				height: auto;
+				margin: auto;
 			}
 		</style>
 
 </head>
 
-<body>
+<body class="body-bg">
 <div id="wrapper" style="background-image:url(<?=BASEPATH?>/images/setting-back.jpg); ">
 <?php include('include/header.php'); ?>
 
@@ -95,29 +87,82 @@ else
             <div class="tab-pane accordion-content active">
              
               <div class="form form-profile" style="left:48px;">
-                
+        <h3>Earnings</h3>
+        <br><br>
                 <div id="chart-container">
 			                    <canvas id="mycanvas"></canvas>
 		</div>
         
-        <h2>List Of Supporter</h2>
-        
+        <h3>Supporters</h3>
+        <br><br>
           <div id="chart-container">
 			                    <canvas id="mycanvas2"></canvas>
 		</div>
 
+		<br><br><br>
+
+		<h3>List of Pact Members</h3>
+		<p>This is a list of all your monthly supporters (Pact Members)</p>
+
+		<br><br>
+
+		<?php
+              $ids = $db_query->get_ids_sql($row_user->user_id);
+              //$all_payments = $db_query->fetch_object("SELECT a.*, 'monthly' AS table_type FROM impact_payment a UNION ALL SELECT b.*, 'onetime' AS table_type FROM impact_pay_onetime b WHERE (a.creator_id IN '$ids' AND (a.status='authenticated' OR a.status='active')) OR (b.creator_id IN '$ids' AND b.status='success')");
+              $pact_members = $db_query->runQuery("SELECT * FROM impact_payment WHERE creator_id IN $ids AND (status='authenticated' OR status='active') GROUP BY transaction_id ORDER BY paid_timestamp DESC");
+              ?>
+              <table>
+                <style type="text/css">
+                td {
+                  border: 1px solid #ddd;
+                  padding: 18px;
+                  word-break: break-word;
+                }
+
+                th{
+                  border: 1px solid #ddd;
+                  padding: 10px;
+                }
+              </style>
+              <tr>
+                <th><h5>Supporter Name</h5></th>
+                <th><h5>Pact</h5></th>
+                <th><h5>Amount (₹)</h5></th>
+                <th><h5>Join Date</h5></th>
+                <th><h5>Transaction ID</h5></th>
+                <!--th style="text-align: center;"><h3>Cancel</h3></th-->
+              </tr>
+              <?php foreach ($pact_members as $row_payment) {
+              	$join_date = $db_query->fetch_object("select min(paid_timestamp) t from impact_payment where user_id='".$row_payment['user_id']."' and (status='authenticated' OR status='active' OR status='completed')");
+                $supporter = $db_query->fetch_object("select full_name name from impact_user where user_id='".$row_payment['user_id']."'");
+                $pact_title = $db_query->fetch_object("select tier_name title from impact_tier where tier_id='".$row_payment['tier_id']."'");
+
+                if (empty($supporter->name)) $supporter->name="Deleted User";
+                if (empty($pact_title->title)) $pact_title->title="Deleted Pact";
+              ?>
+                <tr>
+                  <td><?=$supporter->name?></td>
+                  <td><?=$pact_title->title?></td>
+                  <td><?=$row_payment['paid_amount']?></td>
+                  <td><?=$join_date->t?></td>
+                  <td><?=$row_payment['transaction_id']?></td>
+                  <!--td style="text-align: center;"><a class="join_btn cancel" id="<?=$row_subscription['tier_id']?>" style="cursor:pointer">Cancel</a></td-->
+                </tr>
+              <?php } ?>
+              </table>
 
 		<!-- javascript -->
 		<script type="text/javascript" src="<?=BASEPATH?>/graph/jquery.min.js"></script>
-		<script type="text/javascript" src="<?=BASEPATH?>/graph/Chart.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 		<script type="text/javascript">
         
         $(document).ready(function(){
+
 	$.ajax({
 		url: "<?=BASEPATH?>/data.php",
 		method: "GET",
+		dataType: 'json',
 		success: function(data) {
-			console.log(data);
 			var paid_date = [];
 			var paid_amount = [];
 
@@ -130,11 +175,12 @@ else
 				labels: paid_date,
 				datasets : [
 					{
-						label: 'Earning Before Tax',
-						backgroundColor: 'rgba(200, 200, 200, 0.75)',
-						borderColor: 'rgba(200, 200, 200, 0.75)',
-						hoverBackgroundColor: 'rgba(200, 200, 200, 1)',
-						hoverBorderColor: 'rgba(200, 200, 200, 1)',
+						label: 'Earnings Before Platform Fee',
+						backgroundColor: 'rgba(61, 155, 180, 0.2)',
+						borderColor: 'rgb(61, 155, 180)',
+						hoverBackgroundColor: 'rgba(61, 155, 180, 0.5)',
+						borderWidth: 1,
+						maxBarThickness: 80,
 						data: paid_amount
 					}
 				]
@@ -144,11 +190,25 @@ else
 
 			var barGraph = new Chart(ctx, {
 				type: 'bar',
-				data: chartdata
+				data: chartdata,
+				options: {
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero: true,
+								precision: 0,
+								suggestedMax: 100
+							}
+						}]
+					}
+				}
 			});
 		},
-		error: function(data) {
-			console.log(data);
+		error: function(xhr, textStatus, error) {
+			console.log("Error:");
+			console.log(xhr);
+			console.log(textStatus);
+			console.log(error);
 		}
 	});
 });
@@ -162,6 +222,7 @@ else
 	$.ajax({
 		url: "<?=BASEPATH?>/data_user.php",
 		method: "GET",
+		dataType: 'json',
 		success: function(data) {
 			console.log(data);
 			var paid_date = [];
@@ -176,11 +237,13 @@ else
 				labels: paid_date,
 				datasets : [
 					{
-						label: 'List Of Supporter',
-						backgroundColor: 'rgba(30, 114, 156, 1)',
-						borderColor: 'rgba(30, 114, 156, 0.5)',
-						hoverBackgroundColor: 'rgba(30, 114, 156, 0.5)',
-						hoverBorderColor: 'rgba(30, 114, 156, 1)',
+						label: 'No. of Supporters',
+						//backgroundColor: 'rgba(30, 114, 156, 0.2)',
+						backgroundColor: 'rgba(61, 155, 180, 0.2)',
+						borderColor: 'rgb(61, 155, 180)',
+						hoverBackgroundColor: 'rgba(61, 155, 180, 0.5)',
+						borderWidth: 1,
+						maxBarThickness: 80,
 						data: paid_amount
 					}
 				]
@@ -190,11 +253,24 @@ else
 
 			var barGraph = new Chart(ctx, {
 				type: 'bar',
-				data: chartdata
+				data: chartdata,
+				options: {
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero: true,
+								suggestedMax:10
+							}
+						}]
+					}
+				}
 			});
 		},
-		error: function(data) {
-			console.log(data);
+		error: function(xhr, textStatus, error) {
+			console.log("Error:");
+			console.log(xhr);
+			console.log(textStatus);
+			console.log(error);
 		}
 	});
 });

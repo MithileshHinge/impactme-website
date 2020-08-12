@@ -14,7 +14,7 @@ if(isset($_POST['user_name']) && !empty($_POST['user_name']))
 {
 $s = trim($_POST['user_name']);
 
-$sql = $db_query->runQuery("select * from impact_user where status= 1 and active_status=1 and review_status=1 and user_type='ucreate' and (full_name like '%$s%' or impact_name  like '%$s%' ) order by full_name limit 5");
+$sql = $db_query->runQuery("select * from impact_user where status= 1 and active_status=1 and review_status=1 and user_type='ucreate' and impact_name like '$s%' order by impact_name limit 5");
 $search_arr = array();
 foreach($sql as $row)
 {
@@ -53,8 +53,8 @@ if(isset($_POST['UserId']) && isset($_POST['Password']))
 $user = trim($_POST['UserId']);
 $pass = trim($_POST['Password']);
 
-$sql_search = $db_query->fetch_object("select count(*) c from impact_user where user_id='$user' and password='$pass'");
-if($sql_search->c==1)
+$sql_search = $db_query->fetch_object("select count(*) c, u.* from impact_user u where u.user_id='$user'");
+if($sql_search->c==1 and password_verify($pass, $sql_search->password))
 {
   echo 1; 
  }

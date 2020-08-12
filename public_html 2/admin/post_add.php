@@ -165,7 +165,7 @@ include('include/menubar.php');
                               </textarea>
                              </div>
                             </div>-->
-                            <script>
+                            <!--script>
 	CKEDITOR.replace('short_description',{
                        
                        filebrowserWindowWidth: '900',
@@ -177,7 +177,7 @@ include('include/menubar.php');
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
                              <div class="form-group ">
                               <label  class="col-sm-2">Description</label>
                              <div class="col-sm-10">  
@@ -186,7 +186,7 @@ include('include/menubar.php');
                              </div>
                              
                             </div>
-                            <script>
+                            <!--script>
 	CKEDITOR.replace('description',{
                        
                        filebrowserWindowWidth: '900',
@@ -198,7 +198,7 @@ include('include/menubar.php');
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
 
                             
                               

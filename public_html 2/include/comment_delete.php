@@ -19,7 +19,8 @@ if(isset($_POST['comment_like_id']) && !empty($_POST['comment_like_id']))
 {
 $comment_id = $_POST['comment_like_id'];
 $user_id = base64_decode($_SESSION['user_id']);
-$sql_check = $db_query->fetch_object("select count(*) c from tbl_comment_like where comment_id='$comment_id'  and user_id='$user_id'");
+$ids = $db_query->get_ids_sql($user_id);
+$sql_check = $db_query->fetch_object("select count(*) c from tbl_comment_like where comment_id='$comment_id'  and user_id in $ids");
 $sql_post = $db_query->fetch_object("select post_id from tbl_comment where comment_id='$comment_id'");
 if($sql_check->c==0) {
 $db_query->Query("INSERT INTO tbl_comment_like (`like_id`, `comment_id`, `user_id`) VALUES (NULL, '$comment_id', '$user_id');");
@@ -30,7 +31,7 @@ $db_query->add_notification($user_id, $sql_post->post_id, "comment_like"  );
 }
 else
 {
- $db_query->Query("delete from  tbl_comment_like where  comment_id='$comment_id' and user_id='$user_id'");
+ $db_query->Query("delete from  tbl_comment_like where  comment_id='$comment_id' and user_id in $ids");
 }
 return true;
 }
@@ -40,7 +41,9 @@ if(isset($_POST['post_like_id']) && !empty($_POST['post_like_id']))
 {
 $post_id = $_POST['post_like_id'];
 $user_id = base64_decode($_SESSION['user_id']);
-$sql_check = $db_query->fetch_object("select count(*) c from tbl_post_like where post_id='$post_id'  and user_id='$user_id'");
+$ids = $db_query->get_ids_sql($user_id);
+
+$sql_check = $db_query->fetch_object("select count(*) c from tbl_post_like where post_id='$post_id'  and user_id in $ids");
 if($sql_check->c==0) {
 $db_query->Query("INSERT INTO tbl_post_like (`like_id`, `post_id`, `user_id`) VALUES (NULL, '$post_id', '$user_id');");
 
@@ -54,7 +57,7 @@ $db_query->add_notification($user_id, $post_id, "like"  );
 }
 else
 {
- $db_query->Query("delete from  tbl_post_like where  post_id='$post_id' and user_id='$user_id'");
+ $db_query->Query("delete from  tbl_post_like where  post_id='$post_id' and user_id in $ids");
 }
 
 

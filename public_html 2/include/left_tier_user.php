@@ -1,40 +1,84 @@
 <?php
+
+function show_impact_limit($row_tier, $pact_members)
+{
+	if (!empty($row_tier['impact_limit']) and $row_tier['impact_limit']>0) {
+		if ($pact_members->c <=0) $pact_members->c = '0';
+				?>
+				<div style="padding: 0px 20px 0px 20px;">
+					<p style="display: inline-block; vertical-align: super;">Pact members: <?=$pact_members->c."/".$row_tier['impact_limit']?></p>
+					<?php if ($pact_members->c >= $row_tier['impact_limit']) { ?>
+						<span class="material-icons info-hover" data-toggle="tooltip" data-placement="right" title="This is a limited entry pact. It has reached its max limit of <?=$row_tier['impact_limit']?> members.">info</span>
+					<?php } else { ?>
+						<span class="material-icons info-hover" data-toggle="tooltip" data-placement="right" title="This is a limited entry pact. It will get closed once it reaches its max limit of <?=$row_tier['impact_limit']?> members.">info</span>
+					<?php } ?>
+				</div>
+			<?php }
+}
+
+$ids = $db_query->get_ids_sql($row_user->user_id);
+
 $sql_tier_check = $db_query->fetch_object("select count(*) c from impact_tier where user_id='$row_user1->user_id'");
 if($sql_tier_check->c>0) {?>
 
 
 <div class="wrap-lst-category">
 	<h3 class="tier">
-		Waves
+		Pacts
 	</h3>
 	<?php $sql_tier = $db_query->runQuery("select * from impact_tier where user_id='$row_user1->user_id' and plan_id is not null and not plan_id='' order by tier_price");
-	$check_subscription = $db_query->fetch_object("select IFNULL(tier_id, 0) tier_id from impact_payment where user_id='".$row_user->user_id."' and creator_id='".$row_user1->user_id."' and (status='authenticated' or status='active')");
+	$check_subscription = $db_query->fetch_object("select IFNULL(tier_id, 0) tier_id from impact_payment where user_id in $ids and creator_id='".$row_user1->user_id."' and (status='authenticated' or status='active')");
 	if ($check_subscription->tier_id > 0)
 		$joined_tier_price = $db_query->fetch_object("select tier_price p from impact_tier where user_id='".$row_user1->user_id."' and tier_id='".$check_subscription->tier_id."' and plan_id is not null and not plan_id=''");
 	foreach($sql_tier as $row_tier) { 
 		$tier_link = BASEPATH.'/join/'.$row_user1->user_id.'/checkout/'.$row_tier['tier_id'].'/';
+
+		$pact_members = $db_query->fetch_object("SELECT count(*) c from impact_payment where tier_id='$row_tier->tier_id' and creator_id='$row_user1->user_id' and (status='active' or status='authenticated') group by subscription_id");
+
+		if (!empty($row_tier['impact_limit']) and $row_tier['impact_limit']>0 and $pact_members->c>=$row_tier['impact_limit']) {
+			$tier_link = "#";
+			$join_btn_class = "join_btn_disabled";
+		}else {
+			$join_btn_class = "join_btn";
+		}
 		?>	
 
 		<div class="tier1">
-			<h4 class="livello"><?=$row_tier['tier_name']?> (<?=CURRENCY.$row_tier['tier_price']?>)</h4>
-			<div style="padding-left:10px;padding-right:10px;margin: 0 0 0 13px;"><span class="more" style="padding: 10px 21px 15px 0px;text-align: justify;color: black"> <?=stripslashes(nl2br( $row_tier['description']))?></span></div>
+			<h4 class="livello"><?=$row_tier['tier_name']?></h4>
+			<div style="padding-left:20px;padding-right:20px;"><span class="more" style="text-align: justify;color: #455058; font-weight:300;"> <?=stripslashes($row_tier['description'])?></span></div>
 			<br />
-			<?php if($row_user1->user_id==base64_decode($_SESSION['user_id'])) {?>
+			<?php
+			if($row_user1->user_id==base64_decode($_SESSION['user_id'])) {?>
 
-			<div style="text-align: center;">
-				<a href="#" class="join_btn">Make <?=CURRENCY.$row_tier['tier_price']?> Pact</a>
-			</div>
-			<?php } else { ?>
-			<?php if ($check_subscription->tier_id == 0) { ?>
-			<a href="<?=$tier_link?>" class="join_btn"  style="color:white;">Make <?=CURRENCY.$row_tier['tier_price']?> Pact</a>
-			<?php }else {
-				if ($joined_tier_price->p >= $row_tier['tier_price']) {?>
-				<a class="join_btn_disabled"  style="color:white;">Joined <?=CURRENCY.$row_tier['tier_price']?> Pact</a>
-			<?php }else if ($joined_tier_price->p < $row_tier['tier_price']) {?>
-			<a href="<?=$tier_link?>" class="join_btn"  style="color:white;">Upgrade to <?=CURRENCY.$row_tier['tier_price']?> Pact</a>
-		
-		<?php }}} ?>
-	</div>
+				<div>
+					<a href="#" class="<?=$join_btn_class?>">Make ₹<?=$row_tier['tier_price']?> Pact</a>
+					<?php show_impact_limit($row_tier, $pact_members); ?>
+				</div>
+			<?php 
+			} else { ?>
+				<?php if ($check_subscription->tier_id == 0) { ?>
+					<a href="<?=$tier_link?>" class="<?=$join_btn_class?>"  style="color:white;">Make ₹<?=$row_tier['tier_price']?> Pact</a>
+					<?php show_impact_limit($row_tier, $pact_members); ?>
+				<?php
+				}else {
+					if ($joined_tier_price->p >= $row_tier['tier_price']) {?>
+						<a class="join_btn_disabled"  style="color:white;">Made ₹<?=$row_tier['tier_price']?> Pact</a>
+						<?php show_impact_limit($row_tier, $pact_members); ?>
+				
+					<?php 
+					} else if ($joined_tier_price->p < $row_tier['tier_price']) {?>
+				
+						<a href="<?=$tier_link?>" class="<?=$join_btn_class?>"  style="color:white;">Upgrade to ₹<?=$row_tier['tier_price']?> Pact</a>
+						<?php show_impact_limit($row_tier, $pact_members); ?>
+
+				
+			
+					<?php 
+					}
+				}
+
+			} ?>
+		</div>
 
 
 <!--<div class="wrap-lst-category" style="margin-bottom:20px; padding:10px;">

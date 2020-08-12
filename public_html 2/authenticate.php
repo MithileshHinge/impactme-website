@@ -59,6 +59,9 @@ try {
 
 if(isset($_SESSION['log_type']) && !empty($_SESSION['log_type']))
 {
+	if (empty($fbuserData['email'])){
+		header("Location:".BASEPATH."/sign-up?msg=nv");
+	}
 
    $sql_check = $db_query->fetch_object("select count(*) c , i.* from  impact_user i where i.email_id='".$fbuserData['email']."' and i.user_type='".$_SESSION['log_type']."' limit 1");
 if($sql_check->c>0 )
@@ -68,7 +71,7 @@ if($sql_check->c>0 )
 		  $_SESSION['username'] = $sql_check->email_id;
 		  $_SESSION['user_id'] = base64_encode($sql_check->user_id);
 		  if($_SESSION['log_type']=="ucreate") $_SESSION['user_type'] = 1; else $_SESSION['user_type'] = 0;
-		  $sql_update = $db_query->runQuery("update impact_user set last_log_in_date = '".date('Y-m-d h:i:s A')."' where user_id='".$sql_check->user_id."'");
+		  $sql_update = $db_query->runQuery("update impact_user set last_log_in_date = '".date('Y-m-d h:i:s A')."' where email_id='".$sql_check->email_id."'");
 
 		if(isset($_SESSION['is_user_login'])==1 && $_SESSION['user_type'] == 1)
 		{
@@ -128,7 +131,7 @@ file_put_contents($dir, $image);
 	  $_SESSION['is_user_login'] = 1;
 	  $_SESSION['username'] = $fbuserData['email'];
 	  $_SESSION['user_id'] = base64_encode( $last_id );
-	  $db_query->welcome_email($fbuserData['email'], EMAIL_FROM, $mail);
+	  //$db_query->welcome_email($fbuserData['email'], EMAIL_FROM, $mail);
 	  if($_SESSION['log_type']=="ucreate") $_SESSION['user_type'] = 1; else $_SESSION['user_type'] = 0;
 		  
 		 

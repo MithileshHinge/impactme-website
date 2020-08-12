@@ -86,22 +86,43 @@ else if($_REQUEST['post_type']=="other")
  header('location:'.$view_page."?msg=update");
  
  }
+
  if($_GET[msg]==1)
 {
-$msg = "<span style='color:green;font-weight:bold; margin-bottom:10px;'>Added Successfully</span>";
+$msg = "Post added successfully.";
 $error_type = "success";
-	$sign = "fa-check";
  }
+
+if($_GET[msg]=="update")
+{
+$msg = "Post updated successfully.";
+$error_type = "success";
+} 
+if($_GET[msg]=="deleted")
+{
+  $msg = "Post deleted successfully.";
+  $error_type = "success";
+}
+if($_GET[msg]=="archived")
+{
+  $msg = "Post has been archived.";
+  $error_type = "success";
+}
+if($_GET[msg]=="unarchived")
+{
+  $msg = "Post has been unarchived.";
+  $error_type = "success";
+}
 
  
  if($_GET['id'])
 {
 	$id=$_GET['id'];
 	
-	$sql="DELETE FROM ".$table_name." WHERE ".$table_id."='$id'";
+	$sql="DELETE FROM ".$table_name." WHERE ".$table_id."='$id' and user_id='$row_user->user_id'";
 	$res=$db_query->runQuery($sql);
 	
-		header("location:".$view_page);
+		header("location:".$view_page."?msg=deleted");
 
 }
 if($_GET[$table_id] && $_GET['status'])
@@ -110,15 +131,15 @@ if($_GET[$table_id] && $_GET['status'])
   $status=base64_decode($_GET['status']);
   if($status=='0')
   {
-     $sql_status="UPDATE ".$table_name." SET `status`='1' WHERE ".$table_id."='$id'";
+     $sql_status="UPDATE ".$table_name." SET `status`='1' WHERE ".$table_id."='$id' and user_id='$row_user->user_id'";
      $res_status=$db_query->runQuery($sql_status);
-	  header('location:'.$view_page);
+    header('location:'.$view_page."?msg=unarchived");
    }
   if($status=='1')
   {
-    $sql_status="UPDATE ".$table_name." SET `status`='0' WHERE ".$table_id."='$id'";
+    $sql_status="UPDATE ".$table_name." SET `status`='0' WHERE ".$table_id."='$id' and user_id='$row_user->user_id'";
     $res_status=$db_query->runQuery($sql_status);
-	  header('location:'.$view_page);
+    header('location:'.$view_page."?msg=archived");
   }
 }
 
@@ -130,6 +151,7 @@ if($_GET[$table_id] && $_GET['status'])
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -166,7 +188,7 @@ if($_GET[$table_id] && $_GET['status'])
 	</style>
 </head>
 
-<body>
+<body class="body-bg">
 <div id="wrapper" style="background-image:url(<?=BASEPATH?>/images/setting-back.jpg); ">
 <?php include('include/header.php'); ?>
 
@@ -175,7 +197,6 @@ if($_GET[$table_id] && $_GET['status'])
    
     <div class="project-detail">
       <div class="project-tab-detail tabbable accordion edit-about">
-      <?php if(isset($msg)){?> <div  id="err_msg"><?=$msg?></div> <?php } ?>
         <?php include('include/user_menu.php');?>
         
         
@@ -200,18 +221,20 @@ if($_GET[$table_id] && $_GET['status'])
                      <div class="row-item clearfix">
                     <label class="lbl" for="txt_name1">Post Type:</label>
                     <div class="val">
-                      <select  class="txt" name="post_type" id="post_type" required>
+                      <select disabled="true" class="txt" id="post_type" required>
                       <option value="">--Select Post Type--</option>
                               <option value="image" <?=($row_edit->post_type=="image")?'selected':''?>>Image</option>
                               <option value="video" <?=($row_edit->post_type=="video")?'selected':''?>>Video</option>
                                <option value="other" <?=($row_edit->post_type=="other")?'selected':''?>>Other</option>
                             </select>
+                      <input type="hidden" name="post_type" value="<?=$row_edit->post_type?>"/>
                     </div>
                   </div>
                   <div class="row-item clearfix" id="goal" <?php if($row_edit->post_type=="video" || $row_edit->post_type=="other") {?>style="display:none"<?php } ?>>
                     <label class="lbl" for="txt_location">Image :</label>
                     <div class="val">
-                      <input class="txt" type="file" name="image" id="image" value="<?=$row_edit->image_path?>"  accept="image/*">
+                      <input disabled class="txt" type="file" id="image" value="<?=$row_edit->image_path?>"  accept="image/*"/>
+                      <input type="hidden" name="image" value="<?=$row_edit->image_path?>"/>
                       <img src="<?=IMAGEPATH.$row_edit->image_path?>" style="    width: 250px;
     margin-left: 20%;
     margin-top: 13px;"> 
@@ -221,7 +244,8 @@ if($_GET[$table_id] && $_GET['status'])
                    <div class="row-item clearfix" id="goal_other" <?php if($row_edit->post_type=="video" || $row_edit->post_type=="image") {?>style="display:none"<?php } ?>>
                     <label class="lbl" for="txt_location">Upload File :</label>
                     <div class="val">
-                      <input class="txt" type="file" name="image1" id="image1" value="<?=$row_edit->image_path?>"  >
+                      <input disabled class="txt" type="file" id="image1" value="<?=$row_edit->image_path?>"  />
+                      <input type="hidden" name="image1" value="<?=$row_edit->image_path?>"/>
                       <a href="<?=IMAGEPATH.$row_edit->image_path?>" target="_blank">View File</a> 
                     </div>
                   </div>
@@ -230,28 +254,28 @@ if($_GET[$table_id] && $_GET['status'])
                          <div class="row-item clearfix" id="patron"  <?php if($row_edit->post_type=="image") {?>style="display:none"<?php } ?>>
                     <label class="lbl" for="txt_location">You Tube Video Link:</label>
                     <div class="val">
-                      <input class="txt" type="text" name="video_link" id="video_link" value="<?=$row_edit->video_link?>"  >
+                      <input readonly class="txt" type="text" name="video_link" id="video_link" value="<?=$row_edit->video_link?>"  >
                     </div>
                   </div>
                   
                   
                   <div class="row-item clearfix">
-                    <label class="lbl" for="txt_name1">Price Type:</label>
+                    <label class="lbl" for="txt_name1">Pricing:</label>
                     <div class="val">
-                      <select  class="txt" name="price_type" id="price_type" >
+                      <select class="txt" name="price_type" id="price_type" >
                       <option value="">--Select Post Price--</option>
                               <option value="free" <?=($row_edit->price_type=="free")?'selected':''?>>Free</option>
-                              <option value="tier" <?=($row_edit->price_type=="tier")?'selected':''?>>Tier</option>
+                              <option value="tier" <?=($row_edit->price_type=="tier")?'selected':''?>>Pact</option>
                                <option value="one_time" <?=($row_edit->price_type=="one_time")?'selected':''?>>One Time Payment</option>
                             </select>
                     </div>
                   </div>
                   
                   <div class="row-item clearfix" id="price" <?php if($row_edit->price_type=="free" || $row_edit->price_type=="one_time"){?> style="display:none"<?php } ?>>
-                    <label class="lbl" for="txt_name1">Tier:</label>
+                    <label class="lbl" for="txt_name1">Pact:</label>
                     <div class="val">
                       <select  class="txt" name="tier_id" id="tier_id">
-                      <option value="">--Select Tier--</option>
+                      <option value="">--Select Pact--</option>
                              <?php
 							 $sql_tier = $db_query->runQuery("select * from impact_tier where user_id='$row_user->user_id' and status=1 order by tier_price");
 							 foreach($sql_tier as $row_tier){
@@ -270,12 +294,12 @@ if($_GET[$table_id] && $_GET['status'])
                        <input class="txt" type="text" name="one_time_amount" id="one_time_amount" value="<?=$row_edit->one_time_amount?>"  >
                     </div>
                   </div>
-              
-                    <div class="val"  style="margin: 28px 27px 0 71px;"> 
-                        <label class="lbl" for="txt_location" style="font-size:18px;margin:0 0px 23px 0">Description:</label>
-                     <textarea  class="form-control" name="description" id="description" parsley-trigger="change"  ><?=$row_edit->description?></textarea>
+                  <div class="row-item clearfix">
+                    <label class="lbl" for="txt_location" style="font-size:18px;margin:0 0px 23px 0">Description:</label>
+                    <div class="val"> 
+                     <textarea  class="form-control" name="description" id="description" parsley-trigger="change"  style="height:200px;width:403px;" ><?=$row_edit->description?></textarea>
                               
-                              <script>
+                              <!--script>
 	CKEDITOR.replace('description',{
                        
                        filebrowserWindowWidth: '900',
@@ -287,8 +311,9 @@ if($_GET[$table_id] && $_GET['status'])
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
                     </div>
+                  </div>
                   
       
                   
@@ -296,10 +321,10 @@ if($_GET[$table_id] && $_GET['status'])
                   
                   
                   
-                  <div class="row-item clearfix">
+                  <div class="row-item clearfix" style="text-align:center;">
                    <input type="hidden" name="<?=$table_id?>" value="<?=$edit_id?>"> 
                   <input type="hidden" name="mode" value="add">  
-                    <button class="btn btn-red btn-submit-all newtier" style="    margin-left: 68px;">Update</button>
+                    <button class="btn btn-submit-all newtier" style="display:inline-block;">Update Post</button>
                   </div>
                   <div class="row-item clearfix">&nbsp;</div>
                 </form>
@@ -311,7 +336,7 @@ if($_GET[$table_id] && $_GET['status'])
         </div>
 
         <section class="col-md-12" style="background-color:#FFF; ">
-       <h3 style="text-align:center;font-weight: 700;">Manage Your Post</h3>
+       <h3 style="text-align:center;font-weight: 700;">Manage Your Posts</h3>
             <div class="col-md-12" style="    margin: 10px 0 0 0;padding:0 0 0 0;">
               <?php $sql_post = $db_query->runQuery("select * from ".$table_name." where user_id='$row_user->user_id' order by post_id desc");
 			  foreach($sql_post as $row_post)
@@ -339,14 +364,14 @@ if($_GET[$table_id] && $_GET['status'])
                  <a href="javascript:void(0);" onClick="javascript:deldata(<?=$row_post['post_id']?>)" title="Delete" ><i class="fa fa-times"></i></a>
                  </span>
              
-                        <p style="font-size: 23px;font-weight: 600; margin: 21px 0 0 0;"><?=$row_post['post_title']?><p>
+                        <p style="font-size: 23px;font-weight: 600; margin: 21px 0 0 0; word-break: break-word;"><?=$row_post['post_title']?><p>
                         <?php if($row_post['price_type']=="free"){?><h4 class="">Free</h4><?php } else if($row_post['price_type']=="tier") {
 				  $row_tier_check = $db_query->fetch_object("select tier_name, tier_price from impact_tier where tier_id='$row_post[tier_id]'");
 				  ?>
-                  <h4 class=""><?=$row_tier_check->tier_name?> (<?=$row_tier_check->tier_price.CURRENCY?>)</h4>
+                  <h4 class="" style="word-break: break-word;"><?=$row_tier_check->tier_name?> (<?=$row_tier_check->tier_price.CURRENCY?>)</h4>
                   
                   <?php } else {  ?><h4 class="">One Time (<?=$row_post[one_time_amount].CURRENCY?>)</h4><?php } ?>
-                  <p class="like"><?=mb_strimwidth(html_entity_decode(stripslashes($row_post['description'])),0,100)?></p>
+                  <p class="like" style="word-break: break-word;"><?=mb_strimwidth(stripslashes($row_post['description']),0,100)?></p>
                     </div>
                 </div>
                 
@@ -369,19 +394,42 @@ if($_GET[$table_id] && $_GET['status'])
   <div class="clear"></div>
 </div>
 
-
 </div>
+
+
+<div class="modal fade" id="modalConfirmDel" tabindex="-1" role="dialog" aria-labelledby="modalConfirmDelLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalConfirmDelLabel">Confirm delete post?</h5>
+          </div>
+          <div id="modalConfirmDelBody" class="modal-body">This operation cannot be undone. Do you wish to continue?
+            <input type="hidden" name="modal_post_id" id="modal_post_id" value="0"/>
+          </div>
+          <div class="modal-footer">
+            <button id="confirm-del-no" type="button" class="btn btn-primary" style="color:#fff;" data-dismiss="modal">No</button>
+            <button id="confirm-del-yes" type="button" class="btn btn-secondary" style="color:#fff;">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
 <?php include('include/footer.php');
 include('include/footer_js.php');?>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
  <script language="JavaScript" >
 function deldata(id)
 {
-	if(confirm("Do you want to delete?"))
-	{
-		window.location.href="<?=$view_page?>?id="+id;
-	}
+	$("#modalConfirmDel").modal('show');
+  $("#modal_post_id").val(id);
 }
+
+$('#confirm-del-yes').click(function () {
+  window.location.href="<?=$view_page?>?id="+$("#modal_post_id").val();
+});
 </script>
 </div>
 

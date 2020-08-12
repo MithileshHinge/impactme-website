@@ -12,7 +12,7 @@ $view_page = BASEPATH."/edit/tiers/";
 $edit_id1 = $_GET['edit_id'];
 $row_edit = $db_query->fetch_object("select * from ".$table_name." where ".$table_id."='".$edit_id1."' and user_id='".$row_user->user_id."'");
 $edit_id = $row_edit->tier_id;
-$page_title = "Tier | ".PROJECT_TITLE;
+$page_title = "Pacts | ".PROJECT_TITLE;
 
 if(strlen($row_user->cover_image_path)>0)
   $cover_image = IMAGEPATH.$row_user->cover_image_path;
@@ -140,6 +140,7 @@ if($_GET['id'])
 <html>
 <head>
   <title><?=$page_title?></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="<?=$sql_web->meta_description?>" /> 
   <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -176,7 +177,7 @@ if($_GET['id'])
   </style>
 </head>
 
-<body>
+<body class="body-bg">
   <div id="wrapper" style="background-image:url(<?=BASEPATH?>/images/setting-back.jpg); ">
     <?php include('include/header.php'); ?>
 
@@ -193,21 +194,20 @@ if($_GET['id'])
             <div class="tab-content">
               <div>
 
-                <h3 class="rs alternate-tab accordion-label">Waves</h3>
+                <h3 class="rs alternate-tab accordion-label">Pacts</h3>
                 <div class="tab-pane accordion-content active">
-                  <?php if(isset($msg)){?> <div  id="err_msg"><?=$msg?></div> <?php } ?>
                   <div class="form form-profile">
                     <form action="<?=BASEPATH?>/edit/tiers/<?=$edit_id?>/" name="myForm"  method="post" enctype="multipart/form-data" id="edit-createrform">
 
                       <input type="hidden" name="mode" value="profile" />
                       <div class="row-item clearfix">
-                        <label class="lbl" for="txt_name1">Wave Title:</label>
+                        <label class="lbl" for="txt_name1">Pact Title:</label>
                         <div class="val">
                           <input class="txt" type="text" name="tier_name" id="tier_name" value="<?=$row_edit->tier_name?>"  >
                         </div>
                       </div>
                       <div class="row-item clearfix">
-                        <label class="lbl" for="txt_location">Price:</label>
+                        <label class="lbl" for="txt_location">Price  in ₹:</label>
                         <div class="val">
                           <input class="txt" type="text" name="tier_price" id="tier_price" readonly value="<?=$row_edit->tier_price?>" onKeyPress="JavaScript: return keyRestrict(event,'0123456789.');">
                         </div>
@@ -221,15 +221,15 @@ if($_GET['id'])
 
                           <br>
 
-                          <span style="color:#F00; margin-left:120px"><input type="text" readonly id="text_count" value="300" style="width:30px; border:none; background-color:#fff; color:#F00 "> Characters max</span>
+                          <span style="color:#F00; margin-left:120px" class="pacts-description-help-text"><input type="text" readonly id="text_count" value="300" style="width:30px; border:none; background-color:#fff; color:#F00 "> Characters max</span>
 
                         </div>
                       </div>
                       <div class="row-item clearfix">
-                        <label class="lbl" for="txt_time_zone">Impact limit:</label>
+                        <label class="lbl" for="txt_time_zone">Supporters limit:</label>
                         <div class="val">
                           <input class="txt" type="text" id="impact_limit" name="impact_limit"  value="<?=$row_edit->impact_limit?>" onKeyPress="JavaScript: return keyRestrict(event,'0123456789');">
-                          <label style="font-size: 11px;    margin: -18px 0 41px 120px;">Limit number of impact.</label>
+                          <p style="font-size: 11px;    margin: -18px 0 41px 120px;" class="pacts-limit-help-text">Limit number of supporters for this Pact (optional).</p>
                           <br>
                         </div>
                       </div>
@@ -242,7 +242,7 @@ if($_GET['id'])
                       <div class="row-item clearfix">
                         <input type="hidden" name="<?=$table_id?>" value="<?=$edit_id?>"> 
                         <input type="hidden" name="mode" value="add">  
-                        <button class="btn btn-red btn-submit-all newtier" id="tier-submit">Update</button>
+                        <button class="btn btn-submit-all newtier" id="tier-submit">Update Pact</button>
                       </div>
                       <div class="row-item clearfix">&nbsp;</div>
                     </form>
@@ -255,7 +255,7 @@ if($_GET['id'])
 
 
             <div class="col-md-12 " style="padding:0; background-color:#fff;">
-              <h3 style="text-align:center;font-weight: 700;">Manage Your Tier</h3>
+              <h3 style="text-align:center;font-weight: 700;">Manage Your Pacts</h3>
               <?php $sql_tier = $db_query->runQuery("select * from impact_tier where user_id='$row_user->user_id' order by tier_price asc");
               foreach($sql_tier as $row_tier)
                 {?>
@@ -291,19 +291,42 @@ if($_GET['id'])
 
 
       </div>
+
+      <div class="modal fade" id="modalConfirmDel" tabindex="-1" role="dialog" aria-labelledby="modalConfirmDelLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" style="width:400px;">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalConfirmDelLabel">Confirm Delete?</h5>
+            </div>
+            <div id="modalConfirmDelBody" class="modal-body">Deleting all active subscriptions of this Pact might take some time. Please don't close the window or click back/refresh button. This cannot be undone. Do you wish to continue?
+              <input type="hidden" name="modal_tier_id" id="modal_tier_id" value="0"/>
+            </div>
+            <div class="modal-footer">
+              <button id="confirm-del-no" type="button" class="btn btn-primary" style="color:#fff;" data-dismiss="modal">No</button>
+              <button id="confirm-del-yes" type="button" style="color:#fff;" class="btn btn-secondary">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <?php include('include/footer.php');
       include('include/footer_js.php');?>
 
       <script language="JavaScript" >
       function deldata(id)
       {
-        if(confirm("Deleting all active subscriptions of this tier will take some time. Please don't close the window or click back/refresh button. This cannot be undone. Do you wish to continue?"))
-        {
-          window.location.href="<?=$view_page?>?id="+id;
-        }
+
+        $("#modalConfirmDel").modal('show');
+        $("#modal_tier_id").val(id);
       }
+
+      $('#confirm-del-yes').click(function () {
+        window.location.href="<?=$view_page?>?id="+$("#modal_tier_id").val();
+      });
       </script>
     </div>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
     $(document).ready(function() {

@@ -49,14 +49,14 @@ else
 	 if($db->insertDataArray("impact_user",$_REQUEST))
 	 {
 	   //$send_mail = $db_query->verification_email($row_user->email_id, EMAIL_FROM , $mail,  $verify_link);
-	
-	
 		  $last_id = mysql_insert_id();
+      $db_query->assign_default_profile_image($row_user->email_id);
 		 $_SESSION['is_user_login'] = 1;
 		  $_SESSION['username'] = $row_user->email_id;
 		 $_SESSION['user_id'] = base64_encode( $last_id );
 		$_SESSION['user_type'] = 1;
-         header('location:'.BASEPATH.'/edit/');
+    $db_query->welcome_email($row_user->email_id, EMAIL_FROM, $mail);
+      header('location:'.BASEPATH.'/edit/');
 		 
 		  
      }
@@ -142,7 +142,7 @@ else
                <?php if(isset($msg)){?> <div  id="err_msg"><?=$msg?></div> <?php } ?>
                 <input type="hidden" name="mode" value="profile" />
                   <div class="row-item clearfix">
-                    <label class="lbl" for="txt_name1" style="text-align: right;padding: 13px 24px 0 0;    width: 265px;">Name of your page:</label>
+                    <label class="lbl" for="txt_name1" style="text-align: right;padding: 13px 24px 0 0;    width: 265px;">Name of your page :</label>
                     <div class="val">
                       <input class="txt" type="text" id="impact_name" value="" onBlur="setText(this.value)" onKeyUp="setText(this.value)" name="impact_name"  required>
                      
@@ -158,11 +158,11 @@ else
                     <label class="lbl" for="txt_time_zone" style="text-align: right;padding: 13px 24px 0 0;width:265px">Which sounds correct? :</label>
                     <div class="val">
                    
-                      <label style="font-size: 16px;    margin: 9px 0 0 0px;font-weight:500"> <input  type="radio" name="tag_line"  id="tagline1" value="" required>
-                     <span id="txt1"></span> <span style="vertical-align: middle;">is creating </span><span id="wrd1"></span></label>
+                      <label style="font-size: 16px;    margin: 9px 0 0 0px;font-weight:500"> <input style="vertical-align: baseline;" type="radio" name="tag_line"  id="tagline1" value="" required>
+                     <span id="txt1"></span> <span style="vertical-align: baseline;">is creating </span><span id="wrd1"></span></label>
                       <br>
-                       <label style="font-size: 16px;    margin: 9px 0 0 0px;font-weight:500;"><input  type="radio" name="tag_line" id="tagline2" value="" >
-                     <span id="txt2"></span> <span style="vertical-align: middle;">are creating </span><span id="wrd2"></span></label>
+                       <label style="font-size: 16px;    margin: 9px 0 0 0px;font-weight:500;"><input style="vertical-align: baseline;" type="radio" name="tag_line" id="tagline2" value="" >
+                     <span id="txt2"></span> <span style="vertical-align: baseline;">are creating </span><span id="wrd2"></span></label>
                     </div>
                   </div>
                 

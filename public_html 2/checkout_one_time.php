@@ -63,13 +63,13 @@ if(strlen($row_user->image_path)>0)
  $user_image = IMAGEPATH.$row_user->image_path;
 else
  $user_image = IMAGEPATH.'icon_man.png'; 
-if(strlen($row_user->tag_line)>0) { 
- $page_title = $row_user->tag_line." | One Time Checkout | ".PROJECT_TITLE;
- }
- else
- {
-  $page_title = "One Time Checkout | ".PROJECT_TITLE;
- }
+if(strlen($rowUser->tag_line)>0) { 
+	$page_title = "Checkout | ".$rowUser->tag_line." | ".PROJECT_TITLE;
+}
+else
+{
+	$page_title = "Checkout | ".PROJECT_TITLE;
+}
 
 /* 
  if($_REQUEST['mode']=="card")
@@ -133,6 +133,7 @@ if(strlen($row_user->tag_line)>0) {
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -173,7 +174,7 @@ if(strlen($row_user->tag_line)>0) {
 
         <div class="container">
 
-            <h3 class="payment-monthly" style="margin-top:60px">Complete Your One Time Payment to <?= stripslashes($rowUser->impact_name)?></h3>
+            <h3 class="payment-monthly" style="margin-top:60px">Complete your one time payment to <?= stripslashes($rowUser->impact_name)?></h3>
             <?php if(isset($msg)) { echo $msg ; } ?>
 
             <div class="col-md-12 paymet-box">
@@ -195,26 +196,35 @@ if(strlen($row_user->tag_line)>0) {
 
                     </div>
 
+					<div class="col-md-4 debit-payment">
+
+                    	<p class="gio-payment">Post Title:</p>
+
+                    </div>
+
                    
                     <div class="col-md-4 credit-payment">
-                        <p style="font-size: 18px;color: black;" id="tier_name"><?=$row_post->tier_name?></p>
+                        <p style="font-size: 18px;color: #455058;" id="tier_name"><?=$row_post->tier_name?></p>
                       
 
                     </div>
 
-                    <div class="col-md-12"><p class="checkout-issue">Patreon does not issue refunds on behalf of creators. <a href="#" style="text-decoration: underline;">Learn more.</a></p></div>
+                    <div class="col-md-12"><p class="checkout-issue">ImpactMe does not issue refunds on behalf of creators. <a href="<?=$BASEPATH.'/terms-conditions/#terms_payments'?>" style="text-decoration: underline;">Learn more.</a></p></div>
 
                 </div>
 
                 <div class="col-md-5 card-payment">
 
-                    <h2 style="color: black;    padding: 0 0 12px 0;">Summary</h2>
+                    <h2 style="color: #455058;    padding: 0 0 12px 18px;">Summary</h2>
 
-                    <p style="font-size: 16px;color:black;">One Time Payment<span class="price"><?=CURRENCY?><span id="price2"> <?=$row_post->price?></span></span></p>
+                    <p style="font-size: 16px;color:#455058;  padding: 0 0 0 18px;">One Time Payment<span class="price"><?=CURRENCY?><span id="price2" style="padding:0 26px 0 0;"> <?=$row_post->price?></span></span></p>
 
+                    <p class="pacifi-time">You will be charged a one time fee of <?=CURRENCY?> <span id="price3"><?=$row_post->price?></span></span> to access the post.</p>
+
+                	<p class="pacifi-time">By making this payment, you agree to ImpactMe's <a href="<?=BASEPATH?>/terms-conditions" target="_blank"><u>Terms of Use</u></a>.</p>
                    
 
-                    <div class="wrap-nav-pledge digital-payment">
+                    <div class="wrap-nav-pledge digital-payment" style="padding:0 0 0 18px;">
                     	<form action="<?=BASEPATH.'/response_one_time/'?>" method="post">
 		                    <script
 		                    	src="https://checkout.razorpay.com/v1/checkout.js"
@@ -225,7 +235,7 @@ if(strlen($row_user->tag_line)>0) {
 							    data-buttontext="Pay <?=CURRENCY.' '.$row_post->price?> One time"
 							    data-name="ImpactMe"
 							    data-description="One time payment to unlock post"
-							    data-prefill.name="<?=$row_user->impact_name?>"
+							    data-prefill.name="<?=$row_user->full_name?>"
 							    data-prefill.email="<?=$row_user->email_id?>"
 							></script>
 
@@ -235,7 +245,7 @@ if(strlen($row_user->tag_line)>0) {
 
                     </div>
 
-                    <div class="col-md-12"><p class="question">Questions? 94.8% of people who visit our <a href="#" style="text-decoration: underline;">Help Center</a> find what they're looking for.</p></div>
+                    <div class="col-md-12"><p class="question">Questions? Visit our <a href="<?=BASEPATH?>/help/" style="text-decoration: underline;">Help and FAQ page</a></p></div>
 
                 </div>
 
@@ -246,7 +256,7 @@ if(strlen($row_user->tag_line)>0) {
     </section>
   
 
-<?php //include('include/footer.php');
+<?php include('include/footer.php');
 include('include/footer_js.php');?>
 
 <script type="text/javascript">

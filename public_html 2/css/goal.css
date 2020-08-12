@@ -226,8 +226,8 @@
 }
 .test-page{
 	list-style: none;
-    float: left;
-    margin: 0 0 0 -90px;
+    float: right;
+    margin: 0 20px 0 0px;
 }
 .test-view{
 	margin: 0 0 0 82px;

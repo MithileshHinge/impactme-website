@@ -206,7 +206,7 @@ include('include/menubar.php');
                              </div>
                             
                             </div>
-                            <script>
+                            <!--script>
 	CKEDITOR.replace('description',{
                        
                        filebrowserWindowWidth: '900',
@@ -218,7 +218,7 @@ include('include/menubar.php');
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
  
                           
                               

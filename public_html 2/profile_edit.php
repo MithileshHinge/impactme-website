@@ -60,6 +60,7 @@ else
  if($_REQUEST['mode']=="change_password")
  {
 
+  $_REQUEST['password']= password_hash($_REQUEST['password'], PASSWORD_BCRYPT);
  
  $db->updateArray("impact_user",$_REQUEST,"email_id=".$row_user->email_id);
  header('location:'.BASEPATH.'/settings/?pwd=1');
@@ -99,6 +100,7 @@ else
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -138,6 +140,23 @@ else
 <body>
 <div id="wrapper">
 <?php include('include/header.php'); ?>
+
+<div class="modal fade" id="modalProfilePic" tabindex="-1" role="dialog" aria-labelledby="modalProfilePicLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalProfilePicLabel">Change Profile Picture</h5>
+      </div>
+      <div id="modalProfilePicBody" class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-profile-pic" type="button" class="btn btn-secondary">Cancel</button>
+        <button id="save-profile-pic" type="button" class="btn btn-primary" style="color:#fff;">Save</button>
+      </div>
+    </div>
+    <div class="loading-spinner"></div>
+  </div>
+</div>
 
 <div class="layout-2cols">
   <div class="content grid_12">
@@ -200,13 +219,14 @@ else
                  
                     <label class="lbl" for="txt_bio">Profile Photo:</label>
                    
-                  <div id="imgArea" style="    margin-left: 28px;"><img src="<?=$profile_image?>">
+                  <div class="profo-image" id="imgArea" style="    margin-left: 28px;"><img src="<?=$profile_image?>">
                     
                           <div class="progressBar">
                             <div class="bar"></div>
                             <div class="percent">0%</div>
                           </div>
-                          <div id="imgChange"><span>Change Profile Photo</span>
+                          <div class="profile-change" id="imgChange">
+                            <i class="material-icons time-editcreate" style="font-size: 30px; margin: 19px 0 0 56px;">photo_camera</i>
                             <input type="file" accept="image/*" name="image_upload_file" id="image_upload_file">
                           </div>
                   
@@ -218,10 +238,9 @@ else
 
                   
                     <div class="val"> <label class="lbl" for="txt_name1">About You:</label>
-                      <textarea  class="form-control" name="about_you" id="about_you" parsley-trigger="change"  > <?=trim(stripslashes($row_user->about_you))?>
-                              </textarea>
+                      <textarea  class="form-control" name="about_you" id="about_you" parsley-trigger="change" style="height:200px"><?=trim(stripslashes($row_user->about_you))?></textarea>
                               
-                              <script>
+                              <!--script>
 	CKEDITOR.replace('about_you',{
                        
                        filebrowserWindowWidth: '900',
@@ -233,7 +252,7 @@ else
 					   filebrowserImageUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
 					   filebrowserFlashUploadUrl : '<?=ADMINPATH?>/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
 	} );
-</script>
+</script-->
                      
                   
                   </div>
@@ -245,7 +264,7 @@ else
                   <br />
 
                  
-                   <button class="btn btn-red btn-submit-all " id="update" type="submit">Update</button>
+                   <button class="btn join_btn btn-submit-all " id="update" type="submit">Update</button>
             
                 </form>
               </div>
@@ -276,7 +295,7 @@ else
                   <br />
 
                  
-                   <button class="btn btn-red btn-submit-all " id="log">Change Password </button>
+                   <button class="btn join_btn btn-submit-all " id="log">Change Password </button>
             
                 </form>
               </div>
@@ -289,7 +308,7 @@ else
                <p>Careful! This will permanently disable your account. You won't be able to log in again after you do this.</p>
 <br>
                
-                   <button class="btn btn-red btn-submit-all " id="del" >Delete Account </button>
+                   <button class="btn join_btn btn-submit-all " id="del" >Delete Account </button>
             
            
               </div>
@@ -340,7 +359,7 @@ else
                <p> This will deactivate your account temporarily. You will not appear on search any more. You can activate your account at anytime.</p>
 <br>
                
-                   <button class="btn btn-red btn-submit-all " id="deactivate" >Deactivate Account </button>
+                   <button class="btn join_btn btn-submit-all " id="deactivate" >Deactivate Account </button>
             
            
               </div> 
@@ -353,7 +372,7 @@ else
                <p> This will activate your account. You will be appear on search.</p>
 <br>
                
-                   <button class="btn btn-red btn-submit-all " id="activate" >Activate Account </button>
+                   <button class="btn join_btn btn-submit-all " id="activate" >Activate Account </button>
             
            
               </div> 
@@ -554,8 +573,98 @@ else {
 </script>
 
 <script src="<?=BASEPATH?>/image_upload_js/jquery.form.js"></script>
-<script>
-$(document).on('change', '#image_upload_file', function () {
+
+<link rel="stylesheet" href="https://www.impactme.in/croppie/croppie.css" />
+<script src="https://www.impactme.in/croppie/croppie.js"></script>
+<script type="text/javascript">
+
+var myModal = $('#modalProfilePic');
+var modalBodyCroppie = $('#modalProfilePicBody');
+
+var myCroppie = modalBodyCroppie.croppie({
+    viewport: {
+        width: 250,
+        height: 250,
+        type: 'circle'
+    },
+    boundary: {
+        width: 300,
+        height: 250
+    }
+});
+
+$('#image_upload_file').on('change', function () {
+  if($('#image_upload_file').val() != ''){
+    myModal.modal({backdrop: 'static', keyboard: false});
+    myModal.modal('show');
+  }
+});
+
+myModal.on('shown.bs.modal', function(){ 
+    //myCroppie.croppie('bind', bindOpts);
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      myCroppie.croppie('bind', {
+        url: e.target.result
+      }).then(function(){
+        console.log('jQuery bind complete');
+      });
+      
+    }
+    reader.readAsDataURL($('#image_upload_file').get(0).files[0]);
+});
+
+$('#save-profile-pic').on('click', function(event){
+  $(".loading-spinner").show(0, function(){
+    myCroppie.croppie('result', {
+      type: 'canvas',
+      size: 'viewport'
+    }).then(function (response) {
+      $.ajax({
+        url: '<?=BASEPATH?>/uploadFileCroppie.php',
+        type: "POST",
+        data:  {"type": "fan_profile" ,"image" : response},
+        beforeSend: function(){
+        },
+        success: function(data){
+          obj = $.parseJSON(data);
+          if (obj.status){
+            $("#imgArea>img").prop('src',obj.image_medium);
+            if (obj.only_fan)
+              $(".photo-nav").css("background-image", "url(" + obj.image_medium + ")");
+          }else {
+            alert('Error');
+          }
+          myModal.modal('hide');
+          $(".loading-spinner").hide();
+          $("#image_upload_file").val('');
+        }
+      });
+    });
+    /*
+    $('#uploadForm').on('submit', (function(e) {
+      e.preventDefault();
+      console.log("here6");
+      var $form = $(this);
+      $form.ajaxForm({
+        url: $form.attr('action'),
+        method: $form.attr('method'),
+        data:$form.serialize()
+      }).submit();
+      console.log("here7");
+    }));
+    */
+  });
+});
+
+$('#cancel-profile-pic').on('click', function(event){
+  $("#image_upload_file").val('');
+  myModal.modal('hide');
+});
+
+
+
+/*$(document).on('change', '#image_upload_file', function () {
 var progressBar = $('.progressBar'), bar = $('.progressBar .bar'), percent = $('.progressBar .percent');
 
 $('#uploadForm').ajaxForm({
@@ -624,7 +733,7 @@ $('#uploadForm').ajaxForm({
 
 });
 
-
+*/
 </script>
 
 

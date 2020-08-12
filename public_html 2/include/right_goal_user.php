@@ -58,7 +58,12 @@
                                     <?php 
 									  $g=1;
 				  $sql_goal_count = $db_query->fetch_object("select count(*) c from impact_goal where user_id='$row_user1->user_id'");
-									$sql_goal = $db_query->runQuery("select * from impact_goal where user_id='$row_user1->user_id'");
+
+          if ($row_user1->goal_type == 'earning'){
+            $sql_goal = $db_query->runQuery("select * from impact_goal where user_id='$row_user1->user_id' order by goal_price");
+          }else {
+            $sql_goal = $db_query->runQuery("select * from impact_goal where user_id='$row_user1->user_id' order by patron_number");
+          }
 
           $goal_creator = $db_query->creator($row_user1->email_id);
 				foreach($sql_goal as $row_goal) {
@@ -72,7 +77,7 @@
 
 				if($row_goal['goal_type']=='earning')
 				{
-				$sql_g = "select sum(p1.paid_amount) p from impact_payment p1, impact_user u where u.user_id=p1.user_id and u.user_type='create' and p1.creator_id='".$goal_creator->user_id."' and (p1.status='authenticated' or p1.status='active')";
+				$sql_g = "select ifnull(sum(a.b),0) p from (select p.user_id, paid_amount b from impact_payment p where p.creator_id=".$goal_creator->user_id." and (p.status='authenticated' or p.status='active') group by p.subscription_id) a ";
 				$row_goal_user = $db_query->fetch_object($sql_g );
 				  $total_price_user = $row_goal_user->p;
 				  $goal_price = $row_goal['goal_price'];
@@ -80,7 +85,7 @@
 				
 				else
 				{
-				$sql_g = "select count(*) c from (select p1.user_id u from impact_payment p1, impact_user u where u.user_id=p1.user_id and u.user_type='create' and p1.creator_id='".$goal_creator->user_id."' and (p1.status='authenticated' or p1.status='active') group by p1.user_id) a";
+				$sql_g = "select count(*) c from (select p.user_id, paid_amount b from impact_payment p where p.creator_id='".$goal_creator->user_id."' and (p.status='authenticated' or p.status='active') group by p.subscription_id) a";
 				$row_goal_user = $db_query->fetch_object($sql_g );	
 				
 					 $total_price_user = $row_goal_user->c;
@@ -120,18 +125,18 @@
 <!--<h4 class="tier add-tiers" style="margin:0 auto;">-->
 <!--                      <?=($row_goal['goal_type']=='earning')?'Earnings Based Goals':'Community Based Goals'?>-->
 <!--                    </h4>-->
-                   <h2 style="font-size:150%;">  <?php if($row_goal['goal_type']=='earning'){?> <?=CURRENCY?><?=$row_goal['goal_price']?> <?php } else { ?>
-                      <?=$row_goal['patron_number']?> Impact <?php } ?></h2>
+                   <h2 style="font-size:150%;">  <?php if($row_goal['goal_type']=='earning'){?>₹<?=$row_goal['goal_price']?> <?php } else { ?>
+                      <?=$row_goal['patron_number']?> Supporters <?php } ?></h2>
                                                 <p><?=stripslashes(nl2br($row_goal['description']))?></p>
                                             </div>
                                             <div>
                                               <ul>
-                                                <li class="test-page"><a  href="#"><?=$g++?> of <?=$sql_goal_count->c?></a></li>
+                                                <li class="test-page"><a  href="#"><?=$g?> of <?=$sql_goal_count->c?></a></li>
                                                 <li class="test-view"></li>
                                               </ul>
                                             </div>
                                         </div>
-                                        <?php } ?>
+                                        <?php $g++;} ?>
                                       
                                     </div>
                                 </div>
@@ -147,9 +152,9 @@
 			$jm=0;
 			foreach($sql_goal as $row_goal) { ?>
                 <div class="col-md-12" style="border-bottom: 1px solid #00000040;padding: 12px 0 9px 18px;">
-                  <a href="javascript:return false;" onclick="return goal(<?=$jm++?>);">  <p class="goal-completed"><?php if($row_goal['goal_type']=='earning'){?> <?=CURRENCY?> <?=$row_goal['goal_price']?> <?php } else { ?>
-                      <?=$row_goal['patron_number']?> Impact <?php } ?></p>
-                    <p class="goal-text"><?=stripslashes(nl2br(mb_strimwidth($row_goal['description'],0,50)))?> </p>
+                  <a href="javascript:return false;" onclick="return goal(<?=$jm++?>);">  <p class="goal-completed"><?php if($row_goal['goal_type']=='earning'){?>₹<?=$row_goal['goal_price']?> <?php } else { ?>
+                      <?=$row_goal['patron_number']?> Supporters <?php } ?></p>
+                    <p class="goal-text"><?=stripslashes(nl2br($row_goal['description']))?> </p>
                     </a>
                 </div>
                 <?php } ?>

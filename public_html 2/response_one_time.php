@@ -26,34 +26,37 @@ if(strlen($row_user->image_path)>0)
 else
  $user_image = IMAGEPATH.'icon_man.png'; 
 
-if (empty($_POST['razorpay_payment_id']) ===false and empty($_POST['post_id']) === false){
+$ids = $db_query->get_ids_sql($row_user->user_id);
+
+if (empty($_POST['razorpay_payment_id']) ==false and empty($_POST['post_id']) == false){
   $post_id = $_POST['post_id'];
-  $row_payment = end($db_query->runQuery("select * from impact_pay_onetime where user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'"));
+  $row_payment = end($db_query->runQuery("select * from impact_pay_onetime where user_id in $ids and post_id=".$post_id." and order_id='".$_POST['razorpay_order_id']."' and status='created' limit 1"));
 
+  if (!empty($row_payment) && !empty($row_payment['order_id'])){
 
-  $expectedSignature = hash_hmac('sha256', $row_payment['order_id'] . '|' . $_POST['razorpay_payment_id'], $razorpay_secret);
+    $expectedSignature = hash_hmac('sha256', $row_payment['order_id'] . '|' . $_POST['razorpay_payment_id'], $razorpay_secret);
 
-  if ($expectedSignature === $_POST['razorpay_signature']){
-    $db->updateArray('impact_pay_onetime', array('transaction_id' => $_POST['razorpay_payment_id'], 'status' => 'success'), "user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'");
+    if ($expectedSignature === $_POST['razorpay_signature']){
+      $success = true;
 
-    $response_message = "Payment successful";
+      $db->updateArray('impact_pay_onetime', array('transaction_id' => $_POST['razorpay_payment_id'], 'status' => 'success'), "user_id in $ids and post_id=".$post_id." and order_id='".$row_payment['order_id']."' and status='created'");
 
-    $db_query->add_notification_payment_one_time($row_user->user_id,  $row_pay->post_id , "payment_one_time");
-  }else{
-    $success = false;
-    $error = "Invalid signature 0x07";
-    $response_message = "Payment failed";
-    $db->updateArray('impact_pay_onetime', array('status' => 'authentication fail'), "user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'");
+      $response_message = "Payment successful";
+
+      $db_query->add_notification_payment_one_time($row_user->user_id,  $row_pay->post_id , "payment_one_time");
+    }else{
+      $success = false;
+      $error = "Invalid signature 0x07";
+      $response_message = "Payment failed";
+      $db->updateArray('impact_pay_onetime', array('status' => 'authentication fail'), "user_id in $ids and post_id=".$post_id." and order_id='".$_POST['razorpay_order_id']."' and status='created'");
+    }
   }
-
-
-
 
 }else{
   $success = false;
   $error = "Invalid signature 0x07";
   $response_message = "Payment failed";
-  $db->updateArray('impact_pay_onetime', array('status' => 'authentication fail'), "user_id=".$row_user->user_id." and post_id=".$post_id." and status='created'");
+  $db->updateArray('impact_pay_onetime', array('status' => 'authentication fail'), "user_id in $ids and post_id=".$post_id." and order_id='".$_POST['razorpay_order_id']."' and status='created'");
 }
 /*
 require_once 'payment/TransactionResponse.php';
@@ -126,6 +129,7 @@ if($sql_check->c>0)
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -150,6 +154,10 @@ if($sql_check->c>0)
 <meta name="twitter:title" content="<?=$sql_web->meta_title?>" />
 <meta name="twitter:description" content="<?=$sql_web->meta_description?>" />
 <meta name="twitter:image" content="<?=IMAGEPATH.$row_user->image_path?>" />
+
+<?php if ($success == true){ ?>
+<meta http-equiv="refresh" content="10;url=<?=BASEPATH.'/post/'.$post_id?>"/>
+<?php } ?>
 
 
     <?php include('include/titlebar.php'); ?>
@@ -188,7 +196,19 @@ if($sql_check->c>0)
                  <h4>Date: <?=date('Y-m-d')?></h4>
                   <h4><a href="<?=BASEPATH.'/post/'.$post_id?>">Go to <?=$_POST['creator_name']?>'s post</a></h4>
                    <h4>Amount: <?=$row_payment['paid_amount']?></h4>
-<br>
+                  <br>
+                  <h4 id="timeLeft">You will automatically be redirected to the creator's post in 10 seconds...</h4>
+                  <script type="text/javascript">
+                  var timeleft = 10;
+                  var countdownTimer = setInterval(function(){
+                    if(timeleft < 0){
+                      clearInterval(downloadTimer);
+                    } else {
+                      document.getElementById("timeLeft").innerHTML = "You will automatically be redirected to the creator's post in "+timeleft+" seconds...";
+                    }
+                    timeleft -= 1;
+                  }, 1000);
+                </script>
    <? //=print_r($xml);?>
             
               </div>

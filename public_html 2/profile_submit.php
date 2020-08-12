@@ -37,6 +37,7 @@ $_REQUEST['review_submit_date'] = date('Y-m-d H:i:s');
 <html>
 <head>
  <title><?=$page_title?></title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?=$sql_web->meta_description?>" /> 
     <meta name="title" content="<?=$sql_web->meta_title?>" />
@@ -91,7 +92,7 @@ $_REQUEST['review_submit_date'] = date('Y-m-d H:i:s');
             <div class="tab-pane accordion-content active">
            <?php if($row_user->review_submit_status==0) {?>
              <h2 class="excited" style="text-align:center">Are you ready to submit for review?</h2>
-              <p class="goal">Reviews usually take minutes, although some content takes up to 3 days to review. Once approved, launch your page whenever you’re ready.</p>
+              <p class="goal">Reviews usually take minutes, although some content takes up to 3 days to review. Once approved, your page will be launched automatically.</p>
                  <div class="form form-profile">
                   <h2>Required to submit for review:</h2>
                   <form action="<?=$_SERVER['PHP_SELF']?>" name="profile" method="post" enctype="multipart/form-data">
@@ -142,19 +143,19 @@ $_REQUEST['review_submit_date'] = date('Y-m-d H:i:s');
 				   ?>
 				   
                   <div class="row-item clearfix">
-                    <label class="lbl" style="width:100%; text-align:left; color:<?=$profile_color?>" for="txt_location"><i class="fa fa-<?=$profile_icon?>"></i> Upload Profile Picture</label>
+                    <label class="lbl" style="width:100%; text-align:left !important; color:<?=$profile_color?>" for="txt_location"><i class="fa fa-<?=$profile_icon?>"></i> Upload Profile Picture</label>
                     </div>
                     
                       <div class="row-item clearfix">
-                     <label class="lbl" style="width:100%; text-align:left; color:<?=$cover_color?>" for="txt_location"><i class="fa fa-<?=$cover_icon?>"></i> Upload Cover Image</label>
+                     <label class="lbl" style="width:100%; text-align:left !important; color:<?=$cover_color?>" for="txt_location"><i class="fa fa-<?=$cover_icon?>"></i> Upload Cover Image</label>
                     </div>
                     
                       <div class="row-item clearfix">
-                     <label class="lbl" style="width:100%; text-align:left; color:<?=$about_color?>" for="txt_location"><i class="fa fa-<?=$about_icon?>"></i> Create About Section</label>
+                     <label class="lbl" style="width:100%; text-align:left !important; color:<?=$about_color?>" for="txt_location"><i class="fa fa-<?=$about_icon?>"></i> Create About Section</label>
                     </div>
                     
-                     <button class="btn btn-red btn-submit-all newtier" style="float:left" <?php if($profile_image==0 || $cover_image==0 || $about_image==0 ) {?> disabled="disabled"<?php } ?>>Submit For Review </button>
-                     <a href="<?=BASEPATH?>/edit/" class="btn btn-red btn-submit-all newtier" style="float:left; margin-left:15px;">Edit My Page</a>
+                     <button class="btn join_btn btn-submit-all newtier" style="float:left" <?php if($profile_image==0 || $cover_image==0 || $about_image==0 ) {?> disabled="disabled"<?php } ?>>Submit For Review </button>
+                     <a href="<?=BASEPATH?>/edit/" class="btn join_btn btn-submit-all newtier" style="float:left; margin-left:15px;">Edit My Page</a>
                    <br />
 <br />
    </form>

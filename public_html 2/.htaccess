@@ -134,9 +134,9 @@ RewriteRule ^profile/u/([a-zA-Z0-9_-]+)/post/?$ user_profile.php?u=$1&type=post
 RewriteRule ^profile/u/([a-zA-Z0-9_-]+)/overview/?$ user_profile.php?u=$1&type=overview
 RewriteRule ^profile/u/([a-zA-Z0-9_-]+)/?$ user_profile.php?u=$1
 
-RewriteRule ^profile/([a-zA-Z0-9_-]+)/post/?$ user_profile.php?slug=$1&type=post
-RewriteRule ^profile/([a-zA-Z0-9_-]+)/overview/?$ user_profile.php?slug=$1&type=overview
-RewriteRule ^profile/([a-zA-Z0-9_-]+)/?$ user_profile.php?slug=$1
+RewriteRule ^profile/([a-zA-Z0-9_.-]+)/post/?$ user_profile.php?slug=$1&type=post
+RewriteRule ^profile/([a-zA-Z0-9_.-]+)/overview/?$ user_profile.php?slug=$1&type=overview
+RewriteRule ^profile/([a-zA-Z0-9_.-]+)/?$ user_profile.php?slug=$1
 RewriteRule ^profile/?$ user_creator.php
 
 RewriteRule ^creator/([a-zA-Z0-9_-]+)/post/?$ user_creator.php?slug=$1&type=post
@@ -180,7 +180,8 @@ RewriteRule ^find-creators/?$ find_creators.php
 
 
 #RewriteRule ^my-membership/?$ membership.php
-RewriteRule ^my-subscriptions/?$ membership.php
+RewriteRule ^my-pacts/?$ membership.php
+RewriteRule ^payments-history/?$ payments_history.php
 
 RewriteRule ^search/?$ search_creator.php
 RewriteRule ^verify/create/([a-zA-Z0-9_-]+)/?$ verify.php?reg_type=log&utype=create&slug=$1
@@ -191,6 +192,7 @@ RewriteRule ^verification/?$ verification.php
 
 RewriteRule ^message/?$ message.php
 RewriteRule ^terms-conditions/?$ terms.php
+RewriteRule ^help/?$ help.php
 RewriteRule ^response/?$ response.php
 RewriteRule ^response_one_time/?$ response_one_time.php
 

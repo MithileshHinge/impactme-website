@@ -159,31 +159,31 @@ a  order by a.send_date desc  )b";
 				
 			$row_user = $this->db->fetch_object("select * from impact_user where user_id='$row_fetch[id]'");
 			
-			$row_creator    =$this->creator_new($row_user->email_id); 
+			$row_fan = $this->impact_new($row_user->email_id); 
 		  
 		  
 		 // print_r($row_impact);
-					if(strlen($row_creator->image_path)>0) 
+					if(strlen($row_fan->image_path)>0) 
 					{
 						
-				       $profile_image = IMAGEPATH.$row_creator->image_path;
+				       $profile_image = IMAGEPATH.$row_fan->image_path;
 					   if (@file_get_contents($profile_image, 0, NULL, 0, 1)) 
 					   {
 					      $profile_image = $profile_image;
 					   }
 					   else
 					   {
-					     $profile_image ='';
+					     $profile_image =IMAGEPATH.'icon_man.png';
 					   }
 					}
 					 else
-					   $profile_image ='';
+					   $profile_image =IMAGEPATH.'icon_man.png';
 					   
 					   
-			//$feature_image = $profile_image;
+			$feature_image = $profile_image;
 			
 			
-			$feature_image = IMAGEPATH.$row_user->image_path;
+			//$feature_image = IMAGEPATH.$row_user->image_path;
 			
 			if($i==1)
 			 $to_id = $row_user->user_id;
@@ -266,7 +266,7 @@ a  order by a.send_date desc  )b";
         <div id="ErrorMsg" ></div>
         <div id="SuccessMsg"></div>
          <label for="uname"><b style="font-size: 20px;">From <?=$this->creator($email_id,"impact_name") ?> (Creator)</b></label><br>
-          <?php $sql_check = $this->db->fetch_object("SELECT count(*) c FROM impact_user u, impact_join j where  u.user_id=j.creator_id and j.user_id='$creator_id' and u.user_type='ucreate' ");
+          <?php $sql_check = $this->db->fetch_object("SELECT count(*) c FROM impact_user u, impact_payment p where u.user_id=p.user_id and p.creator_id='$creator_id' and u.user_type='create' and (p.status='authenticated' or p.status='active')");
 		if($sql_check->c>0) {?>
           <input type="text" placeholder="To" name="creator_name" id="creator_name" required class="message-input"><br>
            <ul id="searchResultCreator"></ul>
@@ -274,7 +274,7 @@ a  order by a.send_date desc  )b";
          <textarea id="subject" name="subject" placeholder="Message" style="height:200px" class="message-input"></textarea>
              <button type="button" id="message-submit" class="new-message">Send</button>
              <?php } else {?>
-             <p>You Don't Have Any Impact That You Can Message</p><br />
+             <p>You don't have any supporters that you can message</p><br />
 <br />
 <br />
 <br />
@@ -388,7 +388,7 @@ function setText(element){
 	  var subject = $("#subject").val();
 	  if(user=="" || creator_id=="" || creator_name=="" )
 	  {
-	           $("#ErrorMsg").fadeIn().html("Please Choose Any Impact");
+	           $("#ErrorMsg").fadeIn().html("Please choose a supporter");
 			   setTimeout(function(){ $("#ErrorMsg").fadeOut(); }, 3000);
 			   
 			   $("#searchResultCreator").empty();
@@ -398,7 +398,7 @@ function setText(element){
 	  }
 	  else if(subject.trim()=="" )
 	  {
-	           $("#ErrorMsg").fadeIn().html("Please Write Your Message");
+	           $("#ErrorMsg").fadeIn().html("Please write your message");
 			   setTimeout(function(){ $("#ErrorMsg").fadeOut(); }, 3000);
 			   $("#subject").focus();
 			   return false; 
@@ -413,11 +413,11 @@ function setText(element){
                 success:function(response){
                if(response==false)
 				{
-				 $("#ErrorMsg").fadeIn().html("Message Not Sent");
+				 $("#ErrorMsg").fadeIn().html("Message not sent");
 				}
 				else
 				{
-                   $("#SuccessMsg").fadeIn().html("Your Message Has Been Sent");
+                   $("#SuccessMsg").fadeIn().html("Your message has been sent");
 				   $("#creator_name").val("");
 				   $("#creator_id").val("");
 				   $("#subject").val("");
@@ -493,9 +493,9 @@ function setText(element){
                                         <div class="tabs message-clicking" style="margin: -84px 0 0 -119px;">
                                           <div class="tab-button-outer">
                                             <ul id="tab-button">
-                                                <li style="border: 1px solid #ddd;">
+                                                <!--li style="border: 1px solid #ddd;">
                                                     <button onClick="document.getElementById('impact1').style.display='block'" style="width:auto;" class="new-message">New Message</button>
-                                                </li>
+                                                </li-->
                                                 
                                               <!--<li <?php if($show==0) {?> class="is-active" <?php } ?>><a id="impactbox" href="#tab0111">All</a></li>-->
                                              <!-- <li><a href="#tab0222">Unread</a></li>
@@ -514,7 +514,7 @@ function setText(element){
 
                                           <div id="tab0111" class="tab-contents <?php if($show==0) {?> active <?php } ?>" style="display:block !important;border:0px;" >
                                           
-                                         <div class="col-md-12" style="    margin: -5px 0 0 -41px;">
+                                         <div class="col-md-12" style="    margin: -6px 0 0 -41px;">
                                                 <div class="messaging">
       <div class="inbox_msg">
         <div class="inbox_people">
@@ -524,6 +524,9 @@ function setText(element){
             </div>
             <div class="srch_bar">
               <div class="stylish-input-group">
+                <div class="impactme-message">
+                   <a href="#" id="creatorTab" onClick="document.getElementById('impact1').style.display='block'" class="plus-imapctme">+</a>
+                   </div>
                 <!--<input type="text" class="search-bar"  placeholder="Search" >-->
                 <!-- <span class="input-group-addon"> -->
                 <!-- <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
@@ -555,25 +558,25 @@ a  order by a.send_date desc  )b";
 				//if($row_fetch['to_id'] != $impact_id) {
 			$row_user = $this->db->fetch_object("select * from impact_user where user_id='$row_fetch[id]'");
 			
-			$row_impact    =$this->impact_new($row_user->email_id); 
+			$row_creator    =$this->creator_new($row_user->email_id); 
 		  
 		  
 		 // print_r($row_impact);
-					if(strlen($row_impact->image_path)>0) 
+					if(strlen($row_creator->image_path)>0) 
 					{
 						
-				       $profile_image = IMAGEPATH.$row_impact->image_path;
+				       $profile_image = IMAGEPATH.$row_creator->image_path;
 					   if (@file_get_contents($profile_image, 0, NULL, 0, 1)) 
 					   {
 					      $profile_image = $profile_image;
 					   }
 					   else
 					   {
-					     $profile_image ='';
+					     $profile_image =IMAGEPATH.'icon_man.png';
 					   }
 					}
 					 else
-					   $profile_image ='';
+					   $profile_image =IMAGEPATH.'icon_man.png';
 					   
 					   
 			$feature_image = $profile_image;
@@ -668,8 +671,8 @@ a  order by a.send_date desc  )b";
        
         <div id="ErrorMsg2" ></div>
         <div id="SuccessMsg2"></div>
-         <label for="uname"><b style="font-size: 20px;">From <?=$this->impact($email_id,"impact_name") ?> (Impact)</b></label><br>
-          <?php $sql_check = $this->db->fetch_object(  "select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$impact_id' and (p.status='authenticated' or p.status='active') order by u.full_name");
+         <label for="uname"><b style="font-size: 20px;">From <?=$this->impact($email_id,"impact_name") ?> (Supporter)</b></label><br>
+          <?php $sql_check = $this->db->fetch_object(  "select count(*) c from impact_payment p, impact_user u where u.user_id=p.creator_id and p.user_id='$impact_id' and (p.status='authenticated' or p.status='active')");
 		  
 	
   
@@ -686,7 +689,7 @@ a  order by a.send_date desc  )b";
              <button type="button" id="message-submit2" class="new-message">Send</button>
              </div>
              <?php } else {?>
-             <p>You Don't Have Any Creator That You Can Message</p><br />
+             <p>You don't have any creators that you can message</p><br />
 <br />
 <br />
 <br />
@@ -791,7 +794,7 @@ function setText(element){
 	  var subject2 = $("#subject2").val();
 	  if(user_i=="" || impact_id=="" || impact_name=="" )
 	  {
-	           $("#ErrorMsg2").fadeIn().html("Please Choose Any Creator");
+	           $("#ErrorMsg2").fadeIn().html("Please choose a creator");
 			   setTimeout(function(){ $("#ErrorMsg2").fadeOut(); }, 3000);
 			   
 			   $("#searchResultCreator2").empty();
@@ -801,7 +804,7 @@ function setText(element){
 	  }
 	  else if(subject2.trim()=="" )
 	  {
-	           $("#ErrorMsg2").fadeIn().html("Please Write Your Message");
+	           $("#ErrorMsg2").fadeIn().html("Please write your message");
 			   setTimeout(function(){ $("#ErrorMsg2").fadeOut(); }, 3000);
 			   $("#subject2").focus();
 			   return false; 
@@ -816,12 +819,12 @@ function setText(element){
                 success:function(response){
 				if(response==false)
 				{
-				 $("#ErrorMsg2").fadeIn().html("Message Not Sent");
+				 $("#ErrorMsg2").fadeIn().html("Message not sent");
 				}
 				else
 				{
                
-                   $("#SuccessMsg2").fadeIn().html("Your Message Has Been Sent");
+                   $("#SuccessMsg2").fadeIn().html("Your message has been sent");
 				   $("#impact_name").val("");
 				   $("#impact_id").val("");
 				   $("#subject2").val("");
@@ -891,7 +894,7 @@ function setText(element){
               <div class="received_msg">
                 <div class="received_withd_msg">
                   <p><?=html_entity_decode($row['message'])?></p>
-                  <span class="time_date"> <?=date('h:i a | M d', strtotime($row['send_date']))?> <?=$from_id?></span></div>
+                  <span class="time_date"> <?=date('h:i a | M d', strtotime($row['send_date']))?></span></div>
               </div>
             </div>
             <?php } else { ?>
@@ -906,14 +909,29 @@ function setText(element){
           <?php } ?>
           <div class="down"></div>
           </div>
-          <div class="type_msg">
+        </div>
+        <div class="type_msg mesgs">
             <div class="input_msg_write">
               <input type="text" class="write_msg" placeholder="Type a message" value="" id="write_msg" />
+              <script>
+              $(document).ready(function () {
+                $('.write_msg, .write_msg2').emojioneArea();
+
+                twemoji.parse(document.body);
+              });
+              </script>
+                <!--button style="background:transparent; border:none; float:right; margin: 12px 36px 4px 0">
+              <span class="material-icons">
+              sentiment_satisfied_alt
+              </span>
+              </button-->
               <button class="msg_send_btn" type="button" id="msg_send_btn">
                 <i class="fa fa-paper-plane-o plane" aria-hidden="true"></i></button>
+              
             </div>
           </div>
-        </div>
+
+
         <script>
 		  $(".write_msg").keypress(function (e) {					  
 			if(e.which == 13 && !e.shiftKey) {  
@@ -1022,11 +1040,13 @@ function setText(element){
           <?php } ?>
           <div class="down2"></div>
           </div>
-          <div class="type_msg">
+        </div>
+          <div class="type_msg mesgs">
             <div class="input_msg_write">
               <input type="text" class="write_msg2" placeholder="Type a message" value="" id="write_msg2" />
               <button class="msg_send_btn" type="button" id="msg_send_btn2">
                 <i class="fa fa-paper-plane-o plane" aria-hidden="true"></i></button>
+              
             </div>
           </div>
         </div>
